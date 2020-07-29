@@ -11,15 +11,8 @@ const	siteMainElement = document.querySelector(`.main`);
 const	siteFooterElement = document.querySelector(`.footer`);
 
 // Render a template in certain block
-// Last argument is amount of templates - number only
-const render = (container, template, place, amount) => {
-  if (typeof amount === `number`) {
-    for (let i = 0; i < amount; i++) {
-      container.insertAdjacentHTML(place, template);
-    }
-  } else {
-    container.insertAdjacentHTML(place, template);
-  }
+const render = (container, template, place) => {
+  container.insertAdjacentHTML(place, template);
 };
 
 const createUserProfileTemplate = () => {
@@ -331,9 +324,15 @@ const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`);
 // Render most commented films
 // Render film number in footer
 // Render Popup
-render(filmList, createFilmCardTemplate(), `beforeend`, FILM_CARD_AMOUNT);
+for (let i = 0; i < FILM_CARD_AMOUNT; i++) {
+  render(filmList, createFilmCardTemplate(), `beforeend`);
+}
 render(filmList, createLoadMoreButtonTemplate(), `afterend`);
-render(filmListTop, createExtraFilmCardTemplate(), `beforeend`, TOP_FILM_CARD_AMOUNT);
-render(filmListCommented, createExtraFilmCardTemplate(), `beforeend`, COMMENTED_FILM_CARD_AMOUNT);
+for (let i = 0; i < TOP_FILM_CARD_AMOUNT; i++) {
+  render(filmListTop, createExtraFilmCardTemplate(), `beforeend`);
+}
+for (let i = 0; i < COMMENTED_FILM_CARD_AMOUNT; i++) {
+  render(filmListCommented, createExtraFilmCardTemplate(), `beforeend`);
+}
 render(siteFooterStats, createFileNumberTemplate(), `beforeend`);
 render(siteFooterElement, createFilmDetailsPopup(), `afterend`);
