@@ -1,5 +1,3 @@
-"use strict";
-
 // Constants
 const FILM_CARD_AMOUNT = 5;
 const TOP_FILM_CARD_AMOUNT = 2;
@@ -334,5 +332,6 @@ for (let i = 0; i < TOP_FILM_CARD_AMOUNT; i++) {
 for (let i = 0; i < COMMENTED_FILM_CARD_AMOUNT; i++) {
   render(filmListCommented, createExtraFilmCardTemplate(), `beforeend`);
 }
+
 render(siteFooterStats, createFileNumberTemplate(), `beforeend`);
 render(siteFooterElement, createFilmDetailsPopup(), `afterend`);
