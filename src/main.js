@@ -1,4 +1,5 @@
 // Imports
+import {generateFilmCard} from './mock/film-card-mock.js';
 import {render} from './utils.js'; // Render a template in certain block
 import {createUserProfileTemplate} from './view/user-profile.js';
 import {createSiteMenuTemplate} from './view/site-menu.js';
@@ -11,7 +12,7 @@ import {createFilmNumberTemplate} from './view/film-number.js';
 import {createFilmDetailsPopup} from './view/film-popup.js';
 
 // Constants
-const FILM_CARD_AMOUNT = 5;
+const FILM_CARD_AMOUNT = 20;
 const TOP_FILM_CARD_AMOUNT = 2;
 const COMMENTED_FILM_CARD_AMOUNT = 2;
 
@@ -19,6 +20,9 @@ const COMMENTED_FILM_CARD_AMOUNT = 2;
 const siteHeaderElement = document.querySelector(`.header`);
 const	siteMainElement = document.querySelector(`.main`);
 const	siteFooterElement = document.querySelector(`.footer`);
+
+// Array with Film cards data
+const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
 
 // Render elements
 render(siteHeaderElement, createUserProfileTemplate(), `beforeend`);
@@ -40,7 +44,7 @@ const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`);
 // Render film number in footer
 // Render Popup
 for (let i = 0; i < FILM_CARD_AMOUNT; i++) {
-  render(filmList, createFilmCardTemplate(), `beforeend`);
+  render(filmList, createFilmCardTemplate(filmCards[i]), `beforeend`);
 }
 render(filmList, createLoadMoreButtonTemplate(), `afterend`);
 for (let i = 0; i < TOP_FILM_CARD_AMOUNT; i++) {
@@ -52,3 +56,5 @@ for (let i = 0; i < COMMENTED_FILM_CARD_AMOUNT; i++) {
 
 render(siteFooterStats, createFilmNumberTemplate(), `beforeend`);
 render(siteFooterElement, createFilmDetailsPopup(), `afterend`);
+
+console.log(generateFilmCard());
