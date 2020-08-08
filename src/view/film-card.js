@@ -1,8 +1,14 @@
 import {humanizeYear} from '../utils.js';
 
 export const createFilmCardTemplate = (filmCard) => {
+  const ACTIVE_CONTROL = `film-card__controls-item--active`;
 
   const {title, rating, release, duration, genres, poster, description, comments} = filmCard;
+  let {watched, favorite, inList} = filmCard;
+
+  watched = (watched) ? ACTIVE_CONTROL : ``;
+  favorite = (favorite) ? ACTIVE_CONTROL : ``;
+  inList = (inList) ? ACTIVE_CONTROL : ``;
 
   return (
     `<article class="film-card">
@@ -17,9 +23,9 @@ export const createFilmCardTemplate = (filmCard) => {
 		<p class="film-card__description">${description}</p>
 		<a class="film-card__comments">${comments.length} comments</a>
 		<form class="film-card__controls">
-			<button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
-			<button class="film-card__controls-item button film-card__controls-item--mark-as-watched">Mark as watched</button>
-			<button class="film-card__controls-item button film-card__controls-item--favorite">Mark as favorite</button>
+			<button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${inList}">Add to watchlist</button>
+			<button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${watched}">Mark as watched</button>
+			<button class="film-card__controls-item button film-card__controls-item--favorite ${favorite}">Mark as favorite</button>
 		</form>
 	</article>`
   );

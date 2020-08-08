@@ -14,6 +14,7 @@ const ORIGINALS = [`The Great Flamarion`, `Snatch`, `Lock, Stock and Two Smoking
 const WRITERS = [`Anne Wigton`, `Heinz Herald`, `Richard Weil`, `Lev Tolstoi`, `Vasya Lojkin`];
 const ACTORS = [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`, `Alexander Petrov`, `Misha Galustyan`];
 const COUNTRIES = [`USA`, `Germany`, `Russia`, `Ukraine`, `Uzbekistan`, `Belorussia`];
+const AGE_RATING = [`18+`, `16+`, `6+`, `13+`];
 
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
@@ -152,6 +153,10 @@ export const generateFilmCard = () => {
   const country = getRandomFromArray(COUNTRIES);
   const director = getRandomFromArray(DIRECTORS);
   const genres = getRandomElementsFromArray(GENRES, getRandomInteger(1, 3));
+  const ageRating = getRandomFromArray(AGE_RATING);
+  const watched = Boolean(getRandomInteger(0, 1));
+  const favorite = Boolean(getRandomInteger(0, 1));
+  const inList = Boolean(getRandomInteger(0, 1));
 
   return {
     poster,
@@ -167,5 +172,9 @@ export const generateFilmCard = () => {
     country,
     director,
     genres,
+    ageRating,
+    watched,
+    favorite,
+    inList,
   };
 };
