@@ -1,4 +1,14 @@
-export const createSiteMenuTemplate = () => {
+export const createFilterTemplate = (filters) => {
+
+  const filterNameToTitleMap = {
+    all: `All movies`,
+    watchlist: `Watchlist`,
+    history: `History`,
+    favorites: `Favorites`,
+  };
+
+  console.log(filters);
+
   return (
     `<nav class="main-navigation">
     <div class="main-navigation__items">

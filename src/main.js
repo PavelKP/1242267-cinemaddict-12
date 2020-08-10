@@ -2,7 +2,7 @@
 import {generateFilmCard} from './mock/film-card-mock.js';
 import {render} from './utils.js'; // Render a template in certain block
 import {createUserProfileTemplate} from './view/user-profile.js';
-import {createSiteMenuTemplate} from './view/site-menu.js';
+import {createFilterTemplate} from './view/film-filter.js';
 import {createFilmSortingTemplate} from './view/film-sorting.js';
 import {createFilmBoardTemplate} from './view/film-board.js';
 import {createFilmCardTemplate} from './view/film-card.js';
@@ -10,6 +10,7 @@ import {createLoadMoreButtonTemplate} from './view/load-more-button.js';
 import {createExtraFilmCardTemplate} from './view/film-card-extra.js';
 import {createFilmNumberTemplate} from './view/film-number.js';
 import {createFilmDetailsPopup} from './view/film-popup.js';
+import {generateFilter} from './mock/filter.js';
 
 // Constants
 const FILM_CARD_AMOUNT = 20;
@@ -23,10 +24,12 @@ const	siteFooterElement = document.querySelector(`.footer`);
 
 // Array with Film cards data
 const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
+// Array with filters
+const filters = generateFilter(filmCards);
 
 // Render elements
 render(siteHeaderElement, createUserProfileTemplate(), `beforeend`);
-render(siteMainElement, createSiteMenuTemplate(), `beforeend`);
+render(siteMainElement, createFilterTemplate(filters), `beforeend`);
 render(siteMainElement, createFilmSortingTemplate(), `beforeend`);
 render(siteMainElement, createFilmBoardTemplate(), `beforeend`);
 
