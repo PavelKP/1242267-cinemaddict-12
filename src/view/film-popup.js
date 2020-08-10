@@ -37,6 +37,7 @@ export const createFilmDetailsPopup = (filmCard) => {
   const writersList = writers.join(`, `);
   const actorsList = actors.join(`, `);
   const longReleaseDate = humanizeReleaseDate(release);
+  const genresTitle = (genres.length > 1) ? `Genres` : `Genre`;
   const genresList = genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 
   const isListedChecked = isListed ? `checked` : ``;
@@ -99,7 +100,7 @@ export const createFilmDetailsPopup = (filmCard) => {
               <td class="film-details__cell">${country}</td>
             </tr>
             <tr class="film-details__row">
-              <td class="film-details__term">Genres</td>
+              <td class="film-details__term">${genresTitle}</td>
               <td class="film-details__cell">
                 ${genresList}
               </td>

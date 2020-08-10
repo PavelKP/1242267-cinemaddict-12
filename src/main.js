@@ -54,5 +54,5 @@ for (let i = 0; i < COMMENTED_FILM_CARD_AMOUNT; i++) {
   render(filmListCommented, createExtraFilmCardTemplate(), `beforeend`);
 }
 
-render(siteFooterStats, createFilmNumberTemplate(), `beforeend`);
+render(siteFooterStats, createFilmNumberTemplate(filmCards), `beforeend`);
 render(siteFooterElement, createFilmDetailsPopup(filmCards[0]), `afterend`);
