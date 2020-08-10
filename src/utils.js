@@ -27,4 +27,11 @@ const humanizeYear = (dateObject) => {
   return dateObject.getFullYear();
 };
 
-export {render, humanizeCommentDate, humanizeReleaseDate, humanizeYear};
+// Remove extension
+const removeExtension = (string) => {
+  // Dot, any symbol one ore more times, end of word
+  // Brackets are necessary
+  return string.replace(/\.(.+)$/g, ``);
+};
+
+export {render, humanizeCommentDate, humanizeReleaseDate, humanizeYear, removeExtension};

@@ -154,9 +154,9 @@ export const generateFilmCard = () => {
   const director = getRandomFromArray(DIRECTORS);
   const genres = getRandomElementsFromArray(GENRES, getRandomInteger(1, 3));
   const ageRating = getRandomFromArray(AGE_RATING);
-  const watched = Boolean(getRandomInteger(0, 1));
-  const favorite = Boolean(getRandomInteger(0, 1));
-  const inList = Boolean(getRandomInteger(0, 1));
+  const isWatched = Boolean(getRandomInteger(0, 1));
+  const isFavorite = Boolean(getRandomInteger(0, 1));
+  const isListed = Boolean(getRandomInteger(0, 1));
 
   return {
     poster,
@@ -173,8 +173,8 @@ export const generateFilmCard = () => {
     director,
     genres,
     ageRating,
-    watched,
-    favorite,
-    inList,
+    isWatched,
+    isFavorite,
+    isListed,
   };
 };
