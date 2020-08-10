@@ -1,6 +1,8 @@
+import {getRandomInteger, generateTextFromArray} from '../utils.js';
+
 const FILM_NAMES = [`The Dance of Life`, `Sagebrush Trail`, `The Man with the Golden Arm`, `Santa Claus Conquers the Martians`, `Popeye the Sailor Meets Sindbad the Sailor`];
 const DESCRIPTION_TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
-const DESCRIPTION_SENTENCE_AMOUNT = [1, 5];
+const DESCRIPTION_SENTENCE_MIN_MAX = [1, 5];
 const POSTER_FILES = [`made-for-each-other.png`, `popeye-meets-sinbad.png`, `sagebrush-trail.jpg`, `santa-claus-conquers-the-martians.jpg`, `the-dance-of-life.jpg`, `the-great-flamarion.jpg`, `the-man-with-the-golden-arm.jpg`];
 const COMMENTS = [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`];
 const COMMENTS_AMOUNT = [0, 5];
@@ -16,36 +18,10 @@ const ACTORS = [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`, `Alexand
 const COUNTRIES = [`USA`, `Germany`, `Russia`, `Ukraine`, `Uzbekistan`, `Belorussia`];
 const AGE_RATING = [`18+`, `16+`, `6+`, `13+`];
 
-// Функция из интернета по генерации случайного числа из диапазона
-// Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
 // Get random element from array
 const getRandomFromArray = (array) => {
   const randomIndex = getRandomInteger(0, array.length - 1);
   return array[randomIndex];
-};
-
-// Generate film descripion
-const generateDescription = (type) => {
-  const sentenceAmount = getRandomInteger(...DESCRIPTION_SENTENCE_AMOUNT);
-  let descriptionText = ``;
-
-  for (let i = 0; i < sentenceAmount; i++) {
-    descriptionText += descriptionArray[getRandomInteger(0, descriptionArray.length - 1)];
-    descriptionText += (i < (sentenceAmount - 1)) ? ` ` : ``;
-
-    if (type === `short` && descriptionText.length > 140) {
-      return `${descriptionText.slice(0, 139)}…`;
-    }
-  }
-
-  return descriptionText;
 };
 
 // Generate random date
@@ -145,7 +121,7 @@ export const generateFilmCard = () => {
   const rating = getRandomFromArray(RATINGS);
   const release = generateRandomDate(70);
   const duration = getRandomFromArray(DURATIONS);
-  const description = generateDescription(`short`);
+  const description = generateTextFromArray(descriptionArray, DESCRIPTION_SENTENCE_MIN_MAX);
   const comments = generateComments();
   const original = getRandomFromArray(ORIGINALS);
   const writers = getRandomElementsFromArray(WRITERS, getRandomInteger(1, 3));

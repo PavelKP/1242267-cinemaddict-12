@@ -1,15 +1,19 @@
-import {humanizeYear} from '../utils.js';
+import {humanizeYear, shortenString} from '../utils.js';
+
+const DESCRIPTION_LIMIT = 140;
 
 export const createFilmCardTemplate = (filmCard) => {
 
   const {title, rating, release, duration, genres, poster, description, comments, isWatched, isFavorite, isListed} = filmCard;
 
-  const watchedActiveClassName = isWatched ? `film-card__controls-item--active` : ``;
-  const favoriteActiveClassName = isFavorite ? `film-card__controls-item--active` : ``;
-  const listedActiveClassName = isListed ? `film-card__controls-item--active` : ``;
   const releaseYear = humanizeYear(release);
   const firstGenre = genres[0];
   const commentsAmount = comments.length;
+  const shortDescription = shortenString(description, DESCRIPTION_LIMIT);
+
+  const watchedActiveClassName = isWatched ? `film-card__controls-item--active` : ``;
+  const favoriteActiveClassName = isFavorite ? `film-card__controls-item--active` : ``;
+  const listedActiveClassName = isListed ? `film-card__controls-item--active` : ``;
 
   return (
     `<article class="film-card">
@@ -21,7 +25,7 @@ export const createFilmCardTemplate = (filmCard) => {
 			<span class="film-card__genre">${firstGenre}</span>
 		</p>
 		<img src="./images/posters/${poster}" alt="${title}" class="film-card__poster">
-		<p class="film-card__description">${description}</p>
+		<p class="film-card__description">${shortDescription}</p>
 		<a class="film-card__comments">${commentsAmount} comments</a>
 		<form class="film-card__controls">
 			<button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${listedActiveClassName}">Add to watchlist</button>

@@ -1,3 +1,12 @@
+// Функция из интернета по генерации случайного числа из диапазона
+// Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
+const getRandomInteger = (a = 0, b = 1) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+
+  return Math.floor(lower + Math.random() * (upper - lower + 1));
+};
+
 // Render a template in certain block
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -34,4 +43,21 @@ const removeExtension = (string) => {
   return string.replace(/\.(.+)$/g, ``);
 };
 
-export {render, humanizeCommentDate, humanizeReleaseDate, humanizeYear, removeExtension};
+// Generate film descripion
+const generateTextFromArray = (sentenceArray, arrayMinMaxAmount) => {
+  const sentenceAmount = getRandomInteger(...arrayMinMaxAmount);
+  let randomText = ``;
+
+  for (let i = 0; i < sentenceAmount; i++) {
+    randomText += sentenceArray[getRandomInteger(0, sentenceArray.length - 1)];
+    randomText += (i < (sentenceAmount - 1)) ? ` ` : ``;
+  }
+  return randomText;
+};
+
+// Shorten string to limit -1
+const shortenString = (string, limit) => {
+  return (string.length > limit) ? `${string.slice(0, limit - 1).trim()}…` : string;
+};
+
+export {getRandomInteger, render, humanizeCommentDate, humanizeReleaseDate, humanizeYear, removeExtension, generateTextFromArray, shortenString};
