@@ -1,8 +1,9 @@
 // Imports
 import {generateFilmCard} from './mock/film-card-mock.js';
 import {generateFilter} from './mock/filter-mock.js';
-import {render} from './utils.js'; // Render a template in certain block
+import {render} from './utils.js';
 import {createUserProfileTemplate} from './view/user-profile.js';
+import {createSiteMenuTemplate} from './view/site-menu.js';
 import {createFilterTemplate} from './view/film-filter.js';
 import {createFilmSortingTemplate} from './view/film-sorting.js';
 import {createFilmBoardTemplate} from './view/film-board.js';
@@ -25,12 +26,18 @@ const	siteFooterElement = document.querySelector(`.footer`);
 
 // Array with Film cards data
 const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
-// Array with filters
-const filters = generateFilter(filmCards);
+// Array with filters - we filter through only rendered cards
+let filters = generateFilter(filmCards.slice(0, FILM_CARD_AMOUNT_PER_STEP));
 
 // Render elements
 render(siteHeaderElement, createUserProfileTemplate(), `beforeend`);
-render(siteMainElement, createFilterTemplate(filters), `beforeend`);
+render(siteMainElement, createSiteMenuTemplate(), `beforeend`);
+
+// Find navigation block in site menu
+const siteNavigationElement = siteMainElement.querySelector(`.main-navigation__items`);
+
+// Render elements
+render(siteNavigationElement, createFilterTemplate(filters), `beforeend`); // Render filter block
 render(siteMainElement, createFilmSortingTemplate(), `beforeend`);
 render(siteMainElement, createFilmBoardTemplate(), `beforeend`);
 
@@ -39,6 +46,7 @@ const filmBoardElement = siteMainElement.querySelector(`.films`); // The whole b
 const filmList = filmBoardElement.querySelector(`.films-list .films-list__container`); // Film cards container
 const filmListTop = filmBoardElement.querySelector(`.films-list--extra:nth-child(2) .films-list__container`); // Top rated film cards container
 const filmListCommented = filmBoardElement.querySelector(`.films-list--extra:nth-child(3) .films-list__container`); // Commented film cards container
+// statistics block
 const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`);
 
 // Render film cards
@@ -66,6 +74,13 @@ if (filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
       .forEach((filmCard) => render(filmList, createFilmCardTemplate(filmCard), `beforeend`));
 
     renderedFilmCards += FILM_CARD_AMOUNT_PER_STEP; // Rendered cards + rendered after click
+
+    // Remove old block with filters
+    // Generate new filters from cards on board
+    // Render new filters
+    siteNavigationElement.querySelector(`.main-navigation__items`).remove();
+    filters = generateFilter(filmCards.slice(0, renderedFilmCards));
+    render(siteNavigationElement, createFilterTemplate(filters), `beforeend`);
 
     // Remove popup if nothing to render
     if (renderedFilmCards >= filmCards.length) {
