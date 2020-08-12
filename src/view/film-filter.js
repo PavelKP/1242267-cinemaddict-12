@@ -1,4 +1,4 @@
-const FILTER_NUMBER_LIMIT = 5;
+import {FILTER_NUMBER_LIMIT} from '../const.js';
 
 const filterNameToTitleMap = {
   all: `All movies`,
@@ -26,7 +26,6 @@ const createFilterItemTemplate = (filter, isActive) => {
     <a href="#${filterName}" class="main-navigation__item ${activeFilterClassName}">${filterNameToTitleMap[filterName]} ${number}</a>
   `);
 };
-
 
 export const createFilterTemplate = (filters) => {
   // Generate filters

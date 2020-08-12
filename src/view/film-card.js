@@ -1,6 +1,5 @@
+import {DESCRIPTION_LIMIT} from '../const.js';
 import {humanizeYear, shortenString} from '../utils.js';
-
-const DESCRIPTION_LIMIT = 140;
 
 export const createFilmCardTemplate = (filmCard) => {
 
