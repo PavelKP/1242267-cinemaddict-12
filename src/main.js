@@ -1,6 +1,7 @@
 // Imports
 import {generateFilmCard} from './mock/film-card-mock.js';
 import {generateFilter} from './mock/filter-mock.js';
+import {generateUserProfile} from './mock/user-profile-mock.js';
 import {render} from './utils.js';
 import {createUserProfileTemplate} from './view/user-profile.js';
 import {createSiteMenuTemplate} from './view/site-menu.js';
@@ -28,9 +29,11 @@ const	siteFooterElement = document.querySelector(`.footer`);
 const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
 // Array with filters - we filter through only rendered cards
 let filters = generateFilter(filmCards.slice(0, FILM_CARD_AMOUNT_PER_STEP));
+// User profile data
+const userProfileData = generateUserProfile();
 
 // Render elements
-render(siteHeaderElement, createUserProfileTemplate(), `beforeend`);
+render(siteHeaderElement, createUserProfileTemplate(filmCards, userProfileData), `beforeend`);
 render(siteMainElement, createSiteMenuTemplate(), `beforeend`);
 
 // Find navigation block in site menu
@@ -98,4 +101,4 @@ for (let i = 0; i < COMMENTED_FILM_CARD_AMOUNT; i++) {
 }
 
 render(siteFooterStats, createFilmNumberTemplate(filmCards), `beforeend`);
-render(siteFooterElement, createFilmDetailsPopup(filmCards[0]), `afterend`);
+// render(siteFooterElement, createFilmDetailsPopup(filmCards[0]), `afterend`);
