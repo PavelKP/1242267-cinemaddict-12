@@ -1,4 +1,4 @@
-import {humanizeCommentDate, humanizeReleaseDate, removeExtension} from '../utils.js';
+import {formatCommentDate, formatReleaseDate, removeExtension} from '../utils.js';
 
 // Create comments template
 const createCommentTemplate = (commentsArray) => {
@@ -8,7 +8,7 @@ const createCommentTemplate = (commentsArray) => {
   // Replace array element with template
   // Join array into string
   return commentsArray.map(({text, emoji, author, date}) => {
-    const commentDate = humanizeCommentDate(date);
+    const commentDate = formatCommentDate(date);
     const emojiAlt = removeExtension(emoji);
 
     return (`
@@ -36,7 +36,7 @@ export const createFilmDetailsPopup = (filmCard) => {
 
   const writersList = writers.join(`, `);
   const actorsList = actors.join(`, `);
-  const longReleaseDate = humanizeReleaseDate(release);
+  const longReleaseDate = formatReleaseDate(release);
   const genresTitle = (genres.length > 1) ? `Genres` : `Genre`;
   const genresList = genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 

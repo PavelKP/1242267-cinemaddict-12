@@ -13,7 +13,7 @@ const render = (container, template, place) => {
 };
 
 // Convert date to format YYYY/MM/DD hh:mm
-const humanizeCommentDate = (dateObject) => {
+const formatCommentDate = (dateObject) => {
   const time = dateObject.toLocaleString(`en-GB`, {hour: `2-digit`, minute: `2-digit`});
   const year = dateObject.getFullYear();
   const month = dateObject.toLocaleString(`en-GB`, {month: `2-digit`});
@@ -23,7 +23,7 @@ const humanizeCommentDate = (dateObject) => {
 };
 
 // Convert date to format DD mounth year
-const humanizeReleaseDate = (dateObject) => {
+const formatReleaseDate = (dateObject) => {
   const day = dateObject.toLocaleString(`en-GB`, {day: `2-digit`});
   const month = dateObject.toLocaleString(`en-GB`, {month: `long`});
   const year = dateObject.getFullYear();
@@ -32,7 +32,7 @@ const humanizeReleaseDate = (dateObject) => {
 };
 
 // Convert date to year only
-const humanizeYear = (dateObject) => {
+const formatYear = (dateObject) => {
   return dateObject.getFullYear();
 };
 
@@ -60,4 +60,4 @@ const shortenString = (string, limit) => {
   return (string.length > limit) ? `${string.slice(0, limit - 1).trim()}…` : string;
 };
 
-export {getRandomInteger, render, humanizeCommentDate, humanizeReleaseDate, humanizeYear, removeExtension, generateTextFromArray, shortenString};
+export {getRandomInteger, render, formatCommentDate, formatReleaseDate, formatYear, removeExtension, generateTextFromArray, shortenString};

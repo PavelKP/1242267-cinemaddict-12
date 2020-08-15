@@ -1,11 +1,11 @@
 import {DESCRIPTION_LIMIT} from '../const.js';
-import {humanizeYear, shortenString} from '../utils.js';
+import {formatYear, shortenString} from '../utils.js';
 
 export const createFilmCardTemplate = (filmCard) => {
 
   const {title, rating, release, duration, genres, poster, description, comments, isWatched, isFavorite, isListed} = filmCard;
 
-  const releaseYear = humanizeYear(release);
+  const releaseYear = formatYear(release);
   const firstGenre = genres[0];
   const commentsAmount = comments.length;
   const shortDescription = shortenString(description, DESCRIPTION_LIMIT);
