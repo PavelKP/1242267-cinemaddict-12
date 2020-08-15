@@ -53,20 +53,16 @@ const generateRandomDate = (maxYearGap = 0) => {
   }
   currentDate.setDate(day); // Change day in currentDate object
 
-  let hours;
-  if (currentYear === year && month === currentMonth && day === currentDay) {
-    hours = getRandomInteger(0, currentDate.getHours());
-  } else {
-    hours = getRandomInteger(0, 24);
-  }
+  const hours = (currentYear === year && month === currentMonth && day === currentDay)
+    ? getRandomInteger(0, currentDate.getHours())
+    : getRandomInteger(0, 24);
+
   currentDate.setHours(hours); // Change hours in currentDate object
 
-  let minutes;
-  if (currentYear === year && month === currentMonth && day === currentDay && hours === currentHours) {
-    minutes = getRandomInteger(0, currentDate.getMinutes());
-  } else {
-    minutes = getRandomInteger(0, 60);
-  }
+  const minutes = (currentYear === year && month === currentMonth && day === currentDay && hours === currentHours)
+    ? getRandomInteger(0, currentDate.getMinutes())
+    : getRandomInteger(0, 60);
+
   currentDate.setMinutes(minutes);
 
   return new Date(currentDate);
