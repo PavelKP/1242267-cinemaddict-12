@@ -115,18 +115,6 @@ const generateFilmRating = () => {
   return `${integer}.${fractional}`;
 };
 
-// Generate film duration
-const convertMinutesToFilmLength = (durationInMinutes) => {
-
-  const hours = Math.floor(durationInMinutes / 60);
-  const hoursString = (hours === 0) ? `` : `${hours}h`;
-
-  const minutes = durationInMinutes - (hours * 60);
-  const minutesString = `${minutes}m`;
-
-  return `${hoursString} ${minutesString}`;
-};
-
 // Convert text to separate sentences
 const descriptionArray = DESCRIPTION_TEXT.match(/[A-Z][\w\s,]+\./g);
 
@@ -135,7 +123,7 @@ export const generateFilmCard = () => {
   const title = getRandomFromArray(FILM_NAMES);
   const rating = generateFilmRating();
   const release = generateRandomDate(70);
-  const duration = convertMinutesToFilmLength(getRandomInteger(...DURATION_RANGE));
+  const duration = getRandomInteger(...DURATION_RANGE);
   const description = generateTextFromArray(descriptionArray, DESCRIPTION_SENTENCE_MIN_MAX);
   const comments = generateComments();
   const original = getRandomFromArray(ORIGINALS);

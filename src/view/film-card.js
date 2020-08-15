@@ -1,11 +1,12 @@
 import {DESCRIPTION_LIMIT} from '../const.js';
-import {formatYear, shortenString} from '../utils.js';
+import {formatYear, shortenString, convertMinutesToFilmLength} from '../utils.js';
 
 export const createFilmCardTemplate = (filmCard) => {
 
   const {title, rating, release, duration, genres, poster, description, comments, isWatched, isFavorite, isListed} = filmCard;
 
   const releaseYear = formatYear(release);
+  const formattedDuration = convertMinutesToFilmLength(duration);
   const firstGenre = genres[0];
   const commentsAmount = comments.length;
   const shortDescription = shortenString(description, DESCRIPTION_LIMIT);
@@ -14,13 +15,14 @@ export const createFilmCardTemplate = (filmCard) => {
   const favoriteActiveClassName = isFavorite ? `film-card__controls-item--active` : ``;
   const listedActiveClassName = isListed ? `film-card__controls-item--active` : ``;
 
+
   return (
     `<article class="film-card">
 		<h3 class="film-card__title">${title}</h3>
 		<p class="film-card__rating">${rating}</p>
 		<p class="film-card__info">
 			<span class="film-card__year">${releaseYear}</span>
-			<span class="film-card__duration">${duration}</span>
+			<span class="film-card__duration">${formattedDuration}</span>
 			<span class="film-card__genre">${firstGenre}</span>
 		</p>
 		<img src="./images/posters/${poster}" alt="${title}" class="film-card__poster">

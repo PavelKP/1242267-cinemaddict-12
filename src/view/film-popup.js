@@ -1,4 +1,4 @@
-import {formatCommentDate, formatReleaseDate, removeExtension} from '../utils.js';
+import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils.js';
 
 // Create comments template
 const createCommentTemplate = (commentsArray) => {
@@ -37,6 +37,7 @@ export const createFilmDetailsPopup = (filmCard) => {
   const writersList = writers.join(`, `);
   const actorsList = actors.join(`, `);
   const longReleaseDate = formatReleaseDate(release);
+  const formattedDuration = convertMinutesToFilmLength(duration);
   const genresTitle = (genres.length > 1) ? `Genres` : `Genre`;
   const genresList = genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 
@@ -93,7 +94,7 @@ export const createFilmDetailsPopup = (filmCard) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${duration}</td>
+              <td class="film-details__cell">${formattedDuration}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>

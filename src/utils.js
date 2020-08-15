@@ -60,4 +60,17 @@ const shortenString = (string, limit) => {
   return (string.length > limit) ? `${string.slice(0, limit - 1).trim()}…` : string;
 };
 
-export {getRandomInteger, render, formatCommentDate, formatReleaseDate, formatYear, removeExtension, generateTextFromArray, shortenString};
+
+// Generate film duration
+const convertMinutesToFilmLength = (durationInMinutes) => {
+
+  const hours = Math.floor(durationInMinutes / 60);
+  const hoursString = (hours === 0) ? `` : `${hours}h`;
+
+  const minutes = durationInMinutes - (hours * 60);
+  const minutesString = `${minutes}m`;
+
+  return `${hoursString} ${minutesString}`;
+};
+
+export {getRandomInteger, render, formatCommentDate, formatReleaseDate, formatYear, removeExtension, generateTextFromArray, shortenString, convertMinutesToFilmLength};
