@@ -4,14 +4,19 @@ export const createUserProfileTemplate = (filmCards, userProfileData) => {
   // User profile grade name by default
   let userGradeName = ``;
 
-  if (watchedFilmsAmount !== 0) {
-    // Count user profile grade
-    const userGrade = Object.entries(userProfileData).filter((grade) => {
-      return watchedFilmsAmount >= grade[1].min && watchedFilmsAmount <= grade[1].max;
-    });
+  if (watchedFilmsAmount > 0) {
 
-    // Assign value to user profile grade name
-    userGradeName = userGrade[0][0];
+    for (const grade in userProfileData) {
+      if (userProfileData.hasOwnProperty(grade)) {
+        const minFilms = userProfileData[grade].min;
+        const maxFilms = userProfileData[grade].max;
+        userGradeName = (watchedFilmsAmount >= minFilms && watchedFilmsAmount <= maxFilms) ? grade : false;
+
+        if (userGradeName) {
+          break; // If user name is find, break cycle
+        }
+      }
+    }
   }
 
   return (
