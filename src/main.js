@@ -5,7 +5,6 @@ import {generateUserProfile} from './mock/user-profile-mock.js';
 import {render} from './utils.js';
 import {createUserProfileTemplate} from './view/user-profile.js';
 import {createSiteMenuTemplate} from './view/site-menu.js';
-import {createFilterTemplate} from './view/film-filter.js';
 import {createFilmSortingTemplate} from './view/film-sorting.js';
 import {createFilmBoardTemplate} from './view/film-board.js';
 import {createFilmCardTemplate} from './view/film-card.js';
@@ -32,15 +31,13 @@ let filters = generateFilter(filmCards.slice(0, FILM_CARD_AMOUNT_PER_STEP));
 // User profile data
 const userProfileData = generateUserProfile();
 
-// Render elements
+// Render
+// - user profile
+// - menu with filter block
+// - sorting block
+// - Empty board
 render(siteHeaderElement, createUserProfileTemplate(filmCards, userProfileData), `beforeend`);
-render(siteMainElement, createSiteMenuTemplate(), `beforeend`);
-
-// Find navigation block in site menu
-const siteNavigationElement = siteMainElement.querySelector(`.main-navigation__items`);
-
-// Render elements
-render(siteNavigationElement, createFilterTemplate(filters), `beforeend`); // Render filter block
+render(siteMainElement, createSiteMenuTemplate(filters), `beforeend`);
 render(siteMainElement, createFilmSortingTemplate(), `beforeend`);
 render(siteMainElement, createFilmBoardTemplate(), `beforeend`);
 
@@ -49,15 +46,15 @@ const filmBoardElement = siteMainElement.querySelector(`.films`); // The whole b
 const filmList = filmBoardElement.querySelector(`.films-list .films-list__container`); // Film cards container
 const filmListTop = filmBoardElement.querySelector(`.films-list--extra:nth-child(2) .films-list__container`); // Top rated film cards container
 const filmListCommented = filmBoardElement.querySelector(`.films-list--extra:nth-child(3) .films-list__container`); // Commented film cards container
-// statistics block
-const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`);
+const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`); // statistics block
 
-// Render film cards
-// Render button
-// Render top rated films
-// Render most commented films
-// Render film number in footer
-// Render Popup
+// Render
+// - film cards
+// - button
+// - top rated films
+// - most commented films
+// - film number in footer
+// - Popup
 for (let i = 0; i < FILM_CARD_AMOUNT_PER_STEP; i++) {
   render(filmList, createFilmCardTemplate(filmCards[i]), `beforeend`);
 }
@@ -78,12 +75,12 @@ if (filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
 
     renderedFilmCards += FILM_CARD_AMOUNT_PER_STEP; // Rendered cards + rendered after click
 
-    // Remove old block with filters
-    // Generate new filters from cards on board
-    // Render new filters
-    siteNavigationElement.querySelector(`.main-navigation__items`).remove();
+    // Remove old site menu
+    // Generate new filters array from cards on board
+    // Render new site menu
+    siteMainElement.querySelector(`.main-navigation`).remove();
     filters = generateFilter(filmCards.slice(0, renderedFilmCards));
-    render(siteNavigationElement, createFilterTemplate(filters), `beforeend`);
+    render(siteMainElement, createSiteMenuTemplate(filters), `afterbegin`);
 
     // Remove popup if nothing to render
     if (renderedFilmCards >= filmCards.length) {
