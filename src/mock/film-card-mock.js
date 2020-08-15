@@ -8,8 +8,7 @@ const COMMENTS = [`Interesting setting and a good cast`, `Booooooooooring`, `Ver
 const COMMENTS_AMOUNT = [0, 5];
 const EMOJI = [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`];
 const AUTHORS = [`Tim Macoveev`, `John Doe`, `Pushkin A.`];
-const RATINGS = [8.3, 2.3, 9.5, 5.3, 4.8, 7.9];
-const DURATIONS = [`1h 55m`, `54m`, `1h 59m`, `1h 21m`, `16m`, `1h 18m`];
+const DURATION_RANGE = [15, 120];
 const GENRES = [`Drama`, `Film-Noir`, `Mystery`, `Comedy`, `Cartoon`, `Western`, `Horror`];
 const DIRECTORS = [`Anthony Mann`, `Quentin Tarantino`, `Vasya Ivanov`, `Petya Petrov`, `Jackiy Chan`];
 const ORIGINALS = [`The Great Flamarion`, `Snatch`, `Lock, Stock and Two Smoking Barrels`, `Sherlock Holmes`, `Spiderman 9: reborn`];
@@ -17,6 +16,7 @@ const WRITERS = [`Anne Wigton`, `Heinz Herald`, `Richard Weil`, `Lev Tolstoi`, `
 const ACTORS = [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`, `Alexander Petrov`, `Misha Galustyan`];
 const COUNTRIES = [`USA`, `Germany`, `Russia`, `Ukraine`, `Uzbekistan`, `Belorussia`];
 const AGE_RATING = [`18+`, `16+`, `6+`, `13+`];
+
 
 // Get random element from array
 const getRandomFromArray = (array) => {
@@ -112,15 +112,35 @@ const getRandomElementsFromArray = (array, amount) => {
   return resultArray;
 };
 
+// Generate film ratings array
+const generateFilmRating = () => {
+  const integer = getRandomInteger(1, 10);
+  const fractional = (integer < 10) ? getRandomInteger(0, 9) : 0;
+  return `${integer}.${fractional}`;
+};
+
+// Generate film duration
+const generateFilmDuration = (min, max) => {
+  const duration = getRandomInteger(min, max);
+
+  const hours = Math.floor(duration / 60);
+  const hoursString = (hours === 0) ? `` : `${hours}h`;
+
+  const minutes = duration - (hours * 60);
+  const minutesString = `${minutes}m`;
+
+  return `${hoursString} ${minutesString}`;
+};
+
 // Convert text to separate sentences
 const descriptionArray = DESCRIPTION_TEXT.match(/[A-Z][\w\s,]+\./g);
 
 export const generateFilmCard = () => {
   const poster = getRandomFromArray(POSTER_FILES);
   const title = getRandomFromArray(FILM_NAMES);
-  const rating = getRandomFromArray(RATINGS);
+  const rating = generateFilmRating();
   const release = generateRandomDate(70);
-  const duration = getRandomFromArray(DURATIONS);
+  const duration = generateFilmDuration(...DURATION_RANGE);
   const description = generateTextFromArray(descriptionArray, DESCRIPTION_SENTENCE_MIN_MAX);
   const comments = generateComments();
   const original = getRandomFromArray(ORIGINALS);
