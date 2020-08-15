@@ -4,7 +4,7 @@ module.exports = {
   mode: 'development',
   entry: './src/main.js',
   output: {
-    filename: 'bundle.js',
+    filename: 'js/bundle.js',  // magic hack to put bundle.js in public/js/ directory
     path: path.join(__dirname, 'public'),
   },
   devtool: 'source-map',

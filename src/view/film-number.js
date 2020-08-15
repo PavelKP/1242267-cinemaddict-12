@@ -1,5 +1,7 @@
-export const createFilmNumberTemplate = () => {
+export const createFilmNumberTemplate = (filmCards) => {
+  const filmsTotal = filmCards.length;
+
   return (
-    `<p>130 291 movies inside</p>`
+    `<p>${filmsTotal} movies inside</p>`
   );
 };
