@@ -2,7 +2,6 @@
 import {generateFilmCard} from './mock/film-card-mock.js';
 import {generateFilter} from './mock/filter-mock.js';
 import {generateUserProfile} from './mock/user-profile-mock.js';
-import {render} from './utils.js';
 import {createUserProfileTemplate} from './view/user-profile.js';
 import {createSiteMenuTemplate} from './view/site-menu.js';
 import {createFilmSortingTemplate} from './view/film-sorting.js';
@@ -12,6 +11,7 @@ import {createLoadMoreButtonTemplate} from './view/load-more-button.js';
 import {createExtraFilmCardTemplate} from './view/film-card-extra.js';
 import {createFilmNumberTemplate} from './view/film-number.js';
 import {createFilmDetailsPopup} from './view/film-popup.js';
+import {renderTemplate} from './utils.js';
 
 // Constants
 const FILM_CARD_AMOUNT = 20;
@@ -36,10 +36,10 @@ const userProfileData = generateUserProfile();
 // - menu with filter block
 // - sorting block
 // - Empty board
-render(siteHeaderElement, createUserProfileTemplate(filmCards, userProfileData), `beforeend`);
-render(siteMainElement, createSiteMenuTemplate(filters), `beforeend`);
-render(siteMainElement, createFilmSortingTemplate(), `beforeend`);
-render(siteMainElement, createFilmBoardTemplate(), `beforeend`);
+renderTemplate(siteHeaderElement, createUserProfileTemplate(filmCards, userProfileData), `beforeend`);
+renderTemplate(siteMainElement, createSiteMenuTemplate(filters), `beforeend`);
+renderTemplate(siteMainElement, createFilmSortingTemplate(), `beforeend`);
+renderTemplate(siteMainElement, createFilmBoardTemplate(), `beforeend`);
 
 // Film board and its elements
 const filmBoardElement = siteMainElement.querySelector(`.films`); // The whole board
@@ -56,7 +56,7 @@ const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`); 
 // - film number in footer
 // - Popup
 for (let i = 0; i < FILM_CARD_AMOUNT_PER_STEP; i++) {
-  render(filmList, createFilmCardTemplate(filmCards[i]), `beforeend`);
+  renderTemplate(filmList, createFilmCardTemplate(filmCards[i]), `beforeend`);
 }
 
 // Render load more button
@@ -64,14 +64,14 @@ if (filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
 
   let renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP; // Rendered cards
 
-  render(filmList, createLoadMoreButtonTemplate(), `afterend`);
+  renderTemplate(filmList, createLoadMoreButtonTemplate(), `afterend`);
 
   const loadMoreButton = filmBoardElement.querySelector(`.films-list__show-more`);
   loadMoreButton.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     filmCards
       .slice(renderedFilmCards, renderedFilmCards + FILM_CARD_AMOUNT_PER_STEP)
-      .forEach((filmCard) => render(filmList, createFilmCardTemplate(filmCard), `beforeend`));
+      .forEach((filmCard) => renderTemplate(filmList, createFilmCardTemplate(filmCard), `beforeend`));
 
     renderedFilmCards += FILM_CARD_AMOUNT_PER_STEP; // Rendered cards + rendered after click
 
@@ -80,7 +80,7 @@ if (filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
     // Render new site menu
     siteMainElement.querySelector(`.main-navigation`).remove();
     filters = generateFilter(filmCards.slice(0, renderedFilmCards));
-    render(siteMainElement, createSiteMenuTemplate(filters), `afterbegin`);
+    renderTemplate(siteMainElement, createSiteMenuTemplate(filters), `afterbegin`);
 
     // Remove popup if nothing to render
     if (renderedFilmCards >= filmCards.length) {
@@ -91,11 +91,11 @@ if (filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
 }
 
 for (let i = 0; i < TOP_FILM_CARD_AMOUNT; i++) {
-  render(filmListTop, createExtraFilmCardTemplate(), `beforeend`);
+  renderTemplate(filmListTop, createExtraFilmCardTemplate(), `beforeend`);
 }
 for (let i = 0; i < COMMENTED_FILM_CARD_AMOUNT; i++) {
-  render(filmListCommented, createExtraFilmCardTemplate(), `beforeend`);
+  renderTemplate(filmListCommented, createExtraFilmCardTemplate(), `beforeend`);
 }
 
-render(siteFooterStats, createFilmNumberTemplate(filmCards), `beforeend`);
-render(siteFooterElement, createFilmDetailsPopup(filmCards[0]), `afterend`);
+renderTemplate(siteFooterStats, createFilmNumberTemplate(filmCards), `beforeend`);
+renderTemplate(siteFooterElement, createFilmDetailsPopup(filmCards[0]), `afterend`);
