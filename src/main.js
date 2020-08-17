@@ -4,14 +4,14 @@ import {generateFilter} from './mock/filter-mock.js';
 import {generateUserProfile} from './mock/user-profile-mock.js';
 import {createUserProfileTemplate} from './view/user-profile.js';
 import {createSiteMenuTemplate} from './view/site-menu.js';
-import {createFilmSortingTemplate} from './view/film-sorting.js';
+import FilmSortingView from './view/film-sorting.js';
 import {createFilmBoardTemplate} from './view/film-board.js';
 import {createFilmCardTemplate} from './view/film-card.js';
 import {createLoadMoreButtonTemplate} from './view/load-more-button.js';
 import {createExtraFilmCardTemplate} from './view/film-card-extra.js';
 import {createFilmNumberTemplate} from './view/film-number.js';
 import {createFilmDetailsPopup} from './view/film-popup.js';
-import {renderTemplate} from './utils.js';
+import {renderTemplate, renderElement} from './utils.js';
 
 // Constants
 const FILM_CARD_AMOUNT = 20;
@@ -38,7 +38,7 @@ const userProfileData = generateUserProfile();
 // - Empty board
 renderTemplate(siteHeaderElement, createUserProfileTemplate(filmCards, userProfileData), `beforeend`);
 renderTemplate(siteMainElement, createSiteMenuTemplate(filters), `beforeend`);
-renderTemplate(siteMainElement, createFilmSortingTemplate(), `beforeend`);
+renderElement(siteMainElement, new FilmSortingView().getElement(), `beforeend`);
 renderTemplate(siteMainElement, createFilmBoardTemplate(), `beforeend`);
 
 // Film board and its elements
