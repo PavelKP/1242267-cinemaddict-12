@@ -79,13 +79,13 @@ const renderTemplate = (container, template, place) => {
 };
 
 // Render DOM element
-const renderElement = (container, element, place) => {
+const render = (container, element, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
-      container.prependChild(element);
+      container.prepend(element);
       break;
     case RenderPosition.BEFOREEND:
-      container.appendChild(element);
+      container.append(element);
       break;
   }
 };
@@ -104,4 +104,4 @@ const createElement = (template) => {
 // а не просто <a>Link 1</a><a>Link 2</a>
 
 export {getRandomInteger, formatCommentDate, formatReleaseDate, formatYear, removeExtension,
-  generateTextFromArray, shortenString, convertMinutesToFilmLength, RenderPosition, renderTemplate, renderElement, createElement};
+  generateTextFromArray, shortenString, convertMinutesToFilmLength, RenderPosition, renderTemplate, render, createElement};

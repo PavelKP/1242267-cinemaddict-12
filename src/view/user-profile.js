@@ -1,4 +1,6 @@
-export const createUserProfileTemplate = (filmCards, userProfileData) => {
+import {createElement} from '../utils.js';
+
+const createUserProfileTemplate = (filmCards, userProfileData) => {
   // Cards with watched flag
   const watchedFilmsAmount = filmCards.filter((el) => el.isWatched).length;
   // User profile grade name by default
@@ -26,3 +28,26 @@ export const createUserProfileTemplate = (filmCards, userProfileData) => {
   </section>`
   );
 };
+
+export default class UserProfile {
+  constructor(filmCards, userProfileData) {
+    this._filmCards = filmCards;
+    this._userProfileData = userProfileData;
+    this._element = null;
+  }
+
+  _getTemplate() {
+    return createUserProfileTemplate(this._filmCards, this._userProfileData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

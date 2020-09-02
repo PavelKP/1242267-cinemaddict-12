@@ -1,4 +1,6 @@
-export const createFilmBoardTemplate = () => {
+import {createElement} from '../utils.js';
+
+const createFilmBoardTemplate = () => {
   return (
     `<section class="films">
     <section class="films-list">
@@ -24,3 +26,24 @@ export const createFilmBoardTemplate = () => {
   </section>`
   );
 };
+
+export default class FilmBoard {
+  constructor() {
+    this._element = null;
+  }
+
+  _getTemplate() {
+    return createFilmBoardTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

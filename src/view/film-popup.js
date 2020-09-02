@@ -1,4 +1,6 @@
 import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils.js';
+import {createElement} from '../utils.js';
+
 
 // Create comments template
 const createCommentTemplate = (commentsArray) => {
@@ -30,7 +32,7 @@ const createCommentTemplate = (commentsArray) => {
   }).join(``);
 };
 
-export const createFilmDetailsPopup = (filmCard) => {
+const createFilmDetailsPopup = (filmCard) => {
 
   const {title, rating, release, duration, poster, description, comments, ageRating, original, director, country, genres, writers, actors, isWatched, isFavorite, isListed} = filmCard;
 
@@ -169,3 +171,25 @@ export const createFilmDetailsPopup = (filmCard) => {
 </section>`
   );
 };
+
+export default class FilmDetailsPopup {
+  constructor(card) {
+    this._card = card;
+    this._element = null;
+  }
+
+  _getTemplate() {
+    return createFilmDetailsPopup(this._card);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

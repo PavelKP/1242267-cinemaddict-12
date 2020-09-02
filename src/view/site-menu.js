@@ -1,4 +1,5 @@
 import {FILTER_NUMBER_LIMIT} from '../const.js';
+import {createElement} from '../utils.js';
 
 const filterNameToTitleMap = {
   all: `All movies`,
@@ -27,7 +28,7 @@ const createFilterItemTemplate = (filter, isActive) => {
   `);
 };
 
-export const createSiteMenuTemplate = (filters) => {
+const createSiteMenuTemplate = (filters) => {
   // Generate filters
   // First array element (filter) has active class forever
   const filterItemsTemplate = filters.map((element, i) => createFilterItemTemplate(element, i === 0)).join(``);
@@ -41,3 +42,27 @@ export const createSiteMenuTemplate = (filters) => {
     </nav>`
   );
 };
+
+export default class SiteMenu {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null;
+  }
+
+  _getTemplate() {
+    return createSiteMenuTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+
