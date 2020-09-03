@@ -51,28 +51,6 @@ const renderCard = (container, card) => {
   closeButton.addEventListener(`click`, (evt) => closePopup(evt));
 };
 
-// Sort rating by descending
-const sortRating = (a, b) => {
-  if (a.rating < b.rating) {
-    return 1;
-  }
-  if (a.rating > b.rating) {
-    return -1;
-  }
-  return 0;
-};
-
-// Sort comments by descending
-const sortComments = (a, b) => {
-  if (a.comments.length < b.comments.length) {
-    return 1;
-  }
-  if (a.comments.length > b.comments.length) {
-    return -1;
-  }
-  return 0;
-};
-
 // HTML elements
 const siteHeaderElement = document.querySelector(`.header`);
 const	siteMainElement = document.querySelector(`.main`);
@@ -151,14 +129,14 @@ if (filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
 }
 
 // Copy film cards array and sort by rating
-const filmCardsOrderByRating = filmCards.slice().sort(sortRating);
+const filmCardsOrderByRating = filmCards.slice().sort((a, b) => b.rating - a.rating);
 // Render top rated films
 for (let i = 0; i < TOP_FILM_CARD_AMOUNT; i++) {
   renderCard(filmListTop, filmCardsOrderByRating[i]);
 }
 
 // Copy film cards array and sort by comments amount
-const filmCardsOrderByComments = filmCards.slice().sort(sortComments);
+const filmCardsOrderByComments = filmCards.slice().sort((a, b) => b.comments.length - a.comments.length);
 // Render top commented films
 for (let i = 0; i < COMMENTED_FILM_CARD_AMOUNT; i++) {
   renderCard(filmListCommented, filmCardsOrderByComments[i]);
