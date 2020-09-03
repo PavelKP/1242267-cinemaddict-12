@@ -1,8 +1,3 @@
-const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
-
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 const getRandomInteger = (a = 0, b = 1) => {
@@ -60,7 +55,6 @@ const shortenString = (string, limit) => {
   return (string.length > limit) ? `${string.slice(0, limit - 1).trim()}…` : string;
 };
 
-
 // Generate film duration
 const convertMinutesToFilmLength = (durationInMinutes) => {
 
@@ -80,14 +74,7 @@ const renderTemplate = (container, template, place) => {
 
 // Render DOM element
 const render = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-  }
+  container.insertAdjacentElement(place, element);
 };
 
 // 1. создаём пустой div-блок
@@ -104,4 +91,4 @@ const createElement = (template) => {
 // а не просто <a>Link 1</a><a>Link 2</a>
 
 export {getRandomInteger, formatCommentDate, formatReleaseDate, formatYear, removeExtension,
-  generateTextFromArray, shortenString, convertMinutesToFilmLength, RenderPosition, renderTemplate, render, createElement};
+  generateTextFromArray, shortenString, convertMinutesToFilmLength, renderTemplate, render, createElement};

@@ -1,5 +1,5 @@
 // Imports
-import {renderTemplate, render} from './utils.js';
+import {render} from './utils.js';
 import {generateFilmCard} from './mock/film-card-mock.js';
 import {generateFilter} from './mock/filter-mock.js';
 import {generateUserProfile} from './mock/user-profile-mock.js';
@@ -9,7 +9,6 @@ import FilmSortingView from './view/film-sorting.js';
 import FilmBoardView from './view/film-board.js';
 import FilmCardView from './view/film-card.js';
 import LoadMoreButtonView from './view/load-more-button.js';
-import {createExtraFilmCardTemplate} from './view/film-card-extra.js';
 import FilmNumberView from './view/film-number.js';
 import FilmDetailsPopupView from './view/film-popup.js';
 
@@ -50,6 +49,28 @@ const renderCard = (container, card) => {
   title.addEventListener(`click`, (evt) => showPopup(evt));
   commentsAmount.addEventListener(`click`, (evt) => showPopup(evt));
   closeButton.addEventListener(`click`, (evt) => closePopup(evt));
+};
+
+// Sort rating by descending
+const sortRating = (a, b) => {
+  if (a.rating < b.rating) {
+    return 1;
+  }
+  if (a.rating > b.rating) {
+    return -1;
+  }
+  return 0;
+};
+
+// Sort comments by descending
+const sortComments = (a, b) => {
+  if (a.comments.length < b.comments.length) {
+    return 1;
+  }
+  if (a.comments.length > b.comments.length) {
+    return -1;
+  }
+  return 0;
 };
 
 // HTML elements
@@ -129,11 +150,18 @@ if (filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
   });
 }
 
+// Copy film cards array and sort by rating
+const filmCardsOrderByRating = filmCards.slice().sort(sortRating);
+// Render top rated films
 for (let i = 0; i < TOP_FILM_CARD_AMOUNT; i++) {
-  renderTemplate(filmListTop, createExtraFilmCardTemplate(), `beforeend`);
+  renderCard(filmListTop, filmCardsOrderByRating[i]);
 }
+
+// Copy film cards array and sort by comments amount
+const filmCardsOrderByComments = filmCards.slice().sort(sortComments);
+// Render top commented films
 for (let i = 0; i < COMMENTED_FILM_CARD_AMOUNT; i++) {
-  renderTemplate(filmListCommented, createExtraFilmCardTemplate(), `beforeend`);
+  renderCard(filmListCommented, filmCardsOrderByComments[i]);
 }
 
 // Number of films
