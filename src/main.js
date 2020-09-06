@@ -11,6 +11,8 @@ import FilmCardView from './view/film-card.js';
 import LoadMoreButtonView from './view/load-more-button.js';
 import FilmNumberView from './view/film-number.js';
 import FilmDetailsPopupView from './view/film-popup.js';
+import TopRatedView from './view/top-rated.js';
+import MostCommentedView from './view/most-commented.js';
 import NoFilmsView from './view/no-films.js';
 
 // Constants
@@ -89,10 +91,18 @@ const filmBoardComponent = new FilmBoardView(); // The whole board component
 const filmBoardElement = filmBoardComponent.getElement();
 render(siteMainElement, filmBoardElement, `beforeend`);
 
+// Render top rated container
+const topRatedElement = new TopRatedView().getElement();
+const topRatedContainer = topRatedElement.querySelector(`.films-list__container`);
+render(filmBoardElement, topRatedElement, `beforeend`);
+
+// Render most commented container
+const mostCommentedElement = new MostCommentedView().getElement();
+const mostCommentedContainer = mostCommentedElement.querySelector(`.films-list__container`);
+render(filmBoardElement, mostCommentedElement, `beforeend`);
+
 // Film board elements
 const filmList = filmBoardElement.querySelector(`.films-list .films-list__container`); // Film cards container
-const filmListTop = filmBoardElement.querySelector(`.films-list--extra:nth-child(2) .films-list__container`); // Top rated film cards container
-const filmListCommented = filmBoardElement.querySelector(`.films-list--extra:nth-child(3) .films-list__container`); // Commented film cards container
 const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`); // statistics block
 
 // Render
@@ -148,13 +158,13 @@ if (filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
 const filmCardsOrderByRating = filmCards.slice().sort((a, b) => b.rating - a.rating);
 // Render top rated films
 for (let i = 0; i < Math.min(filmCardsOrderByRating.length, TOP_FILM_CARD_AMOUNT); i++) {
-  renderCard(filmListTop, filmCardsOrderByRating[i]);
+  renderCard(topRatedContainer, filmCardsOrderByRating[i]);
 }
 // Copy film cards array and sort by comments amount
 const filmCardsOrderByComments = filmCards.slice().sort((a, b) => b.comments.length - a.comments.length);
-// Render top commented films
+// Render most commented films
 for (let i = 0; i < Math.min(filmCardsOrderByRating.length, COMMENTED_FILM_CARD_AMOUNT); i++) {
-  renderCard(filmListCommented, filmCardsOrderByComments[i]);
+  renderCard(mostCommentedContainer, filmCardsOrderByComments[i]);
 }
 
 // Number of films
