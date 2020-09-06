@@ -91,15 +91,19 @@ const filmBoardComponent = new FilmBoardView(); // The whole board component
 const filmBoardElement = filmBoardComponent.getElement();
 render(siteMainElement, filmBoardElement, `beforeend`);
 
-// Render top rated container
+// Define top rated container
 const topRatedElement = new TopRatedView().getElement();
 const topRatedContainer = topRatedElement.querySelector(`.films-list__container`);
-render(filmBoardElement, topRatedElement, `beforeend`);
 
-// Render most commented container
+// Define most commented container
 const mostCommentedElement = new MostCommentedView().getElement();
 const mostCommentedContainer = mostCommentedElement.querySelector(`.films-list__container`);
-render(filmBoardElement, mostCommentedElement, `beforeend`);
+
+// Render extra blocks if film cards amount are more than zero
+if (filmCards.length > 0) {
+  render(filmBoardElement, topRatedElement, `beforeend`);
+  render(filmBoardElement, mostCommentedElement, `beforeend`);
+}
 
 // Film board elements
 const filmList = filmBoardElement.querySelector(`.films-list .films-list__container`); // Film cards container
