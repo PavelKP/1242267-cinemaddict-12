@@ -1,5 +1,5 @@
 import {FILTER_NUMBER_LIMIT} from '../const.js';
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const filterNameToTitleMap = {
   all: `All movies`,
@@ -43,25 +43,14 @@ const createSiteMenuTemplate = (filters) => {
   );
 };
 
-export default class SiteMenu {
+export default class SiteMenu extends AbstractView {
   constructor(filters) {
+    super();
     this._filters = filters;
-    this._element = null;
   }
 
   _getTemplate() {
     return createSiteMenuTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

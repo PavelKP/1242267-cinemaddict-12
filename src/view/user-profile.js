@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createUserProfileTemplate = (filmCards, userProfileData) => {
   // Cards with watched flag
@@ -29,25 +29,14 @@ const createUserProfileTemplate = (filmCards, userProfileData) => {
   );
 };
 
-export default class UserProfile {
+export default class UserProfile extends AbstractView {
   constructor(filmCards, userProfileData) {
+    super();
     this._filmCards = filmCards;
     this._userProfileData = userProfileData;
-    this._element = null;
   }
 
   _getTemplate() {
     return createUserProfileTemplate(this._filmCards, this._userProfileData);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
