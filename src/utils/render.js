@@ -1,3 +1,5 @@
+import Abstract from "../view/abstract";
+
 // Render a template in certain block
 const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -5,6 +7,13 @@ const renderTemplate = (container, template, place) => {
 
 // Render DOM element
 const render = (container, element, place) => {
+  if (container instanceof Abstract) {
+    container = container.getElement();
+  }
+  if (element instanceof Abstract) {
+    element = element.getElement();
+  }
+
   container.insertAdjacentElement(place, element);
 };
 
