@@ -2,6 +2,10 @@ import Abstract from "../view/abstract";
 
 // Render a template in certain block
 const renderTemplate = (container, template, place) => {
+  if (container instanceof Abstract) {
+    container = container.getElement();
+  }
+
   container.insertAdjacentHTML(place, template);
 };
 
@@ -30,4 +34,14 @@ const createElement = (template) => {
 // то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
 // а не просто <a>Link 1</a><a>Link 2</a>
 
-export {renderTemplate, render, createElement};
+// Remove component
+const remove = (component) => {
+  if (!(component instanceof Abstract)) {
+    throw new Error(`Can remove only components`);
+  }
+
+  component.getElement().remove();
+  component.removeElement();
+};
+
+export {renderTemplate, render, createElement, remove};

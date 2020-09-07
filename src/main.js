@@ -1,5 +1,5 @@
 // Imports
-import {render} from './utils/render.js';
+import {render, remove} from './utils/render.js';
 import {generateFilmCard} from './mock/film-card-mock.js';
 import {generateFilter} from './mock/filter-mock.js';
 import {generateUserProfile} from './mock/user-profile-mock.js';
@@ -100,19 +100,18 @@ const renderBoard = (siteMainElement, filmCards) => {
 
         renderedFilmCards += FILM_CARD_AMOUNT_PER_STEP; // Rendered cards + rendered after click
 
-        // Remove old site menu through component
+        // Remove old site menu
         // Generate new filters array from cards on board
         // Override component with new data
         // Render new site menu
-        siteMenuComponent.getElement().remove();
+        remove(siteMenuComponent);
         filters = generateFilter(filmCards.slice(0, renderedFilmCards));
         siteMenuComponent = new SiteMenuView(filters);
         render(siteMainElement, siteMenuComponent, `afterbegin`);
 
-        // Remove popup if nothing to render
+        // Remove button if nothing to render
         if (renderedFilmCards >= filmCards.length) {
-          loadMoreButtonComponent.getElement().remove();
-          loadMoreButtonComponent.removeElement();
+          remove(loadMoreButtonComponent);
         }
 
       });
