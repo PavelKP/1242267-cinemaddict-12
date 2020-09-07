@@ -16,7 +16,7 @@ import MostCommentedView from './view/most-commented.js';
 import NoFilmsView from './view/no-films.js';
 
 // Constants
-const FILM_CARD_AMOUNT = 0;
+const FILM_CARD_AMOUNT = 20;
 const FILM_CARD_AMOUNT_PER_STEP = 5; // Cards on board for each loading
 const TOP_FILM_CARD_AMOUNT = 2;
 const COMMENTED_FILM_CARD_AMOUNT = 2;
