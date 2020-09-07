@@ -51,18 +51,11 @@ const renderCard = (container, card) => {
   const popupComponent = new FilmDetailsPopupView(card);
   render(container, filmCardComponent.getElement(), `beforeend`);
 
-  // Find card elements
-  const poster = filmCardComponent.getElement().querySelector(`.film-card__poster`);
-  const title = filmCardComponent.getElement().querySelector(`.film-card__title`);
-  const commentsAmount = filmCardComponent.getElement().querySelector(`.film-card__comments`);
-  // Find popup elements
-  const closeButton = popupComponent.getElement().querySelector(`.film-details__close-btn`);
-
-  // Add listeners
-  poster.addEventListener(`click`, (evt) => showPopup(evt));
-  title.addEventListener(`click`, (evt) => showPopup(evt));
-  commentsAmount.addEventListener(`click`, (evt) => showPopup(evt));
-  closeButton.addEventListener(`click`, (evt) => closePopup(evt));
+  // Set handlers
+  filmCardComponent.setPosterClickHandler(showPopup);
+  filmCardComponent.setTitleClickHandler(showPopup);
+  filmCardComponent.setCommentsClickHandler(showPopup);
+  popupComponent.setPopupEscHandler(closePopup);
 };
 
 const renderBoard = (siteMainElement, filmCards) => {

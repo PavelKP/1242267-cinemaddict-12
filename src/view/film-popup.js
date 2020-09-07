@@ -175,9 +175,19 @@ export default class FilmDetailsPopup extends AbstractView {
   constructor(card) {
     super();
     this._card = card;
+    this._popupEscHandler = this._popupEscHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilmDetailsPopup(this._card);
+  }
+
+  _popupEscHandler(evt) {
+    this._callback.popupEscHandler(evt);
+  }
+
+  setPopupEscHandler(callback) {
+    this._callback.popupEscHandler = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupEscHandler);
   }
 }
