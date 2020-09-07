@@ -1,5 +1,5 @@
 // Imports
-import {render} from './utils.js';
+import {render} from './utils/render.js';
 import {generateFilmCard} from './mock/film-card-mock.js';
 import {generateFilter} from './mock/filter-mock.js';
 import {generateUserProfile} from './mock/user-profile-mock.js';

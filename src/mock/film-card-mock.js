@@ -1,4 +1,5 @@
-import {getRandomInteger, generateTextFromArray} from '../utils.js';
+import {getRandomInteger, generateTextFromArray, getRandomElementsFromArray,
+  getRandomFromArray} from '../utils/common.js';
 
 const FILM_NAMES = [`The Dance of Life`, `Sagebrush Trail`, `The Man with the Golden Arm`, `Santa Claus Conquers the Martians`, `Popeye the Sailor Meets Sindbad the Sailor`];
 const DESCRIPTION_TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
@@ -16,13 +17,6 @@ const WRITERS = [`Anne Wigton`, `Heinz Herald`, `Richard Weil`, `Lev Tolstoi`, `
 const ACTORS = [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`, `Alexander Petrov`, `Misha Galustyan`];
 const COUNTRIES = [`USA`, `Germany`, `Russia`, `Ukraine`, `Uzbekistan`, `Belorussia`];
 const AGE_RATING = [`18+`, `16+`, `6+`, `13+`];
-
-
-// Get random element from array
-const getRandomFromArray = (array) => {
-  const randomIndex = getRandomInteger(0, array.length - 1);
-  return array[randomIndex];
-};
 
 // Generate random date
 const generateRandomDate = (maxYearGap = 0) => {
@@ -90,22 +84,6 @@ const generateComments = () => {
   });
 
   return comments;
-};
-
-// Extract random elements from array (amount = quantity of extracted elements)
-const getRandomElementsFromArray = (array, amount) => {
-  array = array.slice(); // Make copy of the array
-  const resultArray = []; // Create empty array
-
-  // Iterate "amount" times
-  // Cut element from the array
-  // Spread element
-  // Push in the result array
-  for (let i = 0; i < amount; i++) {
-    resultArray.push(...array.splice(getRandomInteger(0, array.length - 1), 1));
-  }
-
-  return resultArray;
 };
 
 // Generate film ratings array

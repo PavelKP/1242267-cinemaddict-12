@@ -1,5 +1,5 @@
 import {DESCRIPTION_LIMIT} from '../const.js';
-import {formatYear, shortenString, convertMinutesToFilmLength} from '../utils.js';
+import {formatYear, shortenString, convertMinutesToFilmLength} from '../utils/film-cards.js';
 import AbstractView from './abstract.js';
 
 

@@ -1,4 +1,4 @@
-import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils.js';
+import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils/film-cards.js';
 import AbstractView from './abstract.js';
 
 // Create comments template
