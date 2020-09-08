@@ -86,28 +86,31 @@ export default class MovieList {
     render(this._boardContainer, this._siteMenuComponent, `afterbegin`);
   }
 
+  _handleLoadMoreButtonClick() {
+    this._filmCards
+      .slice(this._renderedFilmCards, this._renderedFilmCards + FILM_CARD_AMOUNT_PER_STEP)
+      .forEach((filmCard) => this._renderCard(this._filmList, filmCard));
+
+    this._renderedFilmCards += FILM_CARD_AMOUNT_PER_STEP; // Rendered cards + rendered after click
+
+    this._refreshSiteMenu(this._renderedFilmCards);
+
+    // Remove button if nothing to render
+    if (this._renderedFilmCards >= this._filmCards.length) {
+      remove(this._loadMoreButtonComponent);
+    }
+  }
+
   _renderLoadMoreButton() {
     // Render load more button
     if (this._filmCards.length > FILM_CARD_AMOUNT_PER_STEP) {
 
-      let renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP; // Rendered cards
+      this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP; // Rendered cards
       render(this._filmList.parentElement, this._loadMoreButtonComponent, `beforeend`);
 
-      this._loadMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
+      this._loadMoreButtonComponent.setLoadMoreButtonHandler((evt) => {
         evt.preventDefault();
-        this._filmCards
-          .slice(renderedFilmCards, renderedFilmCards + FILM_CARD_AMOUNT_PER_STEP)
-          .forEach((filmCard) => this._renderCard(this._filmList, filmCard));
-
-        renderedFilmCards += FILM_CARD_AMOUNT_PER_STEP; // Rendered cards + rendered after click
-
-        this._refreshSiteMenu(renderedFilmCards);
-
-        // Remove button if nothing to render
-        if (renderedFilmCards >= this._filmCards.length) {
-          remove(this._loadMoreButtonComponent);
-        }
-
+        this._handleLoadMoreButtonClick();
       });
     }
   }
