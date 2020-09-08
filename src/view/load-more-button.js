@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createLoadMoreButtonTemplate = () => {
   return (
@@ -6,23 +6,22 @@ const createLoadMoreButtonTemplate = () => {
   );
 };
 
-export default class LoadMoreButton {
+export default class LoadMoreButton extends AbstractView {
   constructor() {
-    this._element = null;
+    super();
+    this._loadMoreButtonHandler = this._loadMoreButtonHandler.bind(this);
   }
 
   _getTemplate() {
     return createLoadMoreButtonTemplate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-    return this._element;
+  _loadMoreButtonHandler(evt) {
+    this._callback.loadMoreButtonHandler(evt);
   }
 
-  removeElement() {
-    this._element = null;
+  setLoadMoreButtonHandler(callback) {
+    this._callback.loadMoreButtonHandler = callback;
+    this._element.addEventListener(`click`, this._loadMoreButtonHandler);
   }
 }

@@ -1,6 +1,5 @@
-import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils.js';
-import {createElement} from '../utils.js';
-
+import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils/film-cards.js';
+import AbstractView from './abstract.js';
 
 // Create comments template
 const createCommentTemplate = (commentsArray) => {
@@ -172,24 +171,23 @@ const createFilmDetailsPopup = (filmCard) => {
   );
 };
 
-export default class FilmDetailsPopup {
+export default class FilmDetailsPopup extends AbstractView {
   constructor(card) {
+    super();
     this._card = card;
-    this._element = null;
+    this._popupCloseButtonHandler = this._popupCloseButtonHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilmDetailsPopup(this._card);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-    return this._element;
+  _popupCloseButtonHandler(evt) {
+    this._callback.popupCloseButtonHandler(evt);
   }
 
-  removeElement() {
-    this._element = null;
+  setPopupCloseButtonHandler(callback) {
+    this._callback.popupCloseButtonHandler = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupCloseButtonHandler);
   }
 }
