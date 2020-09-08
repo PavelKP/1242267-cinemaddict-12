@@ -65,7 +65,7 @@ export default class MovieList {
     filmCardComponent.setPosterClickHandler(showPopup);
     filmCardComponent.setTitleClickHandler(showPopup);
     filmCardComponent.setCommentsClickHandler(showPopup);
-    popupComponent.setPopupEscHandler(closePopup);
+    popupComponent.setPopupCloseButtonHandler(closePopup);
   }
 
   _renderCards() {
@@ -137,7 +137,7 @@ export default class MovieList {
   }
 
   _renderNoFilms() {
-    render(this._filmList, new NoFilmsView(), `beforeend`);
+    render(this._filmList, this._noFilmsComponent, `beforeend`);
   }
 
   _renderBoard() {

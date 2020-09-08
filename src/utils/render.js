@@ -1,14 +1,5 @@
 import Abstract from "../view/abstract";
 
-// Render a template in certain block
-const renderTemplate = (container, template, place) => {
-  if (container instanceof Abstract) {
-    container = container.getElement();
-  }
-
-  container.insertAdjacentHTML(place, template);
-};
-
 // Render DOM element
 const render = (container, element, place) => {
   if (container instanceof Abstract) {
@@ -44,4 +35,4 @@ const remove = (component) => {
   component.removeElement();
 };
 
-export {renderTemplate, render, createElement, remove};
+export {render, createElement, remove};

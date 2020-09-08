@@ -6,7 +6,7 @@ import {generateUserProfile} from './mock/user-profile-mock.js';
 import UserProfileView from './view/user-profile.js';
 import SiteMenuView from './view/site-menu.js';
 import FilmSortingView from './view/film-sorting.js';
-import MovieListPresenter from './presenter/MovieList.js';
+import MovieListPresenter from './presenter/movie-list.js';
 import FilmNumberView from './view/film-number.js';
 
 // Constants
