@@ -16,6 +16,7 @@ export default class FilmSorting extends AbstractView {
     super();
 
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
+    this._currentSortElement = null;
   }
 
   _getTemplate() {
@@ -27,11 +28,21 @@ export default class FilmSorting extends AbstractView {
       return;
     }
     evt.preventDefault();
+    this._refreshActiveSortingClass(evt);
     this._callback.sortTypeChangeHandler(evt.target.dataset.sortType);
   }
 
   setSortTypeChangeHandler(callback) {
     this._callback.sortTypeChangeHandler = callback;
     this._element.addEventListener(`click`, this._sortTypeChangeHandler);
+
+    // Set current sorting control
+    this._currentSortElement = this._element.querySelector(`.sort__button--active`);
+  }
+
+  _refreshActiveSortingClass(evt) {
+    this._currentSortElement.classList.remove(`sort__button--active`);
+    this._currentSortElement = evt.target;
+    this._currentSortElement.classList.add(`sort__button--active`);
   }
 }
