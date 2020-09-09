@@ -6,6 +6,7 @@ import FilmDetailsPopupView from '../view/film-popup.js';
 import TopRatedView from '../view/top-rated.js';
 import MostCommentedView from '../view/most-commented.js';
 import NoFilmsView from '../view/no-films.js';
+import FilmSortingView from '../view/film-sorting.js';
 import {render, remove} from '../utils/render.js';
 import {generateFilter} from '../mock/filter-mock.js';
 
@@ -19,6 +20,7 @@ export default class MovieList {
     this._boardContainer = boardContainer;
 
     this._filmBoardComponent = new FilmBoardView();
+    this._filmSortingComponent = new FilmSortingView();
     this._loadMoreButtonComponent = new LoadMoreButtonView();
     this._topRatedComponent = new TopRatedView();
     this._mostCommentedComponent = new MostCommentedView();
@@ -30,6 +32,9 @@ export default class MovieList {
   init(filmCards) {
     this._filmCards = filmCards.slice();
 
+    // Render sorting block
+    // Render board
+    render(this._boardContainer, this._filmSortingComponent, `beforeend`); // Render sorting block
     render(this._boardContainer, this._filmBoardComponent, `beforeend`);
 
     this._renderBoard();

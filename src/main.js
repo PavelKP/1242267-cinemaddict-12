@@ -5,7 +5,6 @@ import {generateFilter} from './mock/filter-mock.js';
 import {generateUserProfile} from './mock/user-profile-mock.js';
 import UserProfileView from './view/user-profile.js';
 import SiteMenuView from './view/site-menu.js';
-import FilmSortingView from './view/film-sorting.js';
 import MovieListPresenter from './presenter/movie-list.js';
 import FilmNumberView from './view/film-number.js';
 
@@ -28,12 +27,9 @@ const userProfileData = generateUserProfile();
 // Render
 // - user profile
 // - menu with filter block
-// - sorting block
-// - board
 render(siteHeaderElement, new UserProfileView(filmCards, userProfileData), `beforeend`);
 let siteMenuComponent = new SiteMenuView(filters);
 render(siteMainElement, siteMenuComponent, `beforeend`);
-render(siteMainElement, new FilmSortingView(), `beforeend`);
 
 // Render board
 const movieListPresenter = new MovieListPresenter(siteMainElement);
