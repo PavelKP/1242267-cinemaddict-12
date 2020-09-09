@@ -46,4 +46,12 @@ const removeExtension = (string) => {
   return string.replace(/\.(.+)$/g, ``);
 };
 
-export {formatCommentDate, formatReleaseDate, formatYear, removeExtension, shortenString, convertMinutesToFilmLength};
+const sortByDate = (a, b) => {
+  return b.release.getTime() - a.release.getTime();
+};
+
+const sortByRating = (a, b) => {
+  return b.rating - a.rating;
+};
+
+export {formatCommentDate, formatReleaseDate, formatYear, removeExtension, shortenString, convertMinutesToFilmLength, sortByDate, sortByRating};
