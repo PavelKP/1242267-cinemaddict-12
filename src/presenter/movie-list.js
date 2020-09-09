@@ -172,6 +172,7 @@ export default class MovieList {
     this._sortFilmCards(sortType);
     this._clearFilmList();
     this._renderCards();
+    this._renderLoadMoreButton();
   }
 
   _renderSort() {
