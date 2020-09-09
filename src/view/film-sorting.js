@@ -14,9 +14,24 @@ const createFilmSortingTemplate = () => {
 export default class FilmSorting extends AbstractView {
   constructor() {
     super();
+
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilmSortingTemplate();
+  }
+
+  _sortTypeChangeHandler(evt) {
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
+    evt.preventDefault();
+    this._callback.sortTypeChangeHandler(evt.target.dataset.sortType);
+  }
+
+  setSortTypeChangeHandler(callback) {
+    this._callback.sortTypeChangeHandler = callback;
+    this._element.addEventListener(`click`, this._sortTypeChangeHandler);
   }
 }
