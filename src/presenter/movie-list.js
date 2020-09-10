@@ -19,6 +19,8 @@ const COMMENTED_FILM_CARD_AMOUNT = 2;
 export default class MovieList {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
+    this._currentSortType = SortType.DEFAULT;
+    this._filmCardPresenterObserver = {};
 
     this._filmBoardComponent = new FilmBoardView();
     this._filmSortingComponent = new FilmSortingView();
@@ -28,9 +30,7 @@ export default class MovieList {
     this._noFilmsComponent = new NoFilmsView();
 
     this._filmList = this._filmBoardComponent.getElement().querySelector(`.films-list .films-list__container`);
-
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    this._currentSortType = SortType.DEFAULT;
   }
 
   init(filmCards) {
@@ -45,9 +45,10 @@ export default class MovieList {
     this._renderBoard();
   }
 
-  _renderCard(container, card) {
+  _renderCard(container, card, modifier = ``) {
     const filmCardPresenter = new FilmCardPresenter(container);
     filmCardPresenter.init(card);
+    this._filmCardPresenterObserver[modifier + card.id] = filmCardPresenter;
   }
 
   _renderCards() {
@@ -106,7 +107,7 @@ export default class MovieList {
     const filmCardsOrderByRating = this._filmCards.slice().sort((a, b) => b.rating - a.rating);
     const topRatedContainer = this._topRatedComponent.getElement().querySelector(`.films-list__container`);
     for (let i = 0; i < Math.min(filmCardsOrderByRating.length, TOP_FILM_CARD_AMOUNT); i++) {
-      this._renderCard(topRatedContainer, filmCardsOrderByRating[i]);
+      this._renderCard(topRatedContainer, filmCardsOrderByRating[i], `topRated`);
     }
 
     // Copy film cards array and sort by comments amount
@@ -114,7 +115,7 @@ export default class MovieList {
     const filmCardsOrderByComments = this._filmCards.slice().sort((a, b) => b.comments.length - a.comments.length);
     const mostCommentedContainer = this._mostCommentedComponent.getElement().querySelector(`.films-list__container`);
     for (let i = 0; i < Math.min(filmCardsOrderByRating.length, COMMENTED_FILM_CARD_AMOUNT); i++) {
-      this._renderCard(mostCommentedContainer, filmCardsOrderByComments[i]);
+      this._renderCard(mostCommentedContainer, filmCardsOrderByComments[i], `mostCommented`);
     }
   }
 
@@ -152,7 +153,10 @@ export default class MovieList {
   }
 
   _clearFilmList() {
-    this._filmList.innerHTML = ``;
+    Object
+      .values(this._filmCardPresenterObserver)
+      .forEach((presenter) => presenter.destroy());
+    this._filmCardPresenterObserver = {};
     this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
   }
 

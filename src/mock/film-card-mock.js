@@ -93,10 +93,17 @@ const generateFilmRating = () => {
   return `${integer}.${fractional}`;
 };
 
+// Date.now() и Math.random() - плохие решения для генерации id
+// в "продуктовом" коде, а для моков самое то.
+// Для "продуктового" кода используйте что-то понадежнее,
+// вроде nanoid - https://github.com/ai/nanoid
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 // Convert text to separate sentences
 const descriptionArray = DESCRIPTION_TEXT.match(/[A-Z][\w\s,]+\./g);
 
 export const generateFilmCard = () => {
+  const id = generateId();
   const poster = getRandomFromArray(POSTER_FILES);
   const title = getRandomFromArray(FILM_NAMES);
   const rating = generateFilmRating();
@@ -116,6 +123,7 @@ export const generateFilmCard = () => {
   const isListed = Boolean(getRandomInteger(0, 1));
 
   return {
+    id,
     poster,
     title,
     rating,
