@@ -1,6 +1,6 @@
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsPopupView from '../view/film-popup.js';
-import {render} from '../utils/render.js';
+import {render, replace, remove} from '../utils/render.js';
 
 export default class FilmCardPresenter {
   constructor(filmList) {
@@ -16,15 +16,40 @@ export default class FilmCardPresenter {
   }
 
   init(card) {
+    const prevFilmCardComponent = this._filmCardComponent;
+    const prevPopupComponent = this._popupComponent;
+
     this._filmCardComponent = new FilmCardView(card);
     this._popupComponent = new FilmDetailsPopupView(card);
 
-    render(this._filmList, this._filmCardComponent, `beforeend`);
-
+    // Set handlers
     this._filmCardComponent.setPosterClickHandler(this._showPopup);
     this._filmCardComponent.setTitleClickHandler(this._showPopup);
     this._filmCardComponent.setCommentsClickHandler(this._showPopup);
     this._popupComponent.setPopupCloseButtonHandler(this._closePopup);
+
+    if (prevFilmCardComponent === null || prevPopupComponent === null) {
+      render(this._filmList, this._filmCardComponent, `beforeend`);
+      return;
+    }
+    // if previous film card exists in DOM, change it to new card
+    if (this._filmList.contains(prevFilmCardComponent.getElement())) {
+      // We need new component with handlers (I use getElement() instead of this.element in View)
+      replace(this._filmCardComponent, prevFilmCardComponent);
+    }
+
+    // if previous popup exists in DOM, change it to new popup
+    if (document.body.contains(prevPopupComponent.getElement())) {
+      replace(this._popupComponent, prevPopupComponent);
+    }
+
+    remove(prevFilmCardComponent);
+    remove(prevPopupComponent);
+  }
+
+  destroy() {
+    remove(this._filmCardComponent);
+    remove(this._popupComponent);
   }
 
   _showPopup(evt) {
