@@ -1,8 +1,7 @@
 import FilmBoardView from '../view/film-board.js';
 import SiteMenuView from '../view/site-menu.js';
-import FilmCardView from '../view/film-card.js';
+import FilmCardPresenter from "../presenter/film-card.js";
 import LoadMoreButtonView from '../view/load-more-button.js';
-import FilmDetailsPopupView from '../view/film-popup.js';
 import TopRatedView from '../view/top-rated.js';
 import MostCommentedView from '../view/most-commented.js';
 import NoFilmsView from '../view/no-films.js';
@@ -47,36 +46,8 @@ export default class MovieList {
   }
 
   _renderCard(container, card) {
-    const filmCardComponent = new FilmCardView(card);
-    const popupComponent = new FilmDetailsPopupView(card);
-    render(container, filmCardComponent, `beforeend`);
-
-    const showPopup = (evt) => {
-      evt.preventDefault();
-      document.body.appendChild(popupComponent.getElement());
-      // Set handler on ESC down
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    // Close popup
-    const closePopup = (evt) => {
-      evt.preventDefault();
-      document.body.removeChild(popupComponent.getElement());
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    // Close popup on ESC
-    const onEscKeyDown = (evt) => {
-      if (evt.keyCode === 27) {
-        closePopup(evt);
-      }
-    };
-
-    // Set handlers
-    filmCardComponent.setPosterClickHandler(showPopup);
-    filmCardComponent.setTitleClickHandler(showPopup);
-    filmCardComponent.setCommentsClickHandler(showPopup);
-    popupComponent.setPopupCloseButtonHandler(closePopup);
+    const filmCardPresenter = new FilmCardPresenter(container);
+    filmCardPresenter.init(card);
   }
 
   _renderCards() {
