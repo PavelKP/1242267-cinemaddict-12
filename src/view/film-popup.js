@@ -1,6 +1,6 @@
 import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils/film-cards.js';
 import {EMOJI_FILE_NAMES} from '../const.js';
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 
 // Create comments template
 const createCommentTemplate = (commentsArray) => {
@@ -175,7 +175,7 @@ const createFilmDetailsPopup = (filmCard) => {
   );
 };
 
-export default class FilmDetailsPopup extends AbstractView {
+export default class FilmDetailsPopup extends SmartView {
   constructor(card) {
     super();
     this._data = FilmDetailsPopup.parseCardToData(card);
@@ -278,37 +278,6 @@ export default class FilmDetailsPopup extends AbstractView {
           }
         }
     );
-  }
-
-  updateData(update, justDataUpdating) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
-
-    if (justDataUpdating) {
-      return;
-    }
-
-    this.updateElement();
-  }
-
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
-
-    this.restoreHandlers();
   }
 
   _setInnerHandlers() {
