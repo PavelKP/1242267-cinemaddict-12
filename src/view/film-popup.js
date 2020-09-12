@@ -1,4 +1,5 @@
 import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils/film-cards.js';
+import {EMOJI_FILE_NAMES} from '../const.js';
 import AbstractView from './abstract.js';
 
 // Create comments template
@@ -31,6 +32,22 @@ const createCommentTemplate = (commentsArray) => {
   }).join(``);
 };
 
+const createEmojiList = (fileNames, checkedEmojiId) => {
+
+  return fileNames.map((fileName) => {
+
+    const checked = (checkedEmojiId === `emoji-${fileName}`) ? `checked` : ``;
+
+    return (
+      `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${fileName}" value="${fileName}" ${checked}>
+      <label class="film-details__emoji-label" for="emoji-${fileName}">
+        <img src="./images/emoji/${fileName}.png" data-file-name="${fileName}.png" width="30" height="30" alt="emoji">
+      </label>
+      `
+    );
+  }).join(``);
+};
+
 const createFilmDetailsPopup = (filmCard) => {
 
   const {title, rating, release, duration, poster, description, comments, ageRating, original, director, country, genres, writers, actors, isWatched, isFavorite, isListed, newComment} = filmCard;
@@ -49,8 +66,9 @@ const createFilmDetailsPopup = (filmCard) => {
   const commentsTemplate = createCommentTemplate(comments);
   const commentsAmount = comments.length;
 
-  const newEmoji = newComment.emoji ? `<img src="./images/emoji/${newComment.emoji}" width="55" height="55" alt="${newComment.emojiAlt}"></img>` : ``;
-
+  const newEmoji = newComment.emoji ? `<img src="./images/emoji/${newComment.emoji}" width="55" height="55" alt="${removeExtension(newComment.emoji)}"></img>` : ``;
+  const newCommentText = newComment.text ? newComment.text : ``;
+  const checkedEmojiId = newComment.checkedEmojiId;
 
   return (
     `<section class="film-details">
@@ -143,29 +161,11 @@ const createFilmDetailsPopup = (filmCard) => {
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newCommentText}</textarea>
           </label>
 
           <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-            <label class="film-details__emoji-label" for="emoji-smile">
-              <img src="./images/emoji/smile.png" data-file-name="smile.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-            <label class="film-details__emoji-label" for="emoji-sleeping">
-              <img src="./images/emoji/sleeping.png" data-file-name="sleeping.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-            <label class="film-details__emoji-label" for="emoji-puke">
-              <img src="./images/emoji/puke.png" data-file-name="puke.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-            <label class="film-details__emoji-label" for="emoji-angry">
-              <img src="./images/emoji/angry.png" data-file-name="angry.png" width="30" height="30" alt="emoji">
-            </label>
+          ${createEmojiList(EMOJI_FILE_NAMES, checkedEmojiId)}
           </div>
         </div>
       </section>
@@ -186,6 +186,7 @@ export default class FilmDetailsPopup extends AbstractView {
     this._popupFavoriteClickHandler = this._popupFavoriteClickHandler.bind(this);
 
     this._popupEmojiClickHandler = this._popupEmojiClickHandler.bind(this);
+    this._commentInputHandler = this._commentInputHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -219,18 +220,6 @@ export default class FilmDetailsPopup extends AbstractView {
     });
   }
 
-  /*
-  _popupHistoryClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.popupHistoryClickHandler();
-  }
-
-  _popupFavoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.popupFavoriteClickHandler();
-  }
-*/
-
   _popupEmojiClickHandler(evt) {
     evt.preventDefault();
 
@@ -242,31 +231,29 @@ export default class FilmDetailsPopup extends AbstractView {
       newComment: Object.assign(
           {},
           this._data.newComment,
-          {emoji: evt.target.dataset.fileName}
+          {emoji: evt.target.dataset.fileName,
+            checkedEmojiId: evt.target.parentElement.getAttribute(`for`)}
       )
     });
+  }
+
+  _commentInputHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      newComment: Object.assign(
+          {},
+          this._data.newComment,
+          {text: evt.target.value}
+      )
+    }, true);
   }
 
   setPopupCloseButtonHandler(callback) {
     this._callback.popupCloseButtonHandler = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupCloseButtonHandler);
   }
-  /*
-  setPopupWatchlistClickHandler(callback) {
-    this._callback.popupWatchlistClickHandler = callback;
-    this.getElement().querySelector(`input[name="watchlist"]`).addEventListener(`click`, this._popupWatchlistClickHandler);
-  }
 
-  setPopupHistoryClickHandler(callback) {
-    this._callback.popupHistoryClickHandler = callback;
-    this.getElement().querySelector(`input[name="watched"]`).addEventListener(`click`, this._popupHistoryClickHandler);
-  }
-
-  setPopupFavoriteClickHandler(callback) {
-    this._callback.popupFavoriteClickHandler = callback;
-    this.getElement().querySelector(`input[name="favorite"]`).addEventListener(`click`, this._popupFavoriteClickHandler);
-  }
-*/
   static parseCardToData(card) {
     return Object.assign(
         {},
@@ -277,12 +264,13 @@ export default class FilmDetailsPopup extends AbstractView {
             emoji: null,
             author: null,
             date: null,
+            checkedEmojiId: null,
           }
         }
     );
   }
 
-  updateData(update) {
+  updateData(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -292,6 +280,10 @@ export default class FilmDetailsPopup extends AbstractView {
         this._data,
         update
     );
+
+    if (justDataUpdating) {
+      return;
+    }
 
     this.updateElement();
   }
@@ -314,16 +306,12 @@ export default class FilmDetailsPopup extends AbstractView {
     this.getElement().querySelector(`input[name="watchlist"]`).addEventListener(`click`, this._popupWatchlistClickHandler);
     this.getElement().querySelector(`input[name="watched"]`).addEventListener(`click`, this._popupHistoryClickHandler);
     this.getElement().querySelector(`input[name="favorite"]`).addEventListener(`click`, this._popupFavoriteClickHandler);
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentInputHandler);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
 
     this.setPopupCloseButtonHandler(this._callback.popupCloseButtonHandler);
-    /*
-    this.setPopupWatchlistClickHandler(this._callback.popupWatchlistClickHandler);
-    this.setPopupHistoryClickHandler(this._callback.popupHistoryClickHandler);
-    this.setPopupFavoriteClickHandler(this._callback.popupFavoriteClickHandler);
-    */
   }
 }
