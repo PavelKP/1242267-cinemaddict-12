@@ -28,7 +28,7 @@ export default class FilmCardPresenter {
     this._filmCardComponent = new FilmCardView(card);
     this._popupComponent = new FilmDetailsPopupView(card);
 
-    // Set handlers
+    // Set handlers to card
     this._filmCardComponent.setPosterClickHandler(this._showPopup);
     this._filmCardComponent.setTitleClickHandler(this._showPopup);
     this._filmCardComponent.setCommentsClickHandler(this._showPopup);
@@ -36,7 +36,12 @@ export default class FilmCardPresenter {
     this._filmCardComponent.setHistoryClickHandler(this._handleHistoryClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
+    // Set handlers to popup
     this._popupComponent.setPopupCloseButtonHandler(this._closePopup);
+    this._popupComponent.setPopupWatchlistClickHandler(this._handleWatchlistClick);
+    this._popupComponent.setPopupHistoryClickHandler(this._handleHistoryClick);
+    this._popupComponent.setPopupFavoriteClickHandler(this._handleFavoriteClick);
+
 
     if (prevFilmCardComponent === null || prevPopupComponent === null) {
       render(this._filmList, this._filmCardComponent, `beforeend`);
