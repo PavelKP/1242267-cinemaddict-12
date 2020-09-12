@@ -9,18 +9,24 @@ import FilmSortingView from '../view/film-sorting.js';
 import {render, remove} from '../utils/render.js';
 import {generateFilter} from '../mock/filter-mock.js';
 import {SortType} from '../const.js';
+import {updateItem} from '../utils/common.js';
 import {sortByDate, sortByRating} from '../utils/film-cards.js';
 
 // Constants
 const FILM_CARD_AMOUNT_PER_STEP = 5; // Cards on board for each loading
 const TOP_FILM_CARD_AMOUNT = 2;
 const COMMENTED_FILM_CARD_AMOUNT = 2;
+const IdType = {
+  TOP_RATED: `topRated`,
+  MOST_COMMENTED: `mostCommented`,
+};
 
 export default class MovieList {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
     this._currentSortType = SortType.DEFAULT;
     this._filmCardPresenterObserver = {};
+
 
     this._filmBoardComponent = new FilmBoardView();
     this._filmSortingComponent = new FilmSortingView();
@@ -31,6 +37,7 @@ export default class MovieList {
 
     this._filmList = this._filmBoardComponent.getElement().querySelector(`.films-list .films-list__container`);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handleFilmCardChange = this._handleFilmCardChange.bind(this);
   }
 
   init(filmCards) {
@@ -46,7 +53,7 @@ export default class MovieList {
   }
 
   _renderCard(container, card, modifier = ``) {
-    const filmCardPresenter = new FilmCardPresenter(container);
+    const filmCardPresenter = new FilmCardPresenter(container, this._handleFilmCardChange);
     filmCardPresenter.init(card);
     this._filmCardPresenterObserver[modifier + card.id] = filmCardPresenter;
   }
@@ -107,7 +114,7 @@ export default class MovieList {
     const filmCardsOrderByRating = this._filmCards.slice().sort((a, b) => b.rating - a.rating);
     const topRatedContainer = this._topRatedComponent.getElement().querySelector(`.films-list__container`);
     for (let i = 0; i < Math.min(filmCardsOrderByRating.length, TOP_FILM_CARD_AMOUNT); i++) {
-      this._renderCard(topRatedContainer, filmCardsOrderByRating[i], `topRated`);
+      this._renderCard(topRatedContainer, filmCardsOrderByRating[i], IdType.TOP_RATED);
     }
 
     // Copy film cards array and sort by comments amount
@@ -115,7 +122,7 @@ export default class MovieList {
     const filmCardsOrderByComments = this._filmCards.slice().sort((a, b) => b.comments.length - a.comments.length);
     const mostCommentedContainer = this._mostCommentedComponent.getElement().querySelector(`.films-list__container`);
     for (let i = 0; i < Math.min(filmCardsOrderByRating.length, COMMENTED_FILM_CARD_AMOUNT); i++) {
-      this._renderCard(mostCommentedContainer, filmCardsOrderByComments[i], `mostCommented`);
+      this._renderCard(mostCommentedContainer, filmCardsOrderByComments[i], IdType.MOST_COMMENTED);
     }
   }
 
@@ -144,7 +151,25 @@ export default class MovieList {
     this._sortFilmCards(sortType);
     this._clearFilmList();
     this._renderCards();
+    this._renderExtraFilmCards();
     this._renderLoadMoreButton();
+  }
+
+  _runInitByProperty(key, updatedFilmCard) {
+    if (this._filmCardPresenterObserver.hasOwnProperty((key))) {
+      this._filmCardPresenterObserver[key].init(updatedFilmCard);
+    }
+  }
+
+  _handleFilmCardChange(updatedFilmCard) {
+    this._filmCards = updateItem(this._filmCards, updatedFilmCard);
+    this._sourcedFilmCards = updateItem(this._sourcedFilmCards, updatedFilmCard);
+
+    const clearId = String(updatedFilmCard.id).match(/(\d+)$/g);
+    this._filmCardPresenterObserver[clearId].init(updatedFilmCard);
+
+    this._runInitByProperty(IdType.TOP_RATED + clearId, updatedFilmCard);
+    this._runInitByProperty(IdType.MOST_COMMENTED + clearId, updatedFilmCard);
   }
 
   _renderSort() {

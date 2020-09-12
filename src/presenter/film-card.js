@@ -3,8 +3,9 @@ import FilmDetailsPopupView from '../view/film-popup.js';
 import {render, replace, remove} from '../utils/render.js';
 
 export default class FilmCardPresenter {
-  constructor(filmList) {
+  constructor(filmList, changeData) {
     this._filmList = filmList;
+    this._changeData = changeData;
 
     this._filmCardComponent = null;
     this._popupComponent = null;
@@ -13,9 +14,14 @@ export default class FilmCardPresenter {
     this._showPopup = this._showPopup.bind(this);
     this._closePopup = this._closePopup.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
+    this._handleHistoryClick = this._handleHistoryClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
   init(card) {
+    this._card = card;
+
     const prevFilmCardComponent = this._filmCardComponent;
     const prevPopupComponent = this._popupComponent;
 
@@ -26,6 +32,10 @@ export default class FilmCardPresenter {
     this._filmCardComponent.setPosterClickHandler(this._showPopup);
     this._filmCardComponent.setTitleClickHandler(this._showPopup);
     this._filmCardComponent.setCommentsClickHandler(this._showPopup);
+    this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmCardComponent.setHistoryClickHandler(this._handleHistoryClick);
+    this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+
     this._popupComponent.setPopupCloseButtonHandler(this._closePopup);
 
     if (prevFilmCardComponent === null || prevPopupComponent === null) {
@@ -71,5 +81,41 @@ export default class FilmCardPresenter {
     if (evt.keyCode === 27) {
       this._closePopup(evt);
     }
+  }
+
+  _handleWatchlistClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._card,
+            {
+              isListed: !this._card.isListed,
+            }
+        )
+    );
+  }
+
+  _handleHistoryClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._card,
+            {
+              isWatched: !this._card.isWatched,
+            }
+        )
+    );
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._card,
+            {
+              isFavorite: !this._card.isFavorite,
+            }
+        )
+    );
   }
 }
