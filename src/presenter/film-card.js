@@ -38,9 +38,9 @@ export default class FilmCardPresenter {
 
     // Set handlers to popup
     this._popupComponent.setPopupCloseButtonHandler(this._closePopup);
-    this._popupComponent.setPopupWatchlistClickHandler(this._handleWatchlistClick);
-    this._popupComponent.setPopupHistoryClickHandler(this._handleHistoryClick);
-    this._popupComponent.setPopupFavoriteClickHandler(this._handleFavoriteClick);
+    // this._popupComponent.setPopupWatchlistClickHandler(this._handleWatchlistClick);
+    // this._popupComponent.setPopupHistoryClickHandler(this._handleHistoryClick);
+    // this._popupComponent.setPopupFavoriteClickHandler(this._handleFavoriteClick);
 
 
     if (prevFilmCardComponent === null || prevPopupComponent === null) {
