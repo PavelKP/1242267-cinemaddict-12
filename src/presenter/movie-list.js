@@ -38,6 +38,7 @@ export default class MovieList {
     this._filmList = this._filmBoardComponent.getElement().querySelector(`.films-list .films-list__container`);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleFilmCardChange = this._handleFilmCardChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
   }
 
   init(filmCards) {
@@ -53,7 +54,7 @@ export default class MovieList {
   }
 
   _renderCard(container, card, modifier = ``) {
-    const filmCardPresenter = new FilmCardPresenter(container, this._handleFilmCardChange);
+    const filmCardPresenter = new FilmCardPresenter(container, this._handleFilmCardChange, this._handleModeChange);
     filmCardPresenter.init(card);
     this._filmCardPresenterObserver[modifier + card.id] = filmCardPresenter;
   }
@@ -184,6 +185,13 @@ export default class MovieList {
     this._filmCardPresenterObserver = {};
     this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
   }
+
+  _handleModeChange() {
+    Object
+      .values(this._filmCardPresenterObserver)
+      .forEach((presenter) => presenter.resetView());
+  }
+
 
   _renderBoard() {
     if (this._filmCards.length > 0) {

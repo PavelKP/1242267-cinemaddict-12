@@ -2,13 +2,20 @@ import FilmCardView from '../view/film-card.js';
 import FilmDetailsPopupView from '../view/film-popup.js';
 import {render, replace, remove} from '../utils/render.js';
 
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  POPUP: `POPUP`,
+};
+
 export default class FilmCardPresenter {
-  constructor(filmList, changeData) {
+  constructor(filmList, changeData, changeMode) {
     this._filmList = filmList;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._filmCardComponent = null;
     this._popupComponent = null;
+    this._mode = Mode.DEFAULT;
 
     // Bind handlers
     this._showPopup = this._showPopup.bind(this);
@@ -69,18 +76,23 @@ export default class FilmCardPresenter {
 
   _showPopup(evt) {
     evt.preventDefault();
+
+    this._changeMode();
+    this._mode = Mode.POPUP;
+
     document.body.appendChild(this._popupComponent.getElement());
     // Set handler on ESC down
     document.addEventListener(`keydown`, this._onEscKeyDown);
+
   }
 
   // Close popup
-  _closePopup(evt) {
-    evt.preventDefault();
+  _closePopup() {
     this._popupComponent.reset(this._card); // reset comment block
 
     document.body.removeChild(this._popupComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+    this._mode = Mode.DEFAULT;
   }
 
   // Close popup on ESC
@@ -124,5 +136,11 @@ export default class FilmCardPresenter {
             }
         )
     );
+  }
+
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._closePopup();
+    }
   }
 }
