@@ -156,7 +156,7 @@ const createFilmDetailsPopup = (filmCard) => {
         </ul>
 
         <div class="film-details__new-comment">
-          <div for="add-emoji" class="film-details__add-emoji-label">
+          <div class="film-details__add-emoji-label">
             ${newEmojiTemplate}
           </div>
 

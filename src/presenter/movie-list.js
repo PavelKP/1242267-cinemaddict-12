@@ -1,6 +1,6 @@
 import FilmBoardView from '../view/film-board.js';
 import SiteMenuView from '../view/site-menu.js';
-import FilmCardPresenter from "../presenter/film-card.js";
+import FilmCardPresenter from '../presenter/film-card.js';
 import LoadMoreButtonView from '../view/load-more-button.js';
 import TopRatedView from '../view/top-rated.js';
 import MostCommentedView from '../view/most-commented.js';
