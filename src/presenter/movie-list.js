@@ -167,7 +167,7 @@ export default class MovieList {
     this._sourcedFilmCards = updateItem(this._sourcedFilmCards, updatedFilmCard);
 
     const clearId = String(updatedFilmCard.id).match(/(\d+)$/g);
-    this._filmCardPresenterObserver[clearId].init(updatedFilmCard);
+    this._runInitByProperty(clearId, updatedFilmCard);
 
     this._runInitByProperty(IdType.TOP_RATED + clearId, updatedFilmCard);
     this._runInitByProperty(IdType.MOST_COMMENTED + clearId, updatedFilmCard);
