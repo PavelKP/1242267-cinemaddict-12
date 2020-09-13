@@ -161,7 +161,6 @@ export default class FilmCardPresenter {
   }
 
   _handleCommentSendClick(newComment) {
-
     if (!newComment.emoji || newComment.text.length < MIN_COMMENT_LENGTH) {
       return;
     }

@@ -255,16 +255,18 @@ export default class FilmDetailsPopup extends SmartView {
     });
   }
 
-  _commentSendHandler() {
-    const newComment = Object.assign(
-        {},
-        this._data.newComment,
-        {id: generateId(),
-          author: `Anonymous`,
-          date: new Date()}
-    );
+  _commentSendHandler(evt) {
+    if (evt.ctrlKey && evt.key === `Enter`) {
+      const newComment = Object.assign(
+          {},
+          this._data.newComment,
+          {id: generateId(),
+            author: `Anonymous`,
+            date: new Date()}
+      );
 
-    this._callback.commentSendHandler(newComment);
+      this._callback.commentSendHandler(newComment);
+    }
   }
 
   _commentDeleteHandler(evt) {
@@ -294,14 +296,13 @@ export default class FilmDetailsPopup extends SmartView {
 
   setCommentDeleteHandler(callback) {
     this._callback.commentDeleteHandler = callback;
-    const deleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
-    Array.from(deleteButtons)
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
       .forEach((button) => button.addEventListener(`click`, this._commentDeleteHandler));
   }
 
   setCommentSendHandler(callback) {
     this._callback.commentSendHandler = callback;
-    this._watchKeys(this.getElement().querySelector(`.film-details__comment-input`), this._commentSendHandler);
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._commentSendHandler);
   }
 
   static parseCardToData(card) {
@@ -332,26 +333,7 @@ export default class FilmDetailsPopup extends SmartView {
     this.setPopupWatchlistClickHandler(this._callback.popupWatchlistClickHandler);
     this.setPopupHistoryClickHandler(this._callback.popupHistoryClickHandler);
     this.setPopupFavoriteClickHandler(this._callback.popupFavoriteClickHandler);
+    this.setCommentDeleteHandler(this._callback.commentDeleteHandler);
     this.setCommentSendHandler(this._callback.commentSendHandler);
-  }
-
-  _watchKeys(element, callback) {
-    const KEYS = [`Enter`, `Control`];
-    let pressed = new Set();
-
-    element.addEventListener(`keydown`, (evt) => {
-      pressed.add(evt.key);
-
-      for (let key of KEYS) { // all keys are pressed?
-        if (!pressed.has(key)) {
-          return;
-        }
-      }
-      // if yes, clear set and run callback
-      pressed.clear();
-      callback();
-    });
-    // Remove key from set on keyup
-    element.addEventListener(`keyup`, (evt) => pressed.delete(evt.key));
   }
 }
