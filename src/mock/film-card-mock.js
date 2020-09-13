@@ -1,5 +1,5 @@
 import {getRandomInteger, generateTextFromArray, getRandomElementsFromArray,
-  getRandomFromArray} from '../utils/common.js';
+  getRandomFromArray, generateId} from '../utils/common.js';
 
 const FILM_NAMES = [`The Dance of Life`, `Sagebrush Trail`, `The Man with the Golden Arm`, `Santa Claus Conquers the Martians`, `Popeye the Sailor Meets Sindbad the Sailor`];
 const DESCRIPTION_TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
@@ -7,7 +7,7 @@ const DESCRIPTION_SENTENCE_MIN_MAX = [1, 5];
 const POSTER_FILES = [`made-for-each-other.png`, `popeye-meets-sinbad.png`, `sagebrush-trail.jpg`, `santa-claus-conquers-the-martians.jpg`, `the-dance-of-life.jpg`, `the-great-flamarion.jpg`, `the-man-with-the-golden-arm.jpg`];
 const COMMENTS = [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`];
 const COMMENTS_AMOUNT = [0, 5];
-const EMOJI = [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`];
+const EMOJI = [`angry`, `puke`, `sleeping`, `smile`];
 const AUTHORS = [`Tim Macoveev`, `John Doe`, `Pushkin A.`];
 const DURATION_RANGE = [15, 120];
 const GENRES = [`Drama`, `Film-Noir`, `Mystery`, `Comedy`, `Cartoon`, `Western`, `Horror`];
@@ -70,12 +70,14 @@ const generateComments = () => {
   comments.forEach((element, i) => {
 
     // Generate random comment data
+    const id = generateId();
     const text = getRandomFromArray(COMMENTS);
     const emoji = getRandomFromArray(EMOJI);
     const author = getRandomFromArray(AUTHORS);
     const date = generateRandomDate();
 
     comments[i] = {
+      id,
       text,
       emoji,
       author,
@@ -97,6 +99,7 @@ const generateFilmRating = () => {
 const descriptionArray = DESCRIPTION_TEXT.match(/[A-Z][\w\s,]+\./g);
 
 export const generateFilmCard = () => {
+  const id = generateId();
   const poster = getRandomFromArray(POSTER_FILES);
   const title = getRandomFromArray(FILM_NAMES);
   const rating = generateFilmRating();
@@ -116,6 +119,7 @@ export const generateFilmCard = () => {
   const isListed = Boolean(getRandomInteger(0, 1));
 
   return {
+    id,
     poster,
     title,
     rating,

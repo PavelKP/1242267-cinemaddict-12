@@ -41,4 +41,24 @@ const getRandomFromArray = (array) => {
   return array[randomIndex];
 };
 
-export {getRandomInteger, generateTextFromArray, getRandomElementsFromArray, getRandomFromArray};
+const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1)
+  ];
+};
+
+// Date.now() и Math.random() - плохие решения для генерации id
+// в "продуктовом" коде, а для моков самое то.
+// Для "продуктового" кода используйте что-то понадежнее,
+// вроде nanoid - https://github.com/ai/nanoid
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
+export {getRandomInteger, generateTextFromArray, getRandomElementsFromArray, getRandomFromArray, updateItem, generateId};
