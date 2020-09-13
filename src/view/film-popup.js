@@ -9,7 +9,7 @@ const createCommentTemplate = (commentsArray) => {
   // Destructure variables as parameters
   // Replace array element with template
   // Join array into string
-  return commentsArray.map(({text, emoji, author, date}) => {
+  return commentsArray.map(({id, text, emoji, author, date}) => {
     const commentDate = formatCommentDate(date);
     const emojiAlt = removeExtension(emoji);
 
@@ -23,7 +23,7 @@ const createCommentTemplate = (commentsArray) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id = "${id}">Delete</button>
         </p>
       </div>
     </li>
@@ -187,6 +187,7 @@ export default class FilmDetailsPopup extends SmartView {
 
     this._popupEmojiClickHandler = this._popupEmojiClickHandler.bind(this);
     this._commentInputHandler = this._commentInputHandler.bind(this);
+    this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -250,6 +251,11 @@ export default class FilmDetailsPopup extends SmartView {
     }, true);
   }
 
+  _commentDeleteHandler(evt) {
+    evt.preventDefault();
+    this._callback.commentDeleteHandler(evt.target);
+  }
+
   setPopupCloseButtonHandler(callback) {
     this._callback.popupCloseButtonHandler = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupCloseButtonHandler);
@@ -268,6 +274,13 @@ export default class FilmDetailsPopup extends SmartView {
   setPopupFavoriteClickHandler(callback) {
     this._callback.popupFavoriteClickHandler = callback;
     this.getElement().querySelector(`input[name="favorite"]`).addEventListener(`click`, this._popupFavoriteClickHandler);
+  }
+
+  setCommentDeleteHandler(callback) {
+    this._callback.commentDeleteHandler = callback;
+    const deleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    Array.from(deleteButtons)
+      .forEach((button) => button.addEventListener(`click`, this._commentDeleteHandler));
   }
 
   static parseCardToData(card) {

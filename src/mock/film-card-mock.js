@@ -18,6 +18,13 @@ const ACTORS = [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`, `Alexand
 const COUNTRIES = [`USA`, `Germany`, `Russia`, `Ukraine`, `Uzbekistan`, `Belorussia`];
 const AGE_RATING = [`18+`, `16+`, `6+`, `13+`];
 
+
+// Date.now() и Math.random() - плохие решения для генерации id
+// в "продуктовом" коде, а для моков самое то.
+// Для "продуктового" кода используйте что-то понадежнее,
+// вроде nanoid - https://github.com/ai/nanoid
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 // Generate random date
 const generateRandomDate = (maxYearGap = 0) => {
   const currentDate = new Date();
@@ -70,12 +77,14 @@ const generateComments = () => {
   comments.forEach((element, i) => {
 
     // Generate random comment data
+    const id = generateId();
     const text = getRandomFromArray(COMMENTS);
     const emoji = getRandomFromArray(EMOJI);
     const author = getRandomFromArray(AUTHORS);
     const date = generateRandomDate();
 
     comments[i] = {
+      id,
       text,
       emoji,
       author,
@@ -92,12 +101,6 @@ const generateFilmRating = () => {
   const fractional = (integer < 10) ? getRandomInteger(0, 9) : 0;
   return `${integer}.${fractional}`;
 };
-
-// Date.now() и Math.random() - плохие решения для генерации id
-// в "продуктовом" коде, а для моков самое то.
-// Для "продуктового" кода используйте что-то понадежнее,
-// вроде nanoid - https://github.com/ai/nanoid
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 // Convert text to separate sentences
 const descriptionArray = DESCRIPTION_TEXT.match(/[A-Z][\w\s,]+\./g);

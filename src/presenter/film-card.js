@@ -24,6 +24,7 @@ export default class FilmCardPresenter {
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleHistoryClick = this._handleHistoryClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleCommentDeleteClick = this._handleCommentDeleteClick.bind(this);
   }
 
   init(card) {
@@ -48,6 +49,7 @@ export default class FilmCardPresenter {
     this._popupComponent.setPopupWatchlistClickHandler(this._handleWatchlistClick);
     this._popupComponent.setPopupHistoryClickHandler(this._handleHistoryClick);
     this._popupComponent.setPopupFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupComponent.setCommentDeleteHandler(this._handleCommentDeleteClick);
 
 
     if (prevFilmCardComponent === null || prevPopupComponent === null) {
@@ -133,6 +135,22 @@ export default class FilmCardPresenter {
             this._card,
             {
               isFavorite: !this._card.isFavorite,
+            }
+        )
+    );
+  }
+
+  _handleCommentDeleteClick(element) {
+    const commentId = element.dataset.commentId;
+    const comments = this._card.comments.slice();
+    comments.splice(comments.findIndex((comment) => String(comment.id) === commentId), 1);
+
+    this._changeData(
+        Object.assign(
+            {},
+            this._card,
+            {
+              comments,
             }
         )
     );
