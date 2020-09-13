@@ -32,11 +32,11 @@ const createCommentTemplate = (commentsArray) => {
   }).join(``);
 };
 
-const createEmojiList = (fileNames, checkedEmojiId) => {
+const createEmojiList = (fileNames, currentEmojiName) => {
 
   return fileNames.map((fileName) => {
 
-    const checked = (checkedEmojiId === `emoji-${fileName}`) ? `checked` : ``;
+    const checked = (fileName === currentEmojiName) ? `checked` : ``;
 
     return (
       `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${fileName}" value="${fileName}" ${checked}>
@@ -66,9 +66,9 @@ const createFilmDetailsPopup = (filmCard) => {
   const commentsTemplate = createCommentTemplate(comments);
   const commentsAmount = comments.length;
 
-  const newEmoji = newComment.emoji ? `<img src="./images/emoji/${newComment.emoji}" width="55" height="55" alt="${removeExtension(newComment.emoji)}"></img>` : ``;
+  const newEmojiName = newComment.emoji;
+  const newEmojiTemplate = newEmojiName ? `<img src="./images/emoji/${newEmojiName}.png" width="55" height="55" alt="${newEmojiName}"></img>` : ``;
   const newCommentText = newComment.text ? newComment.text : ``;
-  const checkedEmojiId = newComment.checkedEmojiId;
 
   return (
     `<section class="film-details">
@@ -157,7 +157,7 @@ const createFilmDetailsPopup = (filmCard) => {
 
         <div class="film-details__new-comment">
           <div for="add-emoji" class="film-details__add-emoji-label">
-            ${newEmoji}
+            ${newEmojiTemplate}
           </div>
 
           <label class="film-details__comment-label">
@@ -165,7 +165,7 @@ const createFilmDetailsPopup = (filmCard) => {
           </label>
 
           <div class="film-details__emoji-list">
-          ${createEmojiList(EMOJI_FILE_NAMES, checkedEmojiId)}
+          ${createEmojiList(EMOJI_FILE_NAMES, newEmojiName)}
           </div>
         </div>
       </section>
@@ -185,8 +185,8 @@ export default class FilmDetailsPopup extends SmartView {
     this._popupHistoryClickHandler = this._popupHistoryClickHandler.bind(this);
     this._popupFavoriteClickHandler = this._popupFavoriteClickHandler.bind(this);
 
-    this._popupEmojiClickHandler = this._popupEmojiClickHandler.bind(this);
     this._commentInputHandler = this._commentInputHandler.bind(this);
+    this._emojiInputChangeHandler = this._emojiInputChangeHandler.bind(this);
     this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
 
     this._setInnerHandlers();
@@ -221,24 +221,6 @@ export default class FilmDetailsPopup extends SmartView {
     this._callback.popupFavoriteClickHandler();
   }
 
-
-  _popupEmojiClickHandler(evt) {
-    evt.preventDefault();
-
-    if (evt.target.tagName !== `IMG`) {
-      return;
-    }
-
-    this.updateData({
-      newComment: Object.assign(
-          {},
-          this._data.newComment,
-          {emoji: evt.target.dataset.fileName,
-            checkedEmojiId: evt.target.parentElement.getAttribute(`for`)}
-      )
-    });
-  }
-
   _commentInputHandler(evt) {
     evt.preventDefault();
 
@@ -249,6 +231,24 @@ export default class FilmDetailsPopup extends SmartView {
           {text: evt.target.value}
       )
     }, true);
+  }
+
+  _emojiInputChangeHandler(evt) {
+    evt.preventDefault();
+
+    if (evt.target.tagName !== `INPUT`) {
+      return;
+    }
+
+    const currentEmojiFileName = evt.target.value;
+
+    this.updateData({
+      newComment: Object.assign(
+          {},
+          this._data.newComment,
+          {emoji: currentEmojiFileName}
+      )
+    });
   }
 
   _commentDeleteHandler(evt) {
@@ -300,7 +300,7 @@ export default class FilmDetailsPopup extends SmartView {
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._popupEmojiClickHandler);
+    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._emojiInputChangeHandler);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentInputHandler);
   }
 
