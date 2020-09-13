@@ -6,6 +6,7 @@ const Mode = {
   DEFAULT: `DEFAULT`,
   POPUP: `POPUP`,
 };
+const MIN_COMMENT_LENGTH = 3;
 
 export default class FilmCardPresenter {
   constructor(filmList, changeData, changeMode) {
@@ -25,6 +26,8 @@ export default class FilmCardPresenter {
     this._handleHistoryClick = this._handleHistoryClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleCommentDeleteClick = this._handleCommentDeleteClick.bind(this);
+    this._handleCommentSendClick = this._handleCommentSendClick.bind(this);
+
   }
 
   init(card) {
@@ -50,6 +53,7 @@ export default class FilmCardPresenter {
     this._popupComponent.setPopupHistoryClickHandler(this._handleHistoryClick);
     this._popupComponent.setPopupFavoriteClickHandler(this._handleFavoriteClick);
     this._popupComponent.setCommentDeleteHandler(this._handleCommentDeleteClick);
+    this._popupComponent.setCommentSendHandler(this._handleCommentSendClick);
 
 
     if (prevFilmCardComponent === null || prevPopupComponent === null) {
@@ -151,6 +155,26 @@ export default class FilmCardPresenter {
             this._card,
             {
               comments,
+            }
+        )
+    );
+  }
+
+  _handleCommentSendClick(newComment) {
+
+    if (!newComment.emoji || newComment.text.length < MIN_COMMENT_LENGTH) {
+      return;
+    }
+
+    const updatedCommentsArray = Object.assign({}, this._card).comments;
+    updatedCommentsArray.push(newComment);
+
+    this._changeData(
+        Object.assign(
+            {},
+            this._card,
+            {
+              comments: updatedCommentsArray
             }
         )
     );

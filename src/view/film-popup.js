@@ -1,5 +1,6 @@
-import {formatCommentDate, formatReleaseDate, removeExtension, convertMinutesToFilmLength} from '../utils/film-cards.js';
+import {formatCommentDate, formatReleaseDate, convertMinutesToFilmLength} from '../utils/film-cards.js';
 import {EMOJI_FILE_NAMES} from '../const.js';
+import {generateId} from '../utils/common.js';
 import SmartView from './smart.js';
 
 // Create comments template
@@ -11,15 +12,16 @@ const createCommentTemplate = (commentsArray) => {
   // Join array into string
   return commentsArray.map(({id, text, emoji, author, date}) => {
     const commentDate = formatCommentDate(date);
-    const emojiAlt = removeExtension(emoji);
+    const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"></img>` : ``;
+    const decodedText = decodeURIComponent(text);
 
     return (`
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${emoji}" width="55" height="55" alt="${emojiAlt}">
+        ${emojiTemplate}
       </span>
       <div>
-        <p class="film-details__comment-text">${text}</p>
+        <p class="film-details__comment-text">${decodedText}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>
@@ -68,7 +70,7 @@ const createFilmDetailsPopup = (filmCard) => {
 
   const newEmojiName = newComment.emoji;
   const newEmojiTemplate = newEmojiName ? `<img src="./images/emoji/${newEmojiName}.png" width="55" height="55" alt="${newEmojiName}"></img>` : ``;
-  const newCommentText = newComment.text ? newComment.text : ``;
+  const newCommentText = newComment.text ? decodeURIComponent(newComment.text) : ``;
 
   return (
     `<section class="film-details">
@@ -188,6 +190,7 @@ export default class FilmDetailsPopup extends SmartView {
     this._commentInputHandler = this._commentInputHandler.bind(this);
     this._emojiInputChangeHandler = this._emojiInputChangeHandler.bind(this);
     this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
+    this._commentSendHandler = this._commentSendHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -223,12 +226,13 @@ export default class FilmDetailsPopup extends SmartView {
 
   _commentInputHandler(evt) {
     evt.preventDefault();
+    const encodedText = encodeURIComponent(evt.target.value);
 
     this.updateData({
       newComment: Object.assign(
           {},
           this._data.newComment,
-          {text: evt.target.value}
+          {text: encodedText}
       )
     }, true);
   }
@@ -249,6 +253,18 @@ export default class FilmDetailsPopup extends SmartView {
           {emoji: currentEmojiFileName}
       )
     });
+  }
+
+  _commentSendHandler() {
+    const newComment = Object.assign(
+        {},
+        this._data.newComment,
+        {id: generateId(),
+          author: `Anonymous`,
+          date: new Date()}
+    );
+
+    this._callback.commentSendHandler(newComment);
   }
 
   _commentDeleteHandler(evt) {
@@ -283,17 +299,22 @@ export default class FilmDetailsPopup extends SmartView {
       .forEach((button) => button.addEventListener(`click`, this._commentDeleteHandler));
   }
 
+  setCommentSendHandler(callback) {
+    this._callback.commentSendHandler = callback;
+    this._watchKeys(this.getElement().querySelector(`.film-details__comment-input`), this._commentSendHandler);
+  }
+
   static parseCardToData(card) {
     return Object.assign(
         {},
         card,
         {
           newComment: {
-            text: null,
+            id: null,
+            text: ``,
             emoji: null,
             author: null,
             date: null,
-            checkedEmojiId: null,
           }
         }
     );
@@ -311,5 +332,26 @@ export default class FilmDetailsPopup extends SmartView {
     this.setPopupWatchlistClickHandler(this._callback.popupWatchlistClickHandler);
     this.setPopupHistoryClickHandler(this._callback.popupHistoryClickHandler);
     this.setPopupFavoriteClickHandler(this._callback.popupFavoriteClickHandler);
+    this.setCommentSendHandler(this._callback.commentSendHandler);
+  }
+
+  _watchKeys(element, callback) {
+    const KEYS = [`Enter`, `Control`];
+    let pressed = new Set();
+
+    element.addEventListener(`keydown`, (evt) => {
+      pressed.add(evt.key);
+
+      for (let key of KEYS) { // all keys are pressed?
+        if (!pressed.has(key)) {
+          return;
+        }
+      }
+      // if yes, clear set and run callback
+      pressed.clear();
+      callback();
+    });
+    // Remove key from set on keyup
+    element.addEventListener(`keyup`, (evt) => pressed.delete(evt.key));
   }
 }
