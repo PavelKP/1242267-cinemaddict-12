@@ -33,8 +33,9 @@ const formatDate = (date, format) => {
 };
 
 const formatDuration = (duration) => {
-  const durationHours = (duration.getHours() <= 0) ? `` : `${formatDate(duration, `H`)}h`;
-  const durationMinutes = (duration.getMinutes() <= 0) ? `` : `${formatDate(duration, `m`)}m`;
+  const momentDuration = moment.duration(duration, `minutes`);
+  const durationHours = (momentDuration.hours() <= 0) ? `` : `${momentDuration.hours()}h`;
+  const durationMinutes = (momentDuration.minutes() <= 0) ? `` : `${momentDuration.minutes()}m`;
 
   return `${durationHours} ${durationMinutes}`;
 };
