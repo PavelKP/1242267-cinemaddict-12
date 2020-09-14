@@ -56,7 +56,7 @@ export default class FilmCardPresenter {
     this._popupComponent.setCommentSendHandler(this._handleCommentSendClick);
 
 
-    if (prevFilmCardComponent === null || prevPopupComponent === null) {
+    if (!prevFilmCardComponent || !prevPopupComponent) {
       render(this._filmList, this._filmCardComponent, `beforeend`);
       return;
     }
@@ -94,8 +94,6 @@ export default class FilmCardPresenter {
 
   // Close popup
   _closePopup() {
-    this._popupComponent.reset(this._card); // reset comment block
-
     document.body.removeChild(this._popupComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;

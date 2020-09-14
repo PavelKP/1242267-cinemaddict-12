@@ -1,6 +1,6 @@
-import {formatCommentDate, formatReleaseDate, convertMinutesToFilmLength} from '../utils/film-cards.js';
 import {EMOJI_FILE_NAMES} from '../const.js';
 import {generateId} from '../utils/common.js';
+import {formatDate, formatDuration} from '../utils/film-cards.js';
 import SmartView from './smart.js';
 
 // Create comments template
@@ -11,8 +11,8 @@ const createCommentTemplate = (commentsArray) => {
   // Replace array element with template
   // Join array into string
   return commentsArray.map(({id, text, emoji, author, date}) => {
-    const commentDate = formatCommentDate(date);
-    const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"></img>` : ``;
+    const commentDate = formatDate(date, `YYYY/MM/DD HH:mm`);
+    const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"/>` : ``;
     const decodedText = decodeURIComponent(text);
 
     return (`
@@ -56,8 +56,9 @@ const createFilmDetailsPopup = (filmCard) => {
 
   const writersList = writers.join(`, `);
   const actorsList = actors.join(`, `);
-  const longReleaseDate = formatReleaseDate(release);
-  const formattedDuration = convertMinutesToFilmLength(duration);
+  const longReleaseDate = formatDate(release, `DD MMMM YYYY`);
+  const formattedDuration = formatDuration(duration);
+
   const genresTitle = (genres.length > 1) ? `Genres` : `Genre`;
   const genresList = genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 
@@ -69,7 +70,7 @@ const createFilmDetailsPopup = (filmCard) => {
   const commentsAmount = comments.length;
 
   const newEmojiName = newComment.emoji;
-  const newEmojiTemplate = newEmojiName ? `<img src="./images/emoji/${newEmojiName}.png" width="55" height="55" alt="${newEmojiName}"></img>` : ``;
+  const newEmojiTemplate = newEmojiName ? `<img src="./images/emoji/${newEmojiName}.png" width="55" height="55" alt="${newEmojiName}"/>` : ``;
   const newCommentText = newComment.text ? decodeURIComponent(newComment.text) : ``;
 
   return (
@@ -193,12 +194,6 @@ export default class FilmDetailsPopup extends SmartView {
     this._commentSendHandler = this._commentSendHandler.bind(this);
 
     this._setInnerHandlers();
-  }
-
-  reset(card) {
-    this.updateData(
-        FilmDetailsPopup.parseCardToData(card)
-    );
   }
 
   _getTemplate() {

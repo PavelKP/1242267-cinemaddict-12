@@ -1,5 +1,5 @@
 import {DESCRIPTION_LIMIT} from '../const.js';
-import {formatYear, shortenString, convertMinutesToFilmLength} from '../utils/film-cards.js';
+import {formatYear, shortenString, formatDuration} from '../utils/film-cards.js';
 import AbstractView from './abstract.js';
 
 
@@ -8,7 +8,7 @@ const createFilmCardTemplate = (filmCard) => {
   const {title, rating, release, duration, genres, poster, description, comments, isWatched, isFavorite, isListed} = filmCard;
 
   const releaseYear = formatYear(release);
-  const formattedDuration = convertMinutesToFilmLength(duration);
+  const formattedDuration = formatDuration(duration);
   const firstGenre = genres[0];
   const commentsAmount = comments.length;
   const shortDescription = shortenString(description, DESCRIPTION_LIMIT);

@@ -1,3 +1,5 @@
+import moment from "moment";
+
 // Convert date to year only
 const formatYear = (dateObject) => {
   return dateObject.getFullYear();
@@ -8,44 +10,6 @@ const shortenString = (string, limit) => {
   return (string.length > limit) ? `${string.slice(0, limit - 1).trim()}…` : string;
 };
 
-// Generate film duration
-const convertMinutesToFilmLength = (durationInMinutes) => {
-
-  const hours = Math.floor(durationInMinutes / 60);
-  const hoursString = (hours === 0) ? `` : `${hours}h`;
-
-  const minutes = durationInMinutes - (hours * 60);
-  const minutesString = `${minutes}m`;
-
-  return `${hoursString} ${minutesString}`;
-};
-
-// Convert date to format YYYY/MM/DD hh:mm
-const formatCommentDate = (dateObject) => {
-  const time = dateObject.toLocaleString(`en-GB`, {hour: `2-digit`, minute: `2-digit`});
-  const year = dateObject.getFullYear();
-  const month = dateObject.toLocaleString(`en-GB`, {month: `2-digit`});
-  const day = dateObject.toLocaleString(`en-GB`, {day: `2-digit`});
-
-  return `${year}/${month}/${day} ${time}`;
-};
-
-// Convert date to format DD mounth year
-const formatReleaseDate = (dateObject) => {
-  const day = dateObject.toLocaleString(`en-GB`, {day: `2-digit`});
-  const month = dateObject.toLocaleString(`en-GB`, {month: `long`});
-  const year = dateObject.getFullYear();
-
-  return `${day} ${month} ${year}`;
-};
-
-// Remove extension
-const removeExtension = (string) => {
-  // Dot, any symbol one ore more times, end of word
-  // Brackets are necessary
-  return string.replace(/\.(.+)$/g, ``);
-};
-
 const sortByDate = (a, b) => {
   return b.release.getTime() - a.release.getTime();
 };
@@ -54,4 +18,19 @@ const sortByRating = (a, b) => {
   return b.rating - a.rating;
 };
 
-export {formatCommentDate, formatReleaseDate, formatYear, removeExtension, shortenString, convertMinutesToFilmLength, sortByDate, sortByRating};
+const formatDate = (date, format) => {
+  if (!(date instanceof Date)) {
+    return ``;
+  }
+  return moment(date).format(format);
+};
+
+const formatDuration = (duration) => {
+  const momentDuration = moment.duration(duration, `minutes`);
+  const durationHours = (momentDuration.hours() <= 0) ? `` : `${momentDuration.hours()}h`;
+  const durationMinutes = (momentDuration.minutes() <= 0) ? `` : `${momentDuration.minutes()}m`;
+
+  return `${durationHours} ${durationMinutes}`;
+};
+
+export {formatYear, shortenString, sortByDate, sortByRating, formatDate, formatDuration};
