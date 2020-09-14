@@ -56,7 +56,7 @@ export default class FilmCardPresenter {
     this._popupComponent.setCommentSendHandler(this._handleCommentSendClick);
 
 
-    if (prevFilmCardComponent === null || prevPopupComponent === null) {
+    if (!prevFilmCardComponent || !prevPopupComponent) {
       render(this._filmList, this._filmCardComponent, `beforeend`);
       return;
     }

@@ -10,13 +10,6 @@ const shortenString = (string, limit) => {
   return (string.length > limit) ? `${string.slice(0, limit - 1).trim()}…` : string;
 };
 
-// Remove extension
-const removeExtension = (string) => {
-  // Dot, any symbol one ore more times, end of word
-  // Brackets are necessary
-  return string.replace(/\.(.+)$/g, ``);
-};
-
 const sortByDate = (a, b) => {
   return b.release.getTime() - a.release.getTime();
 };
@@ -40,4 +33,4 @@ const formatDuration = (duration) => {
   return `${durationHours} ${durationMinutes}`;
 };
 
-export {formatYear, removeExtension, shortenString, sortByDate, sortByRating, formatDate, formatDuration};
+export {formatYear, shortenString, sortByDate, sortByRating, formatDate, formatDuration};

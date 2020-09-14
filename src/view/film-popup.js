@@ -12,7 +12,7 @@ const createCommentTemplate = (commentsArray) => {
   // Join array into string
   return commentsArray.map(({id, text, emoji, author, date}) => {
     const commentDate = formatDate(date, `YYYY/MM/DD HH:mm`);
-    const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"></img>` : ``;
+    const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}">` : ``;
     const decodedText = decodeURIComponent(text);
 
     return (`
