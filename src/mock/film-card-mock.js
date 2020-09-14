@@ -95,6 +95,13 @@ const generateFilmRating = () => {
   return `${integer}.${fractional}`;
 };
 
+const generateFilmDuration = (minutes) => {
+  const emptyDate = new Date(0, 0, 0, 0, 0, 0);
+  emptyDate.setFullYear(0);
+
+  return new Date(emptyDate.setMinutes(minutes));
+};
+
 // Convert text to separate sentences
 const descriptionArray = DESCRIPTION_TEXT.match(/[A-Z][\w\s,]+\./g);
 
@@ -104,7 +111,7 @@ export const generateFilmCard = () => {
   const title = getRandomFromArray(FILM_NAMES);
   const rating = generateFilmRating();
   const release = generateRandomDate(70);
-  const duration = getRandomInteger(...DURATION_RANGE);
+  const duration = generateFilmDuration(getRandomInteger(...DURATION_RANGE));
   const description = generateTextFromArray(descriptionArray, DESCRIPTION_SENTENCE_MIN_MAX);
   const comments = generateComments();
   const original = getRandomFromArray(ORIGINALS);
