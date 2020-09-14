@@ -94,8 +94,6 @@ export default class FilmCardPresenter {
 
   // Close popup
   _closePopup() {
-    this._popupComponent.reset(this._card); // reset comment block
-
     document.body.removeChild(this._popupComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
