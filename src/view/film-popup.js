@@ -12,7 +12,7 @@ const createCommentTemplate = (commentsArray) => {
   // Join array into string
   return commentsArray.map(({id, text, emoji, author, date}) => {
     const commentDate = formatDate(date, `YYYY/MM/DD HH:mm`);
-    const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}">` : ``;
+    const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"/>` : ``;
     const decodedText = decodeURIComponent(text);
 
     return (`
@@ -70,7 +70,7 @@ const createFilmDetailsPopup = (filmCard) => {
   const commentsAmount = comments.length;
 
   const newEmojiName = newComment.emoji;
-  const newEmojiTemplate = newEmojiName ? `<img src="./images/emoji/${newEmojiName}.png" width="55" height="55" alt="${newEmojiName}"></img>` : ``;
+  const newEmojiTemplate = newEmojiName ? `<img src="./images/emoji/${newEmojiName}.png" width="55" height="55" alt="${newEmojiName}"/>` : ``;
   const newCommentText = newComment.text ? decodeURIComponent(newComment.text) : ``;
 
   return (
