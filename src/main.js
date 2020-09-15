@@ -38,7 +38,7 @@ filmCardsModel.setFilmCards(filmCards);
 
 // Render board
 const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel);
-movieListPresenter.init(filmCards);
+movieListPresenter.init();
 
 // Find statistics block
 // Render number of films
