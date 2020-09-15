@@ -8,6 +8,7 @@ import SiteMenuView from './view/site-menu.js';
 import MovieListPresenter from './presenter/movie-list.js';
 import FilmNumberView from './view/film-number.js';
 import FilmCardsModel from './model/movies.js';
+import FilterModel from './model/filter.js';
 
 // Constants
 const FILM_CARD_AMOUNT = 20;
@@ -34,7 +35,10 @@ render(siteMainElement, siteMenuComponent, `beforeend`);
 
 // Models
 const filmCardsModel = new FilmCardsModel();
+const filterModel = new FilterModel();
+
 filmCardsModel.setFilmCards(filmCards);
+
 
 // Render board
 const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel);

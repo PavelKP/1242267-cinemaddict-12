@@ -9,8 +9,8 @@ const filterNameToTitleMap = {
 };
 
 // Create one filter template
-const createFilterItemTemplate = (filter, isActive) => {
-  const {filterName, cardsAmount} = filter;
+const createFilterItemTemplate = (filter, currentFilterType) => {
+  const {type, filterName, cardsAmount} = filter;
 
   // Cards amount shows for filters except "all" filter name
   // Not more than 5 cards
@@ -19,7 +19,7 @@ const createFilterItemTemplate = (filter, isActive) => {
     : ``;
 
   // Active style for filter
-  const activeFilterClassName = isActive
+  const activeFilterClassName = (type === currentFilterType)
     ? `main-navigation__item--active`
     : ``;
 
@@ -28,10 +28,10 @@ const createFilterItemTemplate = (filter, isActive) => {
   `);
 };
 
-const createSiteMenuTemplate = (filters) => {
+const createSiteMenuTemplate = (filters, currentFilterType) => {
   // Generate filters
   // First array element (filter) has active class forever
-  const filterItemsTemplate = filters.map((element, i) => createFilterItemTemplate(element, i === 0)).join(``);
+  const filterItemsTemplate = filters.map((element) => createFilterItemTemplate(element, currentFilterType)).join(``);
 
   return (
     `<nav class="main-navigation">
@@ -44,13 +44,26 @@ const createSiteMenuTemplate = (filters) => {
 };
 
 export default class SiteMenu extends AbstractView {
-  constructor(filters) {
+  constructor(filters, currentFilterType) {
     super();
     this._filters = filters;
+    this._currentFilter = currentFilterType;
+
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   _getTemplate() {
-    return createSiteMenuTemplate(this._filters);
+    return createSiteMenuTemplate(this._filters, this._currentFilter);
+  }
+
+  _filterTypeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.filterTypeClick(evt.target);
+  }
+
+  setFilterTypeClickHandler(callback) {
+    this._callback.filterTypeClick = callback;
+    this.getElement().addEventListener(`click`, this._filterTypeClickHandler);
   }
 }
 
