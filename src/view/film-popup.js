@@ -331,4 +331,10 @@ export default class FilmDetailsPopup extends SmartView {
     this.setCommentDeleteHandler(this._callback.commentDeleteHandler);
     this.setCommentSendHandler(this._callback.commentSendHandler);
   }
+
+  reset(card) {
+    this.updateData(
+        FilmDetailsPopup.parseCardToData(card)
+    );
+  }
 }
