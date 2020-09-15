@@ -22,8 +22,10 @@ const IdType = {
 };
 
 export default class MovieList {
-  constructor(boardContainer) {
+  constructor(boardContainer, filmCardsModel) {
+    this._filmCardsModel = filmCardsModel;
     this._boardContainer = boardContainer;
+
     this._currentSortType = SortType.DEFAULT;
     this._filmCardPresenterObserver = {};
 
@@ -51,6 +53,10 @@ export default class MovieList {
     render(this._boardContainer, this._filmBoardComponent, `beforeend`);
 
     this._renderBoard();
+  }
+
+  _getFilmCard() {
+    return this._filmCardsModel.getFilmCards();
   }
 
   _renderCard(container, card, modifier = ``) {

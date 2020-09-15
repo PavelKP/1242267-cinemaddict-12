@@ -7,6 +7,7 @@ import UserProfileView from './view/user-profile.js';
 import SiteMenuView from './view/site-menu.js';
 import MovieListPresenter from './presenter/movie-list.js';
 import FilmNumberView from './view/film-number.js';
+import FilmCardsModel from './model/movies.js';
 
 // Constants
 const FILM_CARD_AMOUNT = 20;
@@ -31,8 +32,12 @@ render(siteHeaderElement, new UserProfileView(filmCards, userProfileData), `befo
 let siteMenuComponent = new SiteMenuView(filters);
 render(siteMainElement, siteMenuComponent, `beforeend`);
 
+// Models
+const filmCardsModel = new FilmCardsModel();
+filmCardsModel.setFilmCards(filmCards);
+
 // Render board
-const movieListPresenter = new MovieListPresenter(siteMainElement);
+const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel);
 movieListPresenter.init(filmCards);
 
 // Find statistics block
