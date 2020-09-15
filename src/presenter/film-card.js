@@ -124,7 +124,7 @@ export default class FilmCardPresenter {
   _handleHistoryClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.PATCH,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,
@@ -138,7 +138,7 @@ export default class FilmCardPresenter {
   _handleFavoriteClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.PATCH,
+        UpdateType.MAJOR,
         Object.assign(
             {},
             this._card,

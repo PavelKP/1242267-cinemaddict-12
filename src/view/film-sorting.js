@@ -34,7 +34,7 @@ export default class FilmSorting extends AbstractView {
 
   setSortTypeChangeHandler(callback) {
     this._callback.sortTypeChangeHandler = callback;
-    this._element.addEventListener(`click`, this._sortTypeChangeHandler);
+    this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
 
     // Set current sorting control
     this._currentSortElement = this._element.querySelector(`.sort__button--active`);
