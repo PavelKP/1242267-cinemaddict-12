@@ -190,20 +190,12 @@ export default class MovieList {
       case UserAction.UPDATE_FILM_CARD:
         this._filmCardsModel.updateFilmCard(updateType, update);
         break;
+      case UserAction.DELETE_COMMENT:
+        this._filmCardsModel.deleteComment(updateType, update);
+        break;
     }
   }
-  /*
-  _handleFilmCardChange(updatedFilmCard) {
-    this._filmCards = updateItem(this._filmCards, updatedFilmCard);
-    this._sourcedFilmCards = updateItem(this._sourcedFilmCards, updatedFilmCard);
 
-    const clearId = String(updatedFilmCard.id).match(/(\d+)$/g);
-    this._runInitByProperty(clearId, updatedFilmCard);
-
-    this._runInitByProperty(IdType.TOP_RATED + clearId, updatedFilmCard);
-    this._runInitByProperty(IdType.MOST_COMMENTED + clearId, updatedFilmCard);
-  }
-  */
   _handleModelEvent(updateType, data) {
     console.log(updateType, data);
 

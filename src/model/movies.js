@@ -54,5 +54,4 @@ export default class Movies extends Observer {
 
     this._notify(updateType);
   }
-
 }
