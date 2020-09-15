@@ -8,8 +8,8 @@ import NoFilmsView from '../view/no-films.js';
 import FilmSortingView from '../view/film-sorting.js';
 import {render, remove} from '../utils/render.js';
 import {generateFilter} from '../mock/filter-mock.js';
-import {SortType} from '../const.js';
-import {updateItem} from '../utils/common.js';
+import {SortType, UserAction, UpdateType} from '../const.js';
+// import {updateItem} from '../utils/common.js';
 import {sortByDate, sortByRating} from '../utils/film-cards.js';
 
 // Constants
@@ -40,8 +40,15 @@ export default class MovieList {
 
     this._filmList = this._filmBoardComponent.getElement().querySelector(`.films-list .films-list__container`);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    this._handleFilmCardChange = this._handleFilmCardChange.bind(this);
+    // this._handleFilmCardChange = this._handleFilmCardChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+
+    // Data binding handlers
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
+    // When something happens with model, it will invoke callback
+    this._filmCardsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -64,18 +71,21 @@ export default class MovieList {
     return this._filmCardsModel.getFilmCards();
   }
 
+  // Render one card
   _renderCard(container, card, modifier = ``) {
-    const filmCardPresenter = new FilmCardPresenter(container, this._handleFilmCardChange, this._handleModeChange);
+    const filmCardPresenter = new FilmCardPresenter(container, this._handleViewAction, this._handleModeChange);
     filmCardPresenter.init(card);
     this._filmCardPresenterObserver[modifier + card.id] = filmCardPresenter;
   }
 
+  // Render number of cards from array
   _renderCards(filmCards) {
     for (let i = 0; i < filmCards.length; i++) {
       this._renderCard(this._filmList, filmCards[i]);
     }
   }
 
+  // Render cards and button if necessary
   _renderCardsList() {
     const filmCardsCount = this._getFilmCards().length;
     const filmCards = this._getFilmCards()
@@ -169,6 +179,16 @@ export default class MovieList {
     }
   }
 
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+
+    switch (actionType) {
+      case UserAction.UPDATE_FILM_CARD:
+        this._filmCardsModel.updateFilmCard(updateType, update);
+        break;
+    }
+  }
+  /*
   _handleFilmCardChange(updatedFilmCard) {
     this._filmCards = updateItem(this._filmCards, updatedFilmCard);
     this._sourcedFilmCards = updateItem(this._sourcedFilmCards, updatedFilmCard);
@@ -178,6 +198,21 @@ export default class MovieList {
 
     this._runInitByProperty(IdType.TOP_RATED + clearId, updatedFilmCard);
     this._runInitByProperty(IdType.MOST_COMMENTED + clearId, updatedFilmCard);
+  }
+  */
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+
+    switch (updateType) {
+      case UpdateType.PATCH:
+        // Only update single film card and popup
+        const clearId = String(data.id).match(/(\d+)$/g);
+        this._runInitByProperty(clearId, data);
+        this._runInitByProperty(IdType.TOP_RATED + clearId, data);
+        this._runInitByProperty(IdType.MOST_COMMENTED + clearId, data);
+        break;
+    }
+
   }
 
   _renderSort() {
