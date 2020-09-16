@@ -38,7 +38,7 @@ const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmCa
 filterPresenter.init();
 
 // Render board
-const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel);
+const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel, filterModel, filterPresenter);
 movieListPresenter.init();
 
 // Find statistics block

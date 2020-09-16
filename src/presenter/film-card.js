@@ -112,7 +112,7 @@ export default class FilmCardPresenter {
   _handleWatchlistClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.PATCH,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,
@@ -140,7 +140,7 @@ export default class FilmCardPresenter {
   _handleFavoriteClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MAJOR,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,

@@ -1,5 +1,4 @@
 import FilmBoardView from '../view/film-board.js';
-import SiteMenuView from '../view/site-menu.js';
 import FilmCardPresenter from '../presenter/film-card.js';
 import LoadMoreButtonView from '../view/load-more-button.js';
 import TopRatedView from '../view/top-rated.js';
@@ -7,13 +6,12 @@ import MostCommentedView from '../view/most-commented.js';
 import NoFilmsView from '../view/no-films.js';
 import FilmSortingView from '../view/film-sorting.js';
 import {render, remove} from '../utils/render.js';
-import {generateFilter} from '../mock/filter-mock.js';
-import {SortType, UserAction, UpdateType} from '../const.js';
-// import {updateItem} from '../utils/common.js';
+import {SortType, UserAction, UpdateType, FILM_CARD_AMOUNT_PER_STEP} from '../const.js';
 import {sortByDate, sortByRating} from '../utils/film-cards.js';
+import {filter} from '../utils/filters.js';
+
 
 // Constants
-const FILM_CARD_AMOUNT_PER_STEP = 5; // Cards on board for each loading
 const TOP_FILM_CARD_AMOUNT = 2;
 const COMMENTED_FILM_CARD_AMOUNT = 2;
 const IdType = {
@@ -22,9 +20,11 @@ const IdType = {
 };
 
 export default class MovieList {
-  constructor(boardContainer, filmCardsModel) {
+  constructor(boardContainer, filmCardsModel, filterModel, filterPresenter) {
     this._filmCardsModel = filmCardsModel;
     this._boardContainer = boardContainer;
+    this._filterModel = filterModel;
+    this._filterPresenter = filterPresenter;
 
     this._currentSortType = SortType.DEFAULT;
     this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
@@ -33,9 +33,6 @@ export default class MovieList {
     this._filmSortingComponent = null;
     this._loadMoreButtonComponent = null;
     this._filmList = null;
-
-    // this._filmSortingComponent = new FilmSortingView();
-    // this._loadMoreButtonComponent = new LoadMoreButtonView();
 
     this._filmBoardComponent = new FilmBoardView();
     this._topRatedComponent = new TopRatedView();
@@ -51,6 +48,7 @@ export default class MovieList {
 
     // When something happens with model, it will invoke callback
     this._filmCardsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -58,14 +56,18 @@ export default class MovieList {
   }
 
   _getFilmCards() {
+    const filterType = this._filterModel.getFilter();
+    const filmCards = this._filmCardsModel.getFilmCards();
+    const filteredCards = filter[filterType](filmCards);
+
     switch (this._currentSortType) {
       case SortType.DATE:
-        return this._filmCardsModel.getFilmCards().slice().sort(sortByDate);
+        return filteredCards.sort(sortByDate);
       case SortType.RATING:
-        return this._filmCardsModel.getFilmCards().slice().sort(sortByRating);
+        return filteredCards.sort(sortByRating);
     }
 
-    return this._filmCardsModel.getFilmCards();
+    return filteredCards;
   }
 
   // Render one card
@@ -97,18 +99,6 @@ export default class MovieList {
     }
   }
 
-  _refreshSiteMenu(renderedFilmCards) {
-    // Generate new filters array from cards on board
-    // Define component
-    const filters = generateFilter(this._getFilmCards().slice(0, renderedFilmCards));
-    this._siteMenuComponent = new SiteMenuView(filters);
-
-    // Remove old site menu
-    // Render new site menu
-    this._boardContainer.querySelector(`.main-navigation`).remove();
-    render(this._boardContainer, this._siteMenuComponent, `afterbegin`);
-  }
-
   _handleLoadMoreButtonClick() {
     const filmCardsCount = this._getFilmCards().length;
     const newRenderedFilmCardsCount = Math.min(filmCardsCount, this._renderedFilmCards + FILM_CARD_AMOUNT_PER_STEP);
@@ -117,7 +107,8 @@ export default class MovieList {
     this._renderCards(filmCards);
     this._renderedFilmCards += FILM_CARD_AMOUNT_PER_STEP; // Rendered cards + rendered after click
 
-    this._refreshSiteMenu(this._renderedFilmCards);
+    // Reinit filter block with rendered cards number
+    this._filterPresenter.init(newRenderedFilmCardsCount);
 
     // Remove button if nothing to render
     if (this._renderedFilmCards >= filmCardsCount) {

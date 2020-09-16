@@ -6,6 +6,7 @@ export default class Filter extends Observer {
   constructor() {
     super();
     this._activeFilter = FilterType.ALL;
+    this._renderedFilmCards = null;
   }
 
   setFilter(updateType, filter) {

@@ -17,7 +17,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
     : ``;
 
   return (`
-    <a href="#${type}" class="main-navigation__item ${activeFilterClassName}">${name} ${number}</a>
+    <a href="#${type}" data-filter-type="${type}" class="main-navigation__item ${activeFilterClassName}">${name} ${number}</a>
   `);
 };
 
@@ -50,8 +50,12 @@ export default class SiteMenu extends AbstractView {
   }
 
   _filterTypeClickHandler(evt) {
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
+
     evt.preventDefault();
-    this._callback.filterTypeClick(evt.target);
+    this._callback.filterTypeClick(evt.target.dataset.filterType);
   }
 
   setFilterTypeClickHandler(callback) {
