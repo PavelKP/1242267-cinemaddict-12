@@ -2,6 +2,7 @@ import {EMOJI_FILE_NAMES} from '../const.js';
 import {generateId} from '../utils/common.js';
 import {formatDate, formatDuration} from '../utils/film-cards.js';
 import SmartView from './smart.js';
+import he from 'he';
 
 // Create comments template
 const createCommentTemplate = (commentsArray) => {
@@ -13,7 +14,7 @@ const createCommentTemplate = (commentsArray) => {
   return commentsArray.map(({id, text, emoji, author, date}) => {
     const commentDate = formatDate(date, `YYYY/MM/DD HH:mm`);
     const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"/>` : ``;
-    const decodedText = decodeURIComponent(text);
+    const encodedText = he.encode(text);
 
     return (`
     <li class="film-details__comment">
@@ -21,7 +22,7 @@ const createCommentTemplate = (commentsArray) => {
         ${emojiTemplate}
       </span>
       <div>
-        <p class="film-details__comment-text">${decodedText}</p>
+        <p class="film-details__comment-text">${encodedText}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>
@@ -221,13 +222,12 @@ export default class FilmDetailsPopup extends SmartView {
 
   _commentInputHandler(evt) {
     evt.preventDefault();
-    const encodedText = encodeURIComponent(evt.target.value);
 
     this.updateData({
       newComment: Object.assign(
           {},
           this._data.newComment,
-          {text: encodedText}
+          {text: evt.target.value}
       )
     }, true);
   }
