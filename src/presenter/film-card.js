@@ -112,7 +112,7 @@ export default class FilmCardPresenter {
   _handleWatchlistClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._card,
@@ -121,13 +121,12 @@ export default class FilmCardPresenter {
             }
         )
     );
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _handleHistoryClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._card,
@@ -136,13 +135,12 @@ export default class FilmCardPresenter {
             }
         )
     );
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _handleFavoriteClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._card,
@@ -151,7 +149,6 @@ export default class FilmCardPresenter {
             }
         )
     );
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _handleCommentDeleteClick(element) {
