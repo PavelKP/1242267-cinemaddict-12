@@ -175,8 +175,6 @@ export default class MovieList {
   }
 
   _handleViewAction(actionType, updateType, update) {
-    console.log(actionType, updateType, update);
-
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
         this._filmCardsModel.updateFilmCard(updateType, update);
@@ -188,8 +186,6 @@ export default class MovieList {
   }
 
   _handleModelEvent(updateType, data) {
-    console.log(updateType, data);
-
     switch (updateType) {
       case UpdateType.PATCH:
         // Only update single film card and popup
