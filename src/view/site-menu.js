@@ -1,4 +1,3 @@
-import {FILTER_NUMBER_LIMIT} from '../const.js';
 import AbstractView from './abstract.js';
 
 // Create one filter template
@@ -7,7 +6,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
 
   // Cards amount shows for filters except "all" filter name
   // Not more than 5 cards
-  const number = (type !== `all` && count <= FILTER_NUMBER_LIMIT)
+  const number = (type !== `all`)
     ? `<span class="main-navigation__item-count">${count}</span>`
     : ``;
 

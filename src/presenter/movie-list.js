@@ -20,11 +20,10 @@ const IdType = {
 };
 
 export default class MovieList {
-  constructor(boardContainer, filmCardsModel, filterModel, filterPresenter) {
+  constructor(boardContainer, filmCardsModel, filterModel) {
     this._filmCardsModel = filmCardsModel;
     this._boardContainer = boardContainer;
     this._filterModel = filterModel;
-    this._filterPresenter = filterPresenter;
 
     this._currentSortType = SortType.DEFAULT;
     this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
@@ -106,9 +105,6 @@ export default class MovieList {
 
     this._renderCards(filmCards);
     this._renderedFilmCards += FILM_CARD_AMOUNT_PER_STEP; // Rendered cards + rendered after click
-
-    // Reinit filter block with rendered cards number
-    this._filterPresenter.init(newRenderedFilmCardsCount);
 
     // Remove button if nothing to render
     if (this._renderedFilmCards >= filmCardsCount) {
