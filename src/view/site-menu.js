@@ -1,21 +1,14 @@
 import {FILTER_NUMBER_LIMIT} from '../const.js';
 import AbstractView from './abstract.js';
 
-const filterNameToTitleMap = {
-  all: `All movies`,
-  watchlist: `Watchlist`,
-  history: `History`,
-  favorites: `Favorites`,
-};
-
 // Create one filter template
 const createFilterItemTemplate = (filter, currentFilterType) => {
-  const {type, filterName, cardsAmount} = filter;
+  const {type, name, count} = filter;
 
   // Cards amount shows for filters except "all" filter name
   // Not more than 5 cards
-  const number = (filterName !== `all` && cardsAmount <= FILTER_NUMBER_LIMIT)
-    ? `<span class="main-navigation__item-count">${cardsAmount}</span>`
+  const number = (type !== `all` && count <= FILTER_NUMBER_LIMIT)
+    ? `<span class="main-navigation__item-count">${count}</span>`
     : ``;
 
   // Active style for filter
@@ -24,7 +17,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
     : ``;
 
   return (`
-    <a href="#${filterName}" class="main-navigation__item ${activeFilterClassName}">${filterNameToTitleMap[filterName]} ${number}</a>
+    <a href="#${type}" class="main-navigation__item ${activeFilterClassName}">${name} ${number}</a>
   `);
 };
 
@@ -49,7 +42,7 @@ export default class SiteMenu extends AbstractView {
     this._filters = filters;
     this._currentFilter = currentFilterType;
 
-    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this._filterTypeClickHandler = this._filterTypeClickHandler.bind(this);
   }
 
   _getTemplate() {
