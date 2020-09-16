@@ -121,6 +121,7 @@ export default class FilmCardPresenter {
             }
         )
     );
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _handleHistoryClick() {
@@ -135,6 +136,7 @@ export default class FilmCardPresenter {
             }
         )
     );
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _handleFavoriteClick() {
@@ -149,6 +151,7 @@ export default class FilmCardPresenter {
             }
         )
     );
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _handleCommentDeleteClick(element) {

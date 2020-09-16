@@ -238,17 +238,17 @@ export default class MovieList {
     const filmCards = this._getFilmCards();
     const filmCardsCount = filmCards.length;
 
+    // Render empty board
+    // Define empty film card container
+    render(this._boardContainer, this._filmBoardComponent, `beforeend`);
+    this._filmList = this._filmBoardComponent.getElement().querySelector(`.films-list .films-list__container`);
+
     if (filmCardsCount === 0) {
       this._renderNoFilms(); // Render plug
       return;
     }
 
     this._renderSort(); // Render sorting block
-
-    // Render empty board
-    // Define empty film card container
-    render(this._boardContainer, this._filmBoardComponent, `beforeend`);
-    this._filmList = this._filmBoardComponent.getElement().querySelector(`.films-list .films-list__container`);
 
     this._renderCardsList(filmCards.slice(0, Math.min(filmCardsCount, this._renderedFilmCards))); // Render cards + button
     this._renderExtraFilmCards(); // Render extra cards
