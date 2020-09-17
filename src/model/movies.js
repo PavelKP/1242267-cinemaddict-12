@@ -11,7 +11,7 @@ export default class Movies extends Observer {
   }
 
   getFilmCards() {
-    return this._filmCards;
+    return this._filmCards.slice();
   }
 
   updateFilmCard(updateType, update) {
