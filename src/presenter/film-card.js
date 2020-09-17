@@ -1,6 +1,7 @@
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsPopupView from '../view/film-popup.js';
 import {render, replace, remove} from '../utils/render.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -17,6 +18,7 @@ export default class FilmCardPresenter {
     this._filmCardComponent = null;
     this._popupComponent = null;
     this._mode = Mode.DEFAULT;
+    this._controlFlag = false;
 
     // Bind handlers
     this._showPopup = this._showPopup.bind(this);
@@ -28,6 +30,9 @@ export default class FilmCardPresenter {
     this._handleCommentDeleteClick = this._handleCommentDeleteClick.bind(this);
     this._handleCommentSendClick = this._handleCommentSendClick.bind(this);
 
+    this._handleWatchlistPopupClick = this._handleWatchlistPopupClick.bind(this);
+    this._handleFavoritePopupClick = this._handleFavoritePopupClick.bind(this);
+    this._handleHistoryPopupClick = this._handleHistoryPopupClick.bind(this);
   }
 
   init(card) {
@@ -49,9 +54,9 @@ export default class FilmCardPresenter {
 
     // Set handlers to popup
     this._popupComponent.setPopupCloseButtonHandler(this._closePopup);
-    this._popupComponent.setPopupWatchlistClickHandler(this._handleWatchlistClick);
-    this._popupComponent.setPopupHistoryClickHandler(this._handleHistoryClick);
-    this._popupComponent.setPopupFavoriteClickHandler(this._handleFavoriteClick);
+    this._popupComponent.setPopupWatchlistClickHandler(this._handleWatchlistPopupClick);
+    this._popupComponent.setPopupHistoryClickHandler(this._handleHistoryPopupClick);
+    this._popupComponent.setPopupFavoriteClickHandler(this._handleFavoritePopupClick);
     this._popupComponent.setCommentDeleteHandler(this._handleCommentDeleteClick);
     this._popupComponent.setCommentSendHandler(this._handleCommentSendClick);
 
@@ -94,9 +99,23 @@ export default class FilmCardPresenter {
 
   // Close popup
   _closePopup() {
+    this._popupComponent.reset(this._card); // reset comment block
+
     document.body.removeChild(this._popupComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
+
+    if (this._controlFlag) {
+      this._changeData(
+          UserAction.UPDATE_FILM_CARD,
+          UpdateType.MINOR,
+          Object.assign(
+              {},
+              this._card
+          )
+      );
+    }
+    this._controlFlag = false;
   }
 
   // Close popup on ESC
@@ -108,6 +127,8 @@ export default class FilmCardPresenter {
 
   _handleWatchlistClick() {
     this._changeData(
+        UserAction.UPDATE_FILM_CARD,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,
@@ -118,8 +139,25 @@ export default class FilmCardPresenter {
     );
   }
 
+  _handleWatchlistPopupClick() {
+    this._changeData(
+        UserAction.UPDATE_FILM_CARD,
+        UpdateType.PATCH,
+        Object.assign(
+            {},
+            this._card,
+            {
+              isListed: !this._card.isListed,
+            }
+        )
+    );
+    this._controlFlag = true;
+  }
+
   _handleHistoryClick() {
     this._changeData(
+        UserAction.UPDATE_FILM_CARD,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,
@@ -130,8 +168,25 @@ export default class FilmCardPresenter {
     );
   }
 
+  _handleHistoryPopupClick() {
+    this._changeData(
+        UserAction.UPDATE_FILM_CARD,
+        UpdateType.PATCH,
+        Object.assign(
+            {},
+            this._card,
+            {
+              isWatched: !this._card.isWatched,
+            }
+        )
+    );
+    this._controlFlag = true;
+  }
+
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_FILM_CARD,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,
@@ -142,12 +197,30 @@ export default class FilmCardPresenter {
     );
   }
 
+  _handleFavoritePopupClick() {
+    this._changeData(
+        UserAction.UPDATE_FILM_CARD,
+        UpdateType.PATCH,
+        Object.assign(
+            {},
+            this._card,
+            {
+              isFavorite: !this._card.isFavorite,
+            }
+        )
+    );
+    this._controlFlag = true;
+  }
+
+
   _handleCommentDeleteClick(element) {
     const commentId = element.dataset.commentId;
     const comments = this._card.comments.slice();
     comments.splice(comments.findIndex((comment) => String(comment.id) === commentId), 1);
 
     this._changeData(
+        UserAction.UPDATE_FILM_CARD,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._card,
@@ -167,6 +240,8 @@ export default class FilmCardPresenter {
     updatedCommentsArray.push(newComment);
 
     this._changeData(
+        UserAction.UPDATE_FILM_CARD,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._card,

@@ -1,37 +1,29 @@
-import {FILTER_NUMBER_LIMIT} from '../const.js';
 import AbstractView from './abstract.js';
 
-const filterNameToTitleMap = {
-  all: `All movies`,
-  watchlist: `Watchlist`,
-  history: `History`,
-  favorites: `Favorites`,
-};
-
 // Create one filter template
-const createFilterItemTemplate = (filter, isActive) => {
-  const {filterName, cardsAmount} = filter;
+const createFilterItemTemplate = (filter, currentFilterType) => {
+  const {type, name, count} = filter;
 
   // Cards amount shows for filters except "all" filter name
   // Not more than 5 cards
-  const number = (filterName !== `all` && cardsAmount <= FILTER_NUMBER_LIMIT)
-    ? `<span class="main-navigation__item-count">${cardsAmount}</span>`
+  const number = (type !== `all`)
+    ? `<span class="main-navigation__item-count">${count}</span>`
     : ``;
 
   // Active style for filter
-  const activeFilterClassName = isActive
+  const activeFilterClassName = (type === currentFilterType)
     ? `main-navigation__item--active`
     : ``;
 
   return (`
-    <a href="#${filterName}" class="main-navigation__item ${activeFilterClassName}">${filterNameToTitleMap[filterName]} ${number}</a>
+    <a href="#${type}" data-filter-type="${type}" class="main-navigation__item ${activeFilterClassName}">${name} ${number}</a>
   `);
 };
 
-const createSiteMenuTemplate = (filters) => {
+const createSiteMenuTemplate = (filters, currentFilterType) => {
   // Generate filters
   // First array element (filter) has active class forever
-  const filterItemsTemplate = filters.map((element, i) => createFilterItemTemplate(element, i === 0)).join(``);
+  const filterItemsTemplate = filters.map((element) => createFilterItemTemplate(element, currentFilterType)).join(``);
 
   return (
     `<nav class="main-navigation">
@@ -44,13 +36,30 @@ const createSiteMenuTemplate = (filters) => {
 };
 
 export default class SiteMenu extends AbstractView {
-  constructor(filters) {
+  constructor(filters, currentFilterType) {
     super();
     this._filters = filters;
+    this._currentFilter = currentFilterType;
+
+    this._filterTypeClickHandler = this._filterTypeClickHandler.bind(this);
   }
 
   _getTemplate() {
-    return createSiteMenuTemplate(this._filters);
+    return createSiteMenuTemplate(this._filters, this._currentFilter);
+  }
+
+  _filterTypeClickHandler(evt) {
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
+
+    evt.preventDefault();
+    this._callback.filterTypeClick(evt.target.dataset.filterType);
+  }
+
+  setFilterTypeClickHandler(callback) {
+    this._callback.filterTypeClick = callback;
+    this.getElement().addEventListener(`click`, this._filterTypeClickHandler);
   }
 }
 
