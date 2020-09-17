@@ -260,9 +260,12 @@ export default class MovieList {
 
     remove(this._filmSortingComponent);
     remove(this._filmBoardComponent);
-
     remove(this._noFilmsComponent);
-    remove(this._loadMoreButtonComponent);
+
+    if (this._loadMoreButtonComponent) {
+      remove(this._loadMoreButtonComponent);
+    }
+
     remove(this._topRatedComponent);
     remove(this._mostCommentedComponent);
 

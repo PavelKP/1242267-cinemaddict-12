@@ -38,7 +38,7 @@ export default class Filter {
   }
 
   _handleModelEvent() {
-    this.init(this._renderedCardsNumber);
+    this.init();
   }
 
   _handleFilterTypeChange(filterType) {
