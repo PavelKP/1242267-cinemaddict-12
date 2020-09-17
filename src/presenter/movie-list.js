@@ -32,6 +32,7 @@ export default class MovieList {
     this._filmSortingComponent = null;
     this._loadMoreButtonComponent = null;
     this._filmList = null;
+    this.destroyed = false;
 
     this._filmBoardComponent = new FilmBoardView();
     this._topRatedComponent = new TopRatedView();
@@ -44,13 +45,15 @@ export default class MovieList {
     // Data binding handlers
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+  }
+
+  init() {
+    this.destroyed = false;
 
     // When something happens with model, it will invoke callback
     this._filmCardsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-  }
 
-  init() {
     this._renderBoard();
   }
 
@@ -278,5 +281,13 @@ export default class MovieList {
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
+  }
+
+  destroy() {
+    this._clearBoard({resetRenderedFilmCardsCount: true, resetSortType: true});
+
+    this._filmCardsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+    this.destroyed = true;
   }
 }
