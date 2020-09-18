@@ -67,11 +67,14 @@ const renderChart = (statisticCtx) => {
   });
 };
 
-const createStatisticsTemplate = (filmCards) => {
-  const watchedFilms = countWatchedFilms(filmCards);
+const createStatisticsTemplate = (data) => {
+  const period = data.period;
+  const watchedFilms = countWatchedFilms(data.cards);
   const watchedFilmsAmount = watchedFilms.length;
   const totalDuration = countDuration(watchedFilms);
   const topGenre = findTopGenre(watchedFilms);
+
+  console.log(period);
 
   return (
     `<section class="statistic">
@@ -84,7 +87,7 @@ const createStatisticsTemplate = (filmCards) => {
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time">
       <label for="statistic-all-time" class="statistic__filters-label">All time</label>
 
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
@@ -128,8 +131,8 @@ export default class Statistics extends SmartView {
     super();
 
     this._data = {
-      filmCards,
-      period: null
+      cards: filmCards,
+      period: `all-time`
     };
 
 
@@ -138,10 +141,11 @@ export default class Statistics extends SmartView {
 
     this._setChart();
     this._setPeriodChangeHandler();
+    this._setChecked(this._data.period);
   }
 
   _getTemplate() {
-    return createStatisticsTemplate(this._data.filmCards);
+    return createStatisticsTemplate(this._data);
   }
 
   _setChart() {
@@ -165,10 +169,16 @@ export default class Statistics extends SmartView {
     this.updateData({
       period
     });
+
+    this._setChecked(this._data.period);
   }
 
   restoreHandlers() {
     this._setPeriodChangeHandler();
     this._setChart();
+  }
+
+  _setChecked(period) {
+    this.getElement().querySelector(`input[value="${period}"]`).checked = true;
   }
 }
