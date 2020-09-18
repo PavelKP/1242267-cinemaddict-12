@@ -35,7 +35,19 @@ export const findTopGenre = (filmCards) => {
     genresMap[uniqueGenre] = totalGenres.filter((genre) => genre === uniqueGenre).length;
   });
 
-  return Object.entries(genresMap).sort((a, b) => b[1] - a[1]);
+  return Object.entries(genresMap).sort((a, b) => {
+    if ((b[1] - a[1]) === 0) {
+
+      if (b[0][0] > a[0][0]) {
+        return -1;
+      } else {
+        return 1;
+      }
+
+    } else {
+      return b[1] - a[1];
+    }
+  });
 };
 
 export const countWatchedInPeriod = (data) => {
