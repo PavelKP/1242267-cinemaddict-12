@@ -19,6 +19,9 @@ const FILM_CARD_AMOUNT = 20;
 let statisticComponent;
 
 const handleStatisticClick = () => {
+  if (statisticComponent) {
+    remove(statisticComponent);
+  }
   movieListPresenter.destroy();
   statisticComponent = new StatisticsView(filmCardsModel.getFilmCards());
   render(siteMainElement, statisticComponent, `beforeend`);

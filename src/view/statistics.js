@@ -1,9 +1,15 @@
 import SmartView from './smart.js';
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {countWatchedFilms, countDuration, findTopGenre} from "../utils/statistics.js";
+import {countDuration, findTopGenre, countWatchedInPeriod} from "../utils/statistics.js";
 
-const renderChart = (statisticCtx) => {
+const renderChart = (statisticCtx, data) => {
+  const watchedInPeriod = countWatchedInPeriod(data);
+
+  const genresMap = watchedInPeriod ? findTopGenre(watchedInPeriod) : false;
+  const genreNames = genresMap ? genresMap.map((pare) => pare[0]) : [];
+  const genreNumbers = genresMap ? genresMap.map((pare) => pare[1]) : [];
+
   const BAR_HEIGHT = 50;
 
   // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
@@ -13,9 +19,9 @@ const renderChart = (statisticCtx) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
+      labels: genreNames,
       datasets: [{
-        data: [11, 8, 7, 4, 3],
+        data: genreNumbers,
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -68,13 +74,13 @@ const renderChart = (statisticCtx) => {
 };
 
 const createStatisticsTemplate = (data) => {
-  const period = data.period;
-  const watchedFilms = countWatchedFilms(data.cards);
-  const watchedFilmsAmount = watchedFilms.length;
-  const totalDuration = countDuration(watchedFilms);
-  const topGenre = findTopGenre(watchedFilms);
+  const watchedInPeriod = countWatchedInPeriod(data);
+  const watchedAmount = watchedInPeriod.length;
 
-  console.log(period);
+  const totalDuration = watchedAmount ? countDuration(watchedInPeriod) : 0;
+  const hours = totalDuration.hours ? totalDuration.hours : 0;
+  const minutes = totalDuration.minutes ? totalDuration.minutes : 0;
+  const topGenre = watchedAmount ? findTopGenre(watchedInPeriod)[0][0] : ``;
 
   return (
     `<section class="statistic">
@@ -106,11 +112,11 @@ const createStatisticsTemplate = (data) => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${watchedFilmsAmount}<span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${watchedAmount}<span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${totalDuration.hours}<span class="statistic__item-description">h</span>${totalDuration.minutes}<span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${hours}<span class="statistic__item-description">h</span>${minutes}<span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
@@ -153,7 +159,7 @@ export default class Statistics extends SmartView {
       this._chart = null;
     }
     const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
-    this._chart = renderChart(statisticCtx);
+    this._chart = renderChart(statisticCtx, this._data);
   }
 
   _setPeriodChangeHandler() {

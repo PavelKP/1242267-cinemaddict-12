@@ -117,7 +117,7 @@ export const generateFilmCard = () => {
   const isWatched = Boolean(getRandomInteger(0, 1));
   const isFavorite = Boolean(getRandomInteger(0, 1));
   const isListed = Boolean(getRandomInteger(0, 1));
-  const watchingDate = isWatched ? generateRandomDate(1) : null;
+  const watchingDate = isWatched ? generateRandomDate() : null;
 
   return {
     id,
