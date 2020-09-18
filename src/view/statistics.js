@@ -3,6 +3,70 @@ import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {countWatchedFilms, countDuration, findTopGenre} from "../utils/statistics.js";
 
+const renderChart = (statisticCtx) => {
+  const BAR_HEIGHT = 50;
+
+  // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
+  statisticCtx.height = BAR_HEIGHT * 5;
+
+  return new Chart(statisticCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`],
+      datasets: [{
+        data: [11, 8, 7, 4, 3],
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20
+          },
+          color: `#ffffff`,
+          anchor: `start`,
+          align: `start`,
+          offset: 40,
+        }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#ffffff`,
+            padding: 100,
+            fontSize: 20
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 24
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
+};
+
 const createStatisticsTemplate = (filmCards) => {
   const watchedFilms = countWatchedFilms(filmCards);
   const watchedFilmsAmount = watchedFilms.length;
@@ -63,10 +127,48 @@ export default class Statistics extends SmartView {
   constructor(filmCards) {
     super();
 
-    this._data = filmCards;
+    this._data = {
+      filmCards,
+      period: null
+    };
+
+
+    this._chart = null;
+    this._periodChangeHandler = this._periodChangeHandler.bind(this);
+
+    this._setChart();
+    this._setPeriodChangeHandler();
   }
 
   _getTemplate() {
-    return createStatisticsTemplate(this._data);
+    return createStatisticsTemplate(this._data.filmCards);
+  }
+
+  _setChart() {
+    if (this._chart !== null) {
+      this._chart = null;
+    }
+    const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
+    this._chart = renderChart(statisticCtx);
+  }
+
+  _setPeriodChangeHandler() {
+    this.getElement().querySelector(`.statistic__filters`).addEventListener(`change`, this._periodChangeHandler);
+  }
+
+  _periodChangeHandler(evt) {
+    const period = evt.target.value;
+    if (!period) {
+      return;
+    }
+
+    this.updateData({
+      period
+    });
+  }
+
+  restoreHandlers() {
+    this._setPeriodChangeHandler();
+    this._setChart();
   }
 }
