@@ -58,8 +58,11 @@ export default class MovieList {
   }
 
   _getFilmCards() {
-    const filterType = this._filterModel.getFilter();
+    let filterType = this._filterModel.getFilter();
+    filterType = (filterType === `stats`) ? `all` : filterType;
+
     const filmCards = this._filmCardsModel.getFilmCards();
+
     const filteredCards = filter[filterType](filmCards);
 
     switch (this._currentSortType) {
@@ -185,6 +188,11 @@ export default class MovieList {
   }
 
   _handleModelEvent(updateType, data) {
+
+    if (data === `stats`) {
+      return;
+    }
+
     switch (updateType) {
       case UpdateType.PATCH:
         // Only update single film card and popup
@@ -254,7 +262,6 @@ export default class MovieList {
   }
 
   _clearBoard({resetRenderedFilmCardsCount = false, resetSortType = false} = {}) {
-    const filmCardsCount = this._getFilmCards().length;
 
     Object
       .values(this._filmCardPresenterObserver)
@@ -275,6 +282,7 @@ export default class MovieList {
     if (resetRenderedFilmCardsCount) {
       this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
     } else {
+      const filmCardsCount = this._getFilmCards().length;
       this._renderedFilmCards = Math.min(filmCardsCount, this._renderedFilmCards);
     }
 

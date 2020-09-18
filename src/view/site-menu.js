@@ -25,12 +25,17 @@ const createSiteMenuTemplate = (filters, currentFilterType) => {
   // First array element (filter) has active class forever
   const filterItemsTemplate = filters.map((element) => createFilterItemTemplate(element, currentFilterType)).join(``);
 
+  // Active style for stats
+  const activeFilterClassName = (currentFilterType === `stats`)
+    ? `main-navigation__item--active`
+    : ``;
+
   return (
     `<nav class="main-navigation">
       <div class="main-navigation__items">
         ${filterItemsTemplate}
       </div>
-      <a href="#stats" class="main-navigation__additional">Stats</a>
+      <a href="#stats" data-filter-type="stats" class="main-navigation__additional ${activeFilterClassName}">Stats</a>
     </nav>`
   );
 };
@@ -42,7 +47,6 @@ export default class SiteMenu extends AbstractView {
     this._currentFilter = currentFilterType;
 
     this._filterTypeClickHandler = this._filterTypeClickHandler.bind(this);
-    this._statisticClickHandler = this._statisticClickHandler.bind(this);
   }
 
   _getTemplate() {
@@ -50,32 +54,31 @@ export default class SiteMenu extends AbstractView {
   }
 
   _filterTypeClickHandler(evt) {
+    evt.preventDefault();
+
     if (evt.target.tagName !== `A`) {
       return;
     }
 
-    evt.preventDefault();
-    this._callback.menuItemClick();
-    this._callback.filterTypeClick(evt.target.dataset.filterType);
-  }
-
-  _statisticClickHandler(evt) {
-    if (evt.target.tagName !== `A`) {
+    if (evt.target.dataset.filterType !== `stats`) {
+      this._callback.menuItemClick();
+      this._callback.filterTypeClick(evt.target.dataset.filterType);
+    } else if (evt.target.dataset.filterType === `stats`) {
+      this._callback.filterTypeClick(evt.target.dataset.filterType);
+      this._callback.statisticClick();
+    } else {
       return;
     }
 
-    evt.preventDefault();
-    this._callback.statisticClick();
   }
 
   setFilterTypeClickHandler(callback) {
     this._callback.filterTypeClick = callback;
-    this.getElement().firstElementChild.addEventListener(`click`, this._filterTypeClickHandler);
+    this.getElement().addEventListener(`click`, this._filterTypeClickHandler);
   }
 
   setStatisticClickHandler(callback) {
     this._callback.statisticClick = callback;
-    this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, this._statisticClickHandler);
   }
 
   setMenuItemClickHandler(callback) {
