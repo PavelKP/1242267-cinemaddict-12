@@ -1,5 +1,13 @@
 import moment from "moment";
 
+const periodToFilterMap = {
+  [`all-time`]: (cards) => cards,
+  [`today`]: (cards) => cards.filter((card) => moment(card.watchingDate).isBetween(moment().startOf(`day`), moment().endOf(`day`))),
+  [`week`]: (cards) => cards.filter((card) => moment(card.watchingDate).isBetween(moment().startOf(`week`), moment().endOf(`week`))),
+  [`month`]: (cards) => cards.filter((card) => moment(card.watchingDate).isBetween(moment().startOf(`month`), moment().endOf(`month`))),
+  [`year`]: (cards) => cards.filter((card) => moment(card.watchingDate).isBetween(moment().startOf(`year`), moment().endOf(`year`)))
+};
+
 export const countWatchedFilms = (filmCards) => {
   return (filmCards.length !== 0) ? filmCards.filter((card) => card.isWatched) : 0;
 };
@@ -30,25 +38,10 @@ export const findTopGenre = (filmCards) => {
   return Object.entries(genresMap).sort((a, b) => b[1] - a[1]);
 };
 
-export const filterByPeriod = (filmCards, period) => {
-  const periodToFilterMap = {
-    [`all-time`]: (cards) => cards,
-    [`today`]: (cards) => cards.filter((card) => moment(card.watchingDate).isBetween(moment().startOf(`day`), moment().endOf(`day`))),
-    [`week`]: (cards) => cards.filter((card) => moment(card.watchingDate).isBetween(moment().startOf(`week`), moment().endOf(`week`))),
-    [`month`]: (cards) => cards.filter((card) => moment(card.watchingDate).isBetween(moment().startOf(`month`), moment().endOf(`month`))),
-    [`year`]: (cards) => cards.filter((card) => moment(card.watchingDate).isBetween(moment().startOf(`year`), moment().endOf(`year`)))
-  };
-
-  if (filmCards) {
-    return periodToFilterMap[period](filmCards);
-  }
-
-};
-
 export const countWatchedInPeriod = (data) => {
   const period = data.period;
   const watchedFilms = countWatchedFilms(data.cards);
 
   // Return array of cards watched in specific period or empty array if nothing has been find
-  return filterByPeriod(watchedFilms, period);
+  return periodToFilterMap[period](watchedFilms);
 };
