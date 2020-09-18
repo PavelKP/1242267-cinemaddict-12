@@ -2,6 +2,8 @@ import SmartView from './smart.js';
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {countDuration, findTopGenre, countWatchedInPeriod} from "../utils/statistics.js";
+import {userGradeSettings} from '../const.js';
+import {getUserRank} from '../utils/user-profile.js';
 
 const renderChart = (statisticCtx, data) => {
   const watchedInPeriod = countWatchedInPeriod(data);
@@ -82,12 +84,14 @@ const createStatisticsTemplate = (data) => {
   const minutes = totalDuration.minutes ? totalDuration.minutes : 0;
   const topGenre = watchedAmount ? findTopGenre(watchedInPeriod)[0][0] : ``;
 
+  const userRank = getUserRank(data.cards, userGradeSettings);
+
   return (
     `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">Sci-Fighter</span>
+      <span class="statistic__rank-label">${userRank}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -140,7 +144,6 @@ export default class Statistics extends SmartView {
       cards: filmCards,
       period: `all-time`
     };
-
 
     this._chart = null;
     this._periodChangeHandler = this._periodChangeHandler.bind(this);
