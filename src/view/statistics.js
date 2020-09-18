@@ -1,6 +1,14 @@
 import SmartView from './smart.js';
+import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {countWatchedFilms, countDuration, findTopGenre} from "../utils/statistics.js";
 
-const createStatisticsTemplate = () => {
+const createStatisticsTemplate = (filmCards) => {
+  const watchedFilms = countWatchedFilms(filmCards);
+  const watchedFilmsAmount = watchedFilms.length;
+  const totalDuration = countDuration(watchedFilms);
+  const topGenre = findTopGenre(watchedFilms);
+
   return (
     `<section class="statistic">
     <p class="statistic__rank">
@@ -31,15 +39,15 @@ const createStatisticsTemplate = () => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${watchedFilmsAmount}<span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${totalDuration.hours}<span class="statistic__item-description">h</span>${totalDuration.minutes}<span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${topGenre}</p>
       </li>
     </ul>
 
@@ -52,11 +60,13 @@ const createStatisticsTemplate = () => {
 };
 
 export default class Statistics extends SmartView {
-  constructor() {
+  constructor(filmCards) {
     super();
+
+    this._data = filmCards;
   }
 
   _getTemplate() {
-    return createStatisticsTemplate();
+    return createStatisticsTemplate(this._data);
   }
 }

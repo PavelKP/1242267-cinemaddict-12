@@ -16,8 +16,11 @@ import StatisticsView from './view/statistics.js';
 // Constants
 const FILM_CARD_AMOUNT = 20;
 
+let statisticComponent;
+
 const handleStatisticClick = () => {
   movieListPresenter.destroy();
+  statisticComponent = new StatisticsView(filmCardsModel.getFilmCards());
   render(siteMainElement, statisticComponent, `beforeend`);
 };
 
@@ -54,9 +57,6 @@ filterPresenter.init();
 // Render board
 const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel, filterModel);
 movieListPresenter.init();
-
-// Statistic block
-const statisticComponent = new StatisticsView();
 
 // Render number of films
 const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`);
