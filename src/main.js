@@ -1,17 +1,16 @@
 // Imports
 import {render, remove} from './utils/render.js';
 import {generateFilmCard} from './mock/film-card-mock.js';
-import {generateUserProfile} from './mock/user-profile-mock.js';
-import UserProfileView from './view/user-profile.js';
 import FilmNumberView from './view/film-number.js';
+import StatisticsView from './view/statistics.js';
 
 import MovieListPresenter from './presenter/movie-list.js';
 import FilterPresenter from './presenter/filter.js';
+import UserProfilePresenter from './presenter/user-profile.js';
 
 import FilmCardsModel from './model/movies.js';
 import FilterModel from './model/filter.js';
-
-import StatisticsView from './view/statistics.js';
+import UserProfileModel from './model/user-profile.js';
 
 // Constants
 const FILM_CARD_AMOUNT = 20;
@@ -42,7 +41,6 @@ const	siteFooterElement = document.querySelector(`.footer`);
 // Array with Film cards data
 // User profile data
 const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
-const userProfileData = generateUserProfile();
 
 // Models
 const filmCardsModel = new FilmCardsModel();
@@ -50,8 +48,12 @@ filmCardsModel.setFilmCards(filmCards);
 
 const filterModel = new FilterModel();
 
+const userProfileModel = new UserProfileModel();
+userProfileModel.countRank(filmCards);
+
 // Render user profile
-render(siteHeaderElement, new UserProfileView(filmCards, userProfileData), `beforeend`);
+const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, userProfileModel, filmCardsModel);
+userProfilePresenter.init();
 
 // Render menu with filter block
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmCardsModel, handleStatisticClick, handleMenuItemClick);
