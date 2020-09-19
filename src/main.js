@@ -10,7 +10,6 @@ import UserProfilePresenter from './presenter/user-profile.js';
 
 import FilmCardsModel from './model/movies.js';
 import FilterModel from './model/filter.js';
-import UserProfileModel from './model/user-profile.js';
 
 // Constants
 const FILM_CARD_AMOUNT = 20;
@@ -48,11 +47,8 @@ filmCardsModel.setFilmCards(filmCards);
 
 const filterModel = new FilterModel();
 
-const userProfileModel = new UserProfileModel();
-userProfileModel.countRank(filmCards);
-
 // Render user profile
-const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, userProfileModel, filmCardsModel);
+const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, filmCardsModel);
 userProfilePresenter.init();
 
 // Render menu with filter block

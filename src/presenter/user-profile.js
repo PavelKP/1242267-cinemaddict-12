@@ -1,20 +1,23 @@
 import UserProfileView from '../view/user-profile.js';
 import {render, replace, remove} from '../utils/render.js';
+import {getUserRank} from '../utils/user-profile.js';
+import {userGradeSettings} from '../const.js';
 
 export default class UserProfilePresenter {
-  constructor(container, userProfileModel, filmCardsModel) {
+  constructor(container, filmCardsModel) {
     this._container = container;
-    this._userProfileModel = userProfileModel;
     this._filmCardsModel = filmCardsModel;
 
     this._activeRank = null;
     this._userProfileComponent = null;
 
-    this._userProfileModel.addObserver(this._handleModelEvent);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
+    this._filmCardsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
-    this._activeRank = this._userProfileModel.getRank();
+    this._activeRank = getUserRank(this._filmCardsModel.getFilmCards(), userGradeSettings);
 
     const prevUserProfileComponent = this._userProfileComponent;
 
