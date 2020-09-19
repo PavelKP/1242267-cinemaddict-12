@@ -23,13 +23,12 @@ export default class UserProfilePresenter {
 
     this._userProfileComponent = new UserProfileView(this._activeRank);
 
-    if (!prevUserProfileComponent) {
+    if (prevUserProfileComponent) {
+      replace(this._userProfileComponent, prevUserProfileComponent);
+      remove(prevUserProfileComponent);
+    } else {
       render(this._container, this._userProfileComponent, `beforeend`);
-      return;
     }
-
-    replace(this._userProfileComponent, prevUserProfileComponent);
-    remove(prevUserProfileComponent);
   }
 
   _handleModelEvent() {
