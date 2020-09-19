@@ -63,13 +63,10 @@ export default class SiteMenu extends AbstractView {
     if (evt.target.dataset.filterType !== `stats`) {
       this._callback.menuItemClick();
       this._callback.filterTypeClick(evt.target.dataset.filterType);
-    } else if (evt.target.dataset.filterType === `stats`) {
+    } else {
       this._callback.filterTypeClick(evt.target.dataset.filterType);
       this._callback.statisticClick();
-    } else {
-      return;
     }
-
   }
 
   setFilterTypeClickHandler(callback) {
