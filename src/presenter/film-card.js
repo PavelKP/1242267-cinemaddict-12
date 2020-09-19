@@ -163,6 +163,7 @@ export default class FilmCardPresenter {
             this._card,
             {
               isWatched: !this._card.isWatched,
+              watchingDate: new Date()
             }
         )
     );
@@ -177,6 +178,7 @@ export default class FilmCardPresenter {
             this._card,
             {
               isWatched: !this._card.isWatched,
+              watchingDate: new Date()
             }
         )
     );

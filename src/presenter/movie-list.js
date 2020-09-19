@@ -32,6 +32,7 @@ export default class MovieList {
     this._filmSortingComponent = null;
     this._loadMoreButtonComponent = null;
     this._filmList = null;
+    this.destroyed = false;
 
     this._filmBoardComponent = new FilmBoardView();
     this._topRatedComponent = new TopRatedView();
@@ -44,19 +45,24 @@ export default class MovieList {
     // Data binding handlers
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+  }
+
+  init() {
+    this.destroyed = false;
 
     // When something happens with model, it will invoke callback
     this._filmCardsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-  }
 
-  init() {
     this._renderBoard();
   }
 
   _getFilmCards() {
-    const filterType = this._filterModel.getFilter();
+    let filterType = this._filterModel.getFilter();
+    filterType = (filterType === `stats`) ? `all` : filterType;
+
     const filmCards = this._filmCardsModel.getFilmCards();
+
     const filteredCards = filter[filterType](filmCards);
 
     switch (this._currentSortType) {
@@ -182,6 +188,11 @@ export default class MovieList {
   }
 
   _handleModelEvent(updateType, data) {
+
+    if (data === `stats`) {
+      return;
+    }
+
     switch (updateType) {
       case UpdateType.PATCH:
         // Only update single film card and popup
@@ -251,7 +262,6 @@ export default class MovieList {
   }
 
   _clearBoard({resetRenderedFilmCardsCount = false, resetSortType = false} = {}) {
-    const filmCardsCount = this._getFilmCards().length;
 
     Object
       .values(this._filmCardPresenterObserver)
@@ -272,11 +282,20 @@ export default class MovieList {
     if (resetRenderedFilmCardsCount) {
       this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
     } else {
+      const filmCardsCount = this._getFilmCards().length;
       this._renderedFilmCards = Math.min(filmCardsCount, this._renderedFilmCards);
     }
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
+  }
+
+  destroy() {
+    this._clearBoard({resetRenderedFilmCardsCount: true, resetSortType: true});
+
+    this._filmCardsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+    this.destroyed = true;
   }
 }
