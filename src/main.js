@@ -11,8 +11,12 @@ import UserProfilePresenter from './presenter/user-profile.js';
 import FilmCardsModel from './model/movies.js';
 import FilterModel from './model/filter.js';
 
+import Api from './api.js';
+
 // Constants
 const FILM_CARD_AMOUNT = 20;
+const AUTHORIZATION = `Basic qr866jdzbbs`;
+const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
 
 let statisticComponent;
 
@@ -40,6 +44,9 @@ const	siteFooterElement = document.querySelector(`.footer`);
 // Array with Film cards data
 // User profile data
 const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getFilmCards().then((json) => console.log(json));
 
 // Models
 const filmCardsModel = new FilmCardsModel();
