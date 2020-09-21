@@ -20,7 +20,7 @@ export default class Api {
   getFilmCards() {
     return this._load({url: `movies`})
       .then(Api.toJSON)
-			.then((cards) => cards.map(FilmCardsModel.adaptToClient));
+			.then((cards) => cards.map(FilmCardsModel.adaptCardToClient));
   }
 
   _getComments(filmCardId) {

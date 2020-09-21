@@ -30,13 +30,14 @@ export default class Movies extends Observer {
     this._notify(updateType, update);
   }
 
-  static adaptToClient(card) {
+  static adaptCardToClient(card) {
     const adaptedCard = Object.assign(
         {},
         card,
         {
           poster: card.film_info.poster,
           title: card.film_info.title,
+          altTitle: card.film_info.alternative_title,
           rating: card.film_info.total_rating,
           release:
             (card.film_info.release.date)
@@ -64,7 +65,55 @@ export default class Movies extends Observer {
     // Remove unused keys
     delete adaptedCard.film_info;
     delete adaptedCard.user_details;
+  //  delete adaptedCard.comments;
 
+    return adaptedCard;
+  }
+
+  static adaptCardToServer(card) {
+
+    console.log(card);
+    console.log(card.comments);
+/*
+    const foo = Object.assign(
+      {},
+      card
+    );*/
+    //console.log(foo);
+
+
+   // const commentsIdArray = card.comments.map((comment) => comment.id);
+    const adaptedCard = Object.assign(
+        {},
+        {
+          id: card.comments/*
+          comments: commentsIdArray,
+          film_info: {
+            title: card.title,
+            alternative_title: card.altTitle,
+            total_rating: card.rating,
+            poster: card.poster,
+            age_rating: card.ageRating,
+            director: card.director,
+            writers: card.writers,
+            actors: card.actors,
+            release: {
+              date: card.release,
+              release_country: card.country
+            },
+            runtime: card.duration,
+            genre: card.genres,
+            description: card.description
+          },
+          user_details: {
+            watchlist: card.isListed,
+            already_watched: card.isWatched,
+            watching_date: card.watchingDate,
+            favorite: card.isFavorite
+          }*/
+        }
+    );
+        //console.log(adaptedCard)
     return adaptedCard;
   }
 

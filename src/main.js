@@ -48,7 +48,11 @@ const api = new Api(END_POINT, AUTHORIZATION);
 
 api.getFilmCards()
   .then((filmCardsArray) => api.pullComments(filmCardsArray))
-  .then((cardsWithComments) => console.log(cardsWithComments));
+  .then((cardsWithComments) => {
+    //console.log(cardsWithComments);
+    return cardsWithComments;
+  }).then((cards) => cards
+  .map((card) => FilmCardsModel.adaptCardToServer(card)));
 
 
 // Models
