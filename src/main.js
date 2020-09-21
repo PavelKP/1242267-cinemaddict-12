@@ -46,7 +46,10 @@ const	siteFooterElement = document.querySelector(`.footer`);
 const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
 const api = new Api(END_POINT, AUTHORIZATION);
 
-api.getFilmCards().then((json) => console.log(json));
+api.getFilmCards()
+  .then((filmCardsArray) => api.pullComments(filmCardsArray))
+  .then((cardsWithComments) => console.log(cardsWithComments));
+
 
 // Models
 const filmCardsModel = new FilmCardsModel();

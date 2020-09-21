@@ -1,3 +1,5 @@
+import FilmCardsModel from "./model/movies.js";
+
 const Method = {
   GET: `GET`,
   PUT: `PUT`,
@@ -17,7 +19,22 @@ export default class Api {
 
   getFilmCards() {
     return this._load({url: `movies`})
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+			.then((cards) => cards.map(FilmCardsModel.adaptToClient));
+  }
+
+  _getComments(filmCardId) {
+    return this._load({url: `comments/${filmCardId}`})
+    .then(Api.toJSON)
+    .then((commentsArray) => FilmCardsModel.adaptCommentsToClient(commentsArray));
+  }
+
+  pullComments(adaptedCards) {
+    const cardsWithComments = adaptedCards.slice();
+    cardsWithComments.map((card) => this._getComments(card.id)
+      .then((commentsArray) => card.comments = commentsArray))
+
+    return cardsWithComments;
   }
 
   _load({
