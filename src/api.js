@@ -29,14 +29,44 @@ export default class Api {
     .then((commentsArray) => FilmCardsModel.adaptCommentsToClient(commentsArray));
   }
 
-  pullComments(adaptedCards) {
-    const cardsWithComments = adaptedCards.slice();
-    cardsWithComments.map((card) => this._getComments(card.id)
-      .then((commentsArray) => card.comments = commentsArray))
+  pullComments(cards) {
+    const promises = [];
 
-    return cardsWithComments;
+    cards.forEach((card) => {
+      promises.push(this._getComments(card.id) // пошёл запрос на сервер, пуш пока не выполняется
+        .then((comments) => { // .then ждёт резолва промиса выше
+          card.comments = comments;
+
+          return card;
+        }));
+    }); // цикл отработал и отправил n запросов
+
+    return Promise.all(promises); // возвращается промис с массивом, который ещё не заполнен
+    // Promise.all не резолвится, ждёт наполнения массива
+    // приходят ответы с сервера и пушатся в массив
+    // Массив собран
+    // Все промисы в массиве выполнены успешно
   }
 
+/*
+  pullComments(adaptedCards) {
+    debugger;
+    const promises = [];
+    adaptedCards.slice(0, 1).forEach((card) => this._getComments(card.id) // пошёл запрос на сервер
+      .then((commentsArray) => { // этот then не отрабатывает, начинается следующая итерация
+        card.comments = commentsArray;
+        promises.push(card);
+
+        return card;
+      })); // цикл отработал и отправил n запросов
+
+    return Promise.all(promises); // вернулся пустой массив, который был объявлен выше
+    // массив пустой и сразу зарезолвился как пустой
+    // далее приходит ответ на каждый запрос
+    // выполняется код .then((commentsArray)... карточки фильмов пушатся в массив выше
+    // Но промис all уже зарезолвился пустым
+  }
+*/
   _load({
     url,
     method = Method.GET,

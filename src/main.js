@@ -46,10 +46,11 @@ const	siteFooterElement = document.querySelector(`.footer`);
 const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
 const api = new Api(END_POINT, AUTHORIZATION);
 
-api.getFilmCards()
-  .then((filmCardsArray) => api.pullComments(filmCardsArray))
-  .then((cardsWithComments) => console.log(cardsWithComments));
-
+api.getFilmCards().then((cards) => {
+  api.pullComments(cards).then((newCard) => {
+    window.console.log(newCard[0].comments);
+  });
+});
 
 // Models
 const filmCardsModel = new FilmCardsModel();
