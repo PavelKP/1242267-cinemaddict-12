@@ -32,9 +32,13 @@ export default class Api {
   pullComments(adaptedCards) {
     const cardsWithComments = adaptedCards.slice();
     cardsWithComments.map((card) => this._getComments(card.id)
-      .then((commentsArray) => card.comments = commentsArray))
+      .then((commentsArray) => {
 
-    return cardsWithComments;
+        card.comments = commentsArray;
+        console.log(card.comments);
+        return cardsWithComments;
+      }));
+
   }
 
   _load({
