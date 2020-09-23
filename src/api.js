@@ -34,7 +34,7 @@ export default class Api {
 
     cards.forEach((card) => {
       promises.push(this._getComments(card.id)
-        .then((comments) => { 
+        .then((comments) => {
           card.comments = comments;
 
           return card;
@@ -72,7 +72,17 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
     .then(Api.toJSON)
-    .then(Api.adaptToClient);
+    .then(FilmCardsModel.adaptToClient)
+    .then((adaptedCard) => {
+      return (
+        this._getComments(adaptedCard.id)
+          .then((comments) => {
+            adaptedCard.comments = comments;
+            return Promise.resolve(adaptedCard);
+          })
+      );
+    })
+    .catch((err) => window.console.log(err));
   }
 
   static toJSON(response) {

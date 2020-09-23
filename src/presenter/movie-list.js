@@ -20,7 +20,7 @@ const IdType = {
 };
 
 export default class MovieList {
-  constructor(boardContainer, filmCardsModel, filterModel) {
+  constructor(boardContainer, filmCardsModel, filterModel, api) {
     this._filmCardsModel = filmCardsModel;
     this._boardContainer = boardContainer;
     this._filterModel = filterModel;
@@ -29,6 +29,7 @@ export default class MovieList {
     this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
     this._filmCardPresenterObserver = {};
     this._isLoading = true;
+    this._api = api;
 
     this._filmSortingComponent = null;
     this._loadMoreButtonComponent = null;
@@ -185,7 +186,10 @@ export default class MovieList {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._filmCardsModel.updateFilmCard(updateType, update);
+        this._api.updateFilmCard(update)
+          .then((updatedCard) => {
+            this._filmCardsModel.updateFilmCard(updateType, updatedCard);
+          });
         break;
       case UserAction.DELETE_COMMENT:
         this._filmCardsModel.deleteComment(updateType, update);

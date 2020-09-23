@@ -50,7 +50,7 @@ const filterModel = new FilterModel();
 const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, filmCardsModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmCardsModel, handleStatisticClick, handleMenuItemClick);
 // Presenter
-const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel, filterModel);
+const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel, filterModel, api);
 
 // Render user profile
 userProfilePresenter.init();
@@ -68,6 +68,6 @@ api.getFilmCards()
     filterPresenter.unlock();
   })
   .catch((err) => {
-    console.log(err);
+    window.console.log(err);
     filmCardsModel.setFilmCards(UpdateType.INIT, []);
   });
