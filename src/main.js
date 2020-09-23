@@ -1,6 +1,6 @@
 // Imports
 import {render, remove} from './utils/render.js';
-import {generateFilmCard} from './mock/film-card-mock.js';
+import {UpdateType} from './const.js';
 import FilmNumberView from './view/film-number.js';
 import StatisticsView from './view/statistics.js';
 
@@ -14,7 +14,6 @@ import FilterModel from './model/filter.js';
 import Api from './api.js';
 
 // Constants
-const FILM_CARD_AMOUNT = 20;
 const AUTHORIZATION = `Basic qr866jdzbbs`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
 
@@ -40,36 +39,35 @@ const handleMenuItemClick = () => {
 const siteHeaderElement = document.querySelector(`.header`);
 const	siteMainElement = document.querySelector(`.main`);
 const	siteFooterElement = document.querySelector(`.footer`);
+const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`);
 
-// Array with Film cards data
-// User profile data
-const filmCards = new Array(FILM_CARD_AMOUNT).fill().map(generateFilmCard);
+// Server
 const api = new Api(END_POINT, AUTHORIZATION);
-
-api.getFilmCards().then((cards) => {
-  api.pullComments(cards).then((newCard) => {
-    window.console.log(newCard[0].comments);
-  });
-});
-
 // Models
 const filmCardsModel = new FilmCardsModel();
-filmCardsModel.setFilmCards(filmCards);
-
 const filterModel = new FilterModel();
+// View
+const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, filmCardsModel);
+const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmCardsModel, handleStatisticClick, handleMenuItemClick);
+// Presenter
+const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel, filterModel);
 
 // Render user profile
-const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, filmCardsModel);
 userProfilePresenter.init();
-
 // Render menu with filter block
-const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmCardsModel, handleStatisticClick, handleMenuItemClick);
 filterPresenter.init();
-
 // Render board
-const movieListPresenter = new MovieListPresenter(siteMainElement, filmCardsModel, filterModel);
 movieListPresenter.init();
 
-// Render number of films
-const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`);
-render(siteFooterStats, new FilmNumberView(filmCards), `beforeend`);
+api.getFilmCards()
+  .then((cards) => api.pullComments(cards))
+  .then((filmCards) => {
+    filmCardsModel.setFilmCards(UpdateType.INIT, filmCards);
+    // Render number of films
+    render(siteFooterStats, new FilmNumberView(filmCards), `beforeend`);
+    filterPresenter.unlock();
+  })
+  .catch((err) => {
+    console.log(err);
+    filmCardsModel.setFilmCards(UpdateType.INIT, []);
+  });

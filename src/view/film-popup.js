@@ -6,7 +6,6 @@ import he from 'he';
 
 // Create comments template
 const createCommentTemplate = (commentsArray) => {
-
   // Iterate throw copy of array with comments
   // Destructure variables as parameters
   // Replace array element with template
@@ -55,6 +54,7 @@ const createFilmDetailsPopup = (filmCard) => {
 
   const {title, rating, release, duration, poster, description, comments, ageRating, original, director, country, genres, writers, actors, isWatched, isFavorite, isListed, newComment} = filmCard;
 
+  const formattedRating = (rating.toString().length === 1) ? `${rating}.0` : rating;
   const writersList = writers.join(`, `);
   const actorsList = actors.join(`, `);
   const longReleaseDate = formatDate(release, `DD MMMM YYYY`);
@@ -83,9 +83,9 @@ const createFilmDetailsPopup = (filmCard) => {
       </div>
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
-          <img class="film-details__poster-img" src="./images/posters/${poster}" alt="${title}">
+          <img class="film-details__poster-img" src="${poster}" alt="${title}">
 
-          <p class="film-details__age">${ageRating}</p>
+          <p class="film-details__age">${ageRating}+</p>
         </div>
 
         <div class="film-details__info">
@@ -96,7 +96,7 @@ const createFilmDetailsPopup = (filmCard) => {
             </div>
 
             <div class="film-details__rating">
-              <p class="film-details__total-rating">${rating}</p>
+              <p class="film-details__total-rating">${formattedRating}</p>
             </div>
           </div>
 

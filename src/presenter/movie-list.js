@@ -1,15 +1,15 @@
-import FilmBoardView from '../view/film-board.js';
 import FilmCardPresenter from '../presenter/film-card.js';
+import FilmBoardView from '../view/film-board.js';
 import LoadMoreButtonView from '../view/load-more-button.js';
 import TopRatedView from '../view/top-rated.js';
 import MostCommentedView from '../view/most-commented.js';
 import NoFilmsView from '../view/no-films.js';
 import FilmSortingView from '../view/film-sorting.js';
+import LoadingView from '../view/loading.js';
 import {render, remove} from '../utils/render.js';
 import {SortType, UserAction, UpdateType, FILM_CARD_AMOUNT_PER_STEP} from '../const.js';
 import {sortByDate, sortByRating} from '../utils/film-cards.js';
 import {filter} from '../utils/filters.js';
-
 
 // Constants
 const TOP_FILM_CARD_AMOUNT = 2;
@@ -28,6 +28,7 @@ export default class MovieList {
     this._currentSortType = SortType.DEFAULT;
     this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
     this._filmCardPresenterObserver = {};
+    this._isLoading = true;
 
     this._filmSortingComponent = null;
     this._loadMoreButtonComponent = null;
@@ -38,6 +39,7 @@ export default class MovieList {
     this._topRatedComponent = new TopRatedView();
     this._mostCommentedComponent = new MostCommentedView();
     this._noFilmsComponent = new NoFilmsView();
+    this._loadingComponent = new LoadingView();
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -158,6 +160,10 @@ export default class MovieList {
     render(this._filmList, this._noFilmsComponent, `beforeend`);
   }
 
+  _renderLoading() {
+    render(this._filmList, this._loadingComponent, `beforeend`);
+  }
+
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
@@ -209,6 +215,11 @@ export default class MovieList {
         this._clearBoard({resetRenderedFilmCardsCount: true, resetSortType: true});
         this._renderBoard();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderBoard();
+        break;
     }
   }
 
@@ -248,6 +259,12 @@ export default class MovieList {
     const filmCards = this._getFilmCards();
     const filmCardsCount = filmCards.length;
 
+    if (this._isLoading) {
+      this._prepareEmptyBoard();
+      this._renderLoading();
+      return;
+    }
+
     if (filmCardsCount === 0) {
       this._prepareEmptyBoard();
       this._renderNoFilms(); // Render plug
@@ -271,6 +288,7 @@ export default class MovieList {
     remove(this._filmSortingComponent);
     remove(this._filmBoardComponent);
     remove(this._noFilmsComponent);
+    remove(this._loadingComponent);
 
     if (this._loadMoreButtonComponent) {
       remove(this._loadMoreButtonComponent);
