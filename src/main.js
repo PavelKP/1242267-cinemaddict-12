@@ -68,6 +68,6 @@ api.getFilmCards()
     filterPresenter.unlock();
   })
   .catch((err) => {
-    window.console.log(err);
+    window.console.error(err);
     filmCardsModel.setFilmCards(UpdateType.INIT, []);
   });

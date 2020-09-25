@@ -184,9 +184,10 @@ export default class MovieList {
   }
 
   _handleViewAction(actionType, updateType, update) {
+    const fallback = this._getFilmCards().filter((card) => card.id === update.id);
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._api.updateFilmCard(update)
+        this._api.updateFilmCard(update, ...fallback)
           .then((updatedCard) => {
             this._filmCardsModel.updateFilmCard(updateType, updatedCard);
           });

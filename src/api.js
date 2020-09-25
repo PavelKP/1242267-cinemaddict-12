@@ -1,4 +1,4 @@
-import FilmCardsModel from "./model/movies.js";
+import FilmCardsModel from './model/movies.js';
 
 const Method = {
   GET: `GET`,
@@ -15,6 +15,7 @@ export default class Api {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
+    this._comments = {};
   }
 
   getFilmCards() {
@@ -34,8 +35,9 @@ export default class Api {
 
     cards.forEach((card) => {
       promises.push(this._getComments(card.id)
-        .then((comments) => {
+        .then((comments) => { // Save comments in this._comments
           card.comments = comments;
+          this._comments[card.id] = comments;
 
           return card;
         }));
@@ -64,7 +66,7 @@ export default class Api {
       .catch(Api.catchError);
   }
 
-  updateFilmCard(card) {
+  updateFilmCard(card, fallback) {
     return this._load({
       url: `movies/${card.id}`,
       method: Method.PUT,
@@ -74,15 +76,44 @@ export default class Api {
     .then(Api.toJSON)
     .then(FilmCardsModel.adaptToClient)
     .then((adaptedCard) => {
-      return (
-        this._getComments(adaptedCard.id)
-          .then((comments) => {
-            adaptedCard.comments = comments;
-            return Promise.resolve(adaptedCard);
-          })
-      );
+      const oldComments = this._comments[card.id].slice();
+      const flags = card.comments.map((comment) => {
+        let flag;
+        for (const oldComment of oldComments) {
+          if (oldComment.id === comment.id) {
+            flag = true;
+            break;
+          }
+          flag = false;
+
+        }
+        return flag;
+      });
+      // If new comments don`t exist
+      // We don't ask sever for
+      if (flags.indexOf(false) === -1) {
+        return (
+          Promise.resolve(oldComments)
+            .then((comments) => {
+              adaptedCard.comments = comments;
+              return Promise.resolve(adaptedCard);
+            })
+        );
+      } else {
+        return (
+          this._getComments(adaptedCard.id)
+            .then((comments) => {
+              adaptedCard.comments = comments;
+              return Promise.resolve(adaptedCard);
+            })
+        );
+      }
+
     })
-    .catch((err) => window.console.log(err));
+    .catch((err) => {
+      window.console.error(err);
+      return Promise.resolve(fallback);
+    });
   }
 
   static toJSON(response) {

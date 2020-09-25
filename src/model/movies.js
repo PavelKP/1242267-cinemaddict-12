@@ -72,7 +72,7 @@ export default class Movies extends Observer {
   }
 
   static adaptCommentsToClient(commentsArray) {
-    const adaptedCommentsArray = commentsArray.map((commentObject) => {
+    return commentsArray.map((commentObject) => {
       const adaptedComment = Object.assign(
           {},
           commentObject,
@@ -91,8 +91,6 @@ export default class Movies extends Observer {
 
       return adaptedComment;
     });
-
-    return adaptedCommentsArray;
   }
 
   static adaptCardToServer(card) {
@@ -110,7 +108,8 @@ export default class Movies extends Observer {
     (card.watchingDate)
       ? new Date(card.watchingDate)
       : card.watchingDate;
-    const adaptedCard = Object.assign(
+
+    return Object.assign(
         {},
         {
           /* eslint camelcase: ["error", {properties: "never"}]*/
@@ -140,7 +139,5 @@ export default class Movies extends Observer {
             favorite: card.isFavorite,
           }
         });
-
-    return adaptedCard;
   }
 }
