@@ -221,7 +221,7 @@ export default class MovieList {
         break;
       case UpdateType.PATCH_CUSTOM:
         const filterType = this._filterModel.getFilter();
-        if (this._cardPropertyChanged === filterType) {
+        if (this._cardPropertyChanged[filterType] === `changed`) {
           // MINOR update
           this._clearBoard();
           this._renderBoard();
