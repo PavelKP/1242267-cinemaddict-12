@@ -280,11 +280,10 @@ export default class FilmCardPresenter {
   }
 
   _toggleProperty(property) {
-    if (this._changedProperties[property] === `changed`) {
-      this._changedProperties[property] = null;
-    } else {
-      this._changedProperties[property] = `changed`;
-    }
+    this._changedProperties[property] =
+    (this._changedProperties[property] === `changed`)
+      ? null
+      : `changed`;
   }
 
   _setCurrentProperties() {
