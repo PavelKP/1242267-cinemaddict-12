@@ -184,6 +184,13 @@ export default class MovieList {
     }
   }
 
+  _changeViewStateByProperty(prefix, update) {
+    const clearId = String(update.id).match(/(\d+)$/g);
+    if (this._filmCardPresenterObserver.hasOwnProperty([prefix + clearId])) {
+      this._filmCardPresenterObserver[prefix + clearId].setViewState(CardPresenterViewState.DELETING, update.deletedCommentId);
+    }
+  }
+
   _handleViewAction(actionType, updateType, update, property) {
     const fallback = this._getFilmCards().filter((card) => card.id === update.id);
     this._cardPropertyChanged = property;
@@ -202,8 +209,9 @@ export default class MovieList {
           });
         break;
       case UserAction.DELETE_COMMENT:
-        this._filmCardPresenterObserver[update.id]
-          .setViewState(CardPresenterViewState.DELETING, update.deletedCommentId);
+        this._changeViewStateByProperty(``, update);
+        this._changeViewStateByProperty(IdType.MOST_COMMENTED, update);
+        this._changeViewStateByProperty(IdType.TOP_RATED, update);
 
         this._api.deleteComment(update)
         .then(() => {
