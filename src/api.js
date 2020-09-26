@@ -77,23 +77,17 @@ export default class Api {
     .then(FilmCardsModel.adaptToClient)
     .then((adaptedCard) => {
       const oldComments = this._comments[card.id].slice();
-      const flags = card.comments.map((comment) => {
-        let flag;
-        for (const oldComment of oldComments) {
-          if (oldComment.id === comment.id) {
-            flag = true;
-            break;
-          }
-          flag = false;
-
-        }
-        return flag;
+      const flags = card.comments.map((newComment) => {
+        return oldComments.findIndex((oldComment) => {
+          return oldComment.id === newComment.id;
+        });
       });
-      // If new comments don`t exist
-      // We don't ask sever for
-      if (flags.indexOf(false) === -1) {
+
+      // If new comments exist
+      // We ask server for
+      if (flags.includes(-1)) {
         return (
-          Promise.resolve(oldComments)
+          this._getComments(adaptedCard.id)
             .then((comments) => {
               adaptedCard.comments = comments;
               return Promise.resolve(adaptedCard);
@@ -101,7 +95,7 @@ export default class Api {
         );
       } else {
         return (
-          this._getComments(adaptedCard.id)
+          Promise.resolve(oldComments)
             .then((comments) => {
               adaptedCard.comments = comments;
               return Promise.resolve(adaptedCard);
