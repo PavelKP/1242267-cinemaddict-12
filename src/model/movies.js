@@ -140,4 +140,15 @@ export default class Movies extends Observer {
           }
         });
   }
+
+  static adaptLocalCommentToServer(newComment) {
+    return Object.assign(
+        {},
+        {
+          comment: newComment.text,
+          emotion: newComment.emoji,
+          date: newComment.date
+        }
+    );
+  }
 }
