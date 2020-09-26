@@ -195,6 +195,13 @@ export default class MovieList {
             this._filmCardsModel.updateFilmCard(updateType, updatedCard);
           });
         break;
+      case UserAction.ADD_COMMENT:
+        console.log(update);
+        this._api.addComment(update)
+          .then((updatedCard) => {
+            this._filmCardsModel.updateFilmCard(updateType, updatedCard);
+          });
+        break;
       case UserAction.DELETE_COMMENT:
         this._filmCardsModel.deleteComment(updateType, update);
         break;

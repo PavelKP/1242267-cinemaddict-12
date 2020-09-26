@@ -33,6 +33,15 @@ export default class Movies extends Observer {
   }
 
   static adaptToClient(card) {
+    card = card.hasOwnProperty(`movie`)
+      ? (
+        Object.assign(
+            {},
+            card.movie
+        )
+      )
+      : card;
+
     const adaptedCard = Object.assign(
         {},
         card,

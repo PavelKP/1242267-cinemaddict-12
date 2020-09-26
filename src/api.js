@@ -110,7 +110,10 @@ export default class Api {
   }
 
 
-  addComment(comment, cardId) {
+  addComment(comment) {
+    const cardId = comment.cardId;
+    delete comment.cardId;
+
     return this._load({
       url: `comments/${cardId}`,
       method: Method.POST,
@@ -133,13 +136,13 @@ export default class Api {
         //return Promise.resolve(fallback); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       });
   }
-/*
-  deleteComment(card) {
+
+  deleteComment(commentId) {
     return this._load({
-      url: `tasks/${task.id}`,
+      url: `comments/${commentId}`,
       method: Method.DELETE
     });
-  }*/
+  }
 
   static toJSON(response) {
     return response.json();

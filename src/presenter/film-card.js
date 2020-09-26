@@ -257,18 +257,12 @@ export default class FilmCardPresenter {
       return;
     }
 
-    const updatedCommentsArray = Object.assign({}, this._card).comments;
-    updatedCommentsArray.push(newComment);
-
     this._changeData(
-        UserAction.UPDATE_FILM_CARD,
+        UserAction.ADD_COMMENT,
         UpdateType.PATCH,
         Object.assign(
             {},
-            this._card,
-            {
-              comments: updatedCommentsArray
-            }
+            newComment
         )
     );
   }
