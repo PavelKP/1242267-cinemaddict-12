@@ -240,13 +240,16 @@ export default class FilmCardPresenter {
     comments.splice(comments.findIndex((comment) => String(comment.id) === commentId), 1);
 
     this._changeData(
-        UserAction.UPDATE_FILM_CARD,
+        UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
         Object.assign(
             {},
             this._card,
             {
               comments,
+            },
+            {
+              deletedCommentId: commentId
             }
         )
     );

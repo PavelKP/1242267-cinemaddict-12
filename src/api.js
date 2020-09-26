@@ -137,9 +137,12 @@ export default class Api {
       });
   }
 
-  deleteComment(commentId) {
+  deleteComment(card) {
+    const deletedCommentId = card.deletedCommentId;
+    delete card.deletedCommentId;
+
     return this._load({
-      url: `comments/${commentId}`,
+      url: `comments/${deletedCommentId}`,
       method: Method.DELETE
     });
   }
