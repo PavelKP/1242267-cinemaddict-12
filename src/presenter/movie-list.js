@@ -1,15 +1,15 @@
-import FilmBoardView from '../view/film-board.js';
 import FilmCardPresenter from '../presenter/film-card.js';
+import FilmBoardView from '../view/film-board.js';
 import LoadMoreButtonView from '../view/load-more-button.js';
 import TopRatedView from '../view/top-rated.js';
 import MostCommentedView from '../view/most-commented.js';
 import NoFilmsView from '../view/no-films.js';
 import FilmSortingView from '../view/film-sorting.js';
-import {render, remove} from '../utils/render.js';
+import LoadingView from '../view/loading.js';
+import {render, remove, replace} from '../utils/render.js';
 import {SortType, UserAction, UpdateType, FILM_CARD_AMOUNT_PER_STEP} from '../const.js';
 import {sortByDate, sortByRating} from '../utils/film-cards.js';
 import {filter} from '../utils/filters.js';
-
 
 // Constants
 const TOP_FILM_CARD_AMOUNT = 2;
@@ -20,7 +20,7 @@ const IdType = {
 };
 
 export default class MovieList {
-  constructor(boardContainer, filmCardsModel, filterModel) {
+  constructor(boardContainer, filmCardsModel, filterModel, api) {
     this._filmCardsModel = filmCardsModel;
     this._boardContainer = boardContainer;
     this._filterModel = filterModel;
@@ -28,16 +28,20 @@ export default class MovieList {
     this._currentSortType = SortType.DEFAULT;
     this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
     this._filmCardPresenterObserver = {};
+    this._isLoading = true;
+    this._api = api;
 
     this._filmSortingComponent = null;
     this._loadMoreButtonComponent = null;
     this._filmList = null;
     this.destroyed = false;
+    this._cardPropertyChanged = false;
 
     this._filmBoardComponent = new FilmBoardView();
     this._topRatedComponent = new TopRatedView();
     this._mostCommentedComponent = new MostCommentedView();
     this._noFilmsComponent = new NoFilmsView();
+    this._loadingComponent = new LoadingView();
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -158,6 +162,10 @@ export default class MovieList {
     render(this._filmList, this._noFilmsComponent, `beforeend`);
   }
 
+  _renderLoading() {
+    render(this._filmList, this._loadingComponent, `beforeend`);
+  }
+
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
@@ -176,15 +184,28 @@ export default class MovieList {
     }
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, update, property) {
+    const fallback = this._getFilmCards().filter((card) => card.id === update.id);
+    this._cardPropertyChanged = property;
+
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._filmCardsModel.updateFilmCard(updateType, update);
+        this._api.updateFilmCard(update, ...fallback)
+          .then((updatedCard) => {
+            this._filmCardsModel.updateFilmCard(updateType, updatedCard);
+          });
         break;
       case UserAction.DELETE_COMMENT:
         this._filmCardsModel.deleteComment(updateType, update);
         break;
     }
+  }
+
+  _updateSingleCardAndPopup(data) {
+    const clearId = String(data.id).match(/(\d+)$/g);
+    this._runInitByProperty(clearId, data);
+    this._runInitByProperty(IdType.TOP_RATED + clearId, data);
+    this._runInitByProperty(IdType.MOST_COMMENTED + clearId, data);
   }
 
   _handleModelEvent(updateType, data) {
@@ -196,10 +217,21 @@ export default class MovieList {
     switch (updateType) {
       case UpdateType.PATCH:
         // Only update single film card and popup
-        const clearId = String(data.id).match(/(\d+)$/g);
-        this._runInitByProperty(clearId, data);
-        this._runInitByProperty(IdType.TOP_RATED + clearId, data);
-        this._runInitByProperty(IdType.MOST_COMMENTED + clearId, data);
+        this._updateSingleCardAndPopup(data);
+        break;
+      case UpdateType.PATCH_CUSTOM:
+        const filterType = this._filterModel.getFilter();
+        if (this._cardPropertyChanged[filterType] === `changed`) {
+          // MINOR update
+          this._clearBoard();
+          this._renderBoard();
+        } else {
+          // Update single film card, popup, filter
+          this._updateSingleCardAndPopup(data);
+
+          this._renderSort(); // Render sorting block
+          this._cardPropertyChanged = null;
+        }
         break;
       case UpdateType.MINOR:
         this._clearBoard();
@@ -209,18 +241,26 @@ export default class MovieList {
         this._clearBoard({resetRenderedFilmCardsCount: true, resetSortType: true});
         this._renderBoard();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderBoard();
+        break;
     }
   }
 
   _renderSort() {
-    if (this._filmSortingComponent) {
-      this._filmSortingComponent = null;
-    }
+    const prevSortingComponent = this._filmSortingComponent;
 
     this._filmSortingComponent = new FilmSortingView(this._currentSortType);
     this._filmSortingComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
 
-    render(this._boardContainer, this._filmSortingComponent, `beforeend`); // Render sorting block
+    if (prevSortingComponent) {
+      replace(this._filmSortingComponent, prevSortingComponent);
+      remove(prevSortingComponent);
+    } else {
+      render(this._boardContainer, this._filmSortingComponent, `beforeend`); // Render sorting block
+    }
   }
 
   _clearFilmList() {
@@ -248,6 +288,12 @@ export default class MovieList {
     const filmCards = this._getFilmCards();
     const filmCardsCount = filmCards.length;
 
+    if (this._isLoading) {
+      this._prepareEmptyBoard();
+      this._renderLoading();
+      return;
+    }
+
     if (filmCardsCount === 0) {
       this._prepareEmptyBoard();
       this._renderNoFilms(); // Render plug
@@ -268,9 +314,9 @@ export default class MovieList {
       .forEach((presenter) => presenter.destroy());
     this._filmCardPresenterObserver = {};
 
-    remove(this._filmSortingComponent);
     remove(this._filmBoardComponent);
     remove(this._noFilmsComponent);
+    remove(this._loadingComponent);
 
     if (this._loadMoreButtonComponent) {
       remove(this._loadMoreButtonComponent);

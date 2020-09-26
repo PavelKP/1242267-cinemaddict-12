@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 
 // Convert date to year only
 const formatYear = (dateObject) => {

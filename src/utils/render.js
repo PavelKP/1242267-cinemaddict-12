@@ -1,4 +1,4 @@
-import Abstract from "../view/abstract";
+import Abstract from '../view/abstract';
 
 // Render DOM element
 const render = (container, element, place) => {

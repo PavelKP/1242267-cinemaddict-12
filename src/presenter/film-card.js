@@ -1,7 +1,7 @@
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsPopupView from '../view/film-popup.js';
 import {render, replace, remove} from '../utils/render.js';
-import {UserAction, UpdateType} from '../const.js';
+import {UserAction, UpdateType, FilterType} from '../const.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -19,6 +19,8 @@ export default class FilmCardPresenter {
     this._popupComponent = null;
     this._mode = Mode.DEFAULT;
     this._controlFlag = false;
+    this._changedProperties = null;
+
 
     // Bind handlers
     this._showPopup = this._showPopup.bind(this);
@@ -95,6 +97,7 @@ export default class FilmCardPresenter {
     // Set handler on ESC down
     document.addEventListener(`keydown`, this._onEscKeyDown);
 
+    this._setCurrentProperties(this._card); // Collect pushed buttons
   }
 
   // Close popup
@@ -108,14 +111,16 @@ export default class FilmCardPresenter {
     if (this._controlFlag) {
       this._changeData(
           UserAction.UPDATE_FILM_CARD,
-          UpdateType.MINOR,
+          UpdateType.PATCH_CUSTOM,
           Object.assign(
               {},
               this._card
-          )
+          ),
+          this._changedProperties
       );
     }
     this._controlFlag = false;
+    this._changedProperties = null;
   }
 
   // Close popup on ESC
@@ -126,16 +131,20 @@ export default class FilmCardPresenter {
   }
 
   _handleWatchlistClick() {
+    this._setCurrentProperties(this._card);
+    this._toggleProperty(FilterType.WATCHLIST);
+
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH_CUSTOM,
         Object.assign(
             {},
             this._card,
             {
               isListed: !this._card.isListed,
             }
-        )
+        ),
+        this._changedProperties
     );
   }
 
@@ -152,12 +161,16 @@ export default class FilmCardPresenter {
         )
     );
     this._controlFlag = true;
+    this._toggleProperty(FilterType.WATCHLIST);
   }
 
   _handleHistoryClick() {
+    this._setCurrentProperties(this._card);
+    this._toggleProperty(FilterType.HISTORY);
+
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH_CUSTOM,
         Object.assign(
             {},
             this._card,
@@ -165,7 +178,8 @@ export default class FilmCardPresenter {
               isWatched: !this._card.isWatched,
               watchingDate: new Date()
             }
-        )
+        ),
+        this._changedProperties
     );
   }
 
@@ -183,19 +197,24 @@ export default class FilmCardPresenter {
         )
     );
     this._controlFlag = true;
+    this._toggleProperty(FilterType.HISTORY);
   }
 
   _handleFavoriteClick() {
+    this._setCurrentProperties(this._card);
+    this._toggleProperty(FilterType.FAVORITES);
+
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH_CUSTOM,
         Object.assign(
             {},
             this._card,
             {
               isFavorite: !this._card.isFavorite,
             }
-        )
+        ),
+        this._changedProperties
     );
   }
 
@@ -212,8 +231,8 @@ export default class FilmCardPresenter {
         )
     );
     this._controlFlag = true;
+    this._toggleProperty(FilterType.FAVORITES);
   }
-
 
   _handleCommentDeleteClick(element) {
     const commentId = element.dataset.commentId;
@@ -258,5 +277,21 @@ export default class FilmCardPresenter {
     if (this._mode !== Mode.DEFAULT) {
       this._closePopup();
     }
+  }
+
+  _toggleProperty(property) {
+    this._changedProperties[property] =
+    (this._changedProperties[property] === `changed`)
+      ? null
+      : `changed`;
+  }
+
+  _setCurrentProperties() {
+    this._changedProperties = {
+      favorites: null,
+      history: null,
+      watchlist: null,
+      all: null
+    };
   }
 }

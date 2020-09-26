@@ -9,6 +9,7 @@ export default class Filter {
     this._filterModel = filterModel;
     this._filmCardsModel = filmCardsModel;
     this._currentFilter = null;
+    this._isOpen = false;
 
     this._filterComponent = null;
 
@@ -29,9 +30,12 @@ export default class Filter {
     const prevFilterComponent = this._filterComponent;
 
     this._filterComponent = new FilterView(filters, this._currentFilter);
-    this._filterComponent.setFilterTypeClickHandler(this._handleFilterTypeChange);
-    this._filterComponent.setStatisticClickHandler(this._handleStatisticClick);
-    this._filterComponent.setMenuItemClickHandler(this._handleMenuItemClick);
+
+    if (this._isOpen) {
+      this._filterComponent.setFilterTypeClickHandler(this._handleFilterTypeChange);
+      this._filterComponent.setStatisticClickHandler(this._handleStatisticClick);
+      this._filterComponent.setMenuItemClickHandler(this._handleMenuItemClick);
+    }
 
     if (!prevFilterComponent) {
       render(this._filterContainer, this._filterComponent, `beforeend`);
@@ -42,7 +46,13 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
+  unlock() {
+    this._isOpen = true;
+    this.init();
+  }
+
   _handleModelEvent() {
+    this._isOpen = true;
     this.init();
   }
 

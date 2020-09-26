@@ -14,8 +14,10 @@ export const UserAction = {
 
 export const UpdateType = {
   PATCH: `PATCH`,
+  PATCH_CUSTOM: `PATCH_CUSTOM`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const FilterType = {
