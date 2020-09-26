@@ -1,5 +1,4 @@
 import {EMOJI_FILE_NAMES} from '../const.js';
-import {generateId} from '../utils/common.js';
 import {formatDate, formatDuration} from '../utils/film-cards.js';
 import SmartView from './smart.js';
 import he from 'he';
