@@ -3,7 +3,8 @@ import FilmCardsModel from './model/movies.js';
 const Method = {
   GET: `GET`,
   PUT: `PUT`,
-  POST: `POST`
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const SuccessHTTPStatusRange = {
@@ -105,6 +106,41 @@ export default class Api {
     .catch((err) => {
       window.console.error(err);
       return Promise.resolve(fallback);
+    });
+  }
+
+
+  addComment(comment) {
+    const cardId = comment.cardId;
+    delete comment.cardId;
+
+    return this._load({
+      url: `comments/${cardId}`,
+      method: Method.POST,
+      body: JSON.stringify(FilmCardsModel.adaptLocalCommentToServer(comment)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON)
+      .then(FilmCardsModel.adaptToClient)
+      .then((adaptedCard) => {
+        return (
+          this._getComments(adaptedCard.id)
+            .then((comments) => {
+              adaptedCard.comments = comments;
+              return Promise.resolve(adaptedCard);
+            })
+        );
+      })
+      .catch((err) => {
+        window.console.error(err);
+        //return Promise.resolve(fallback); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      });
+  }
+
+  deleteComment(commentId) {
+    return this._load({
+      url: `comments/${commentId}`,
+      method: Method.DELETE
     });
   }
 

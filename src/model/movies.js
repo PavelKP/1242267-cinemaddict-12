@@ -33,6 +33,15 @@ export default class Movies extends Observer {
   }
 
   static adaptToClient(card) {
+    card = card.hasOwnProperty(`movie`)
+      ? (
+        Object.assign(
+            {},
+            card.movie
+        )
+      )
+      : card;
+
     const adaptedCard = Object.assign(
         {},
         card,
@@ -139,5 +148,16 @@ export default class Movies extends Observer {
             favorite: card.isFavorite,
           }
         });
+  }
+
+  static adaptLocalCommentToServer(newComment) {
+    return Object.assign(
+        {},
+        {
+          comment: newComment.text,
+          emotion: newComment.emoji,
+          date: newComment.date
+        }
+    );
   }
 }

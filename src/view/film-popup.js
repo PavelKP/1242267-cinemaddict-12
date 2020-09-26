@@ -255,9 +255,9 @@ export default class FilmDetailsPopup extends SmartView {
       const newComment = Object.assign(
           {},
           this._data.newComment,
-          {id: generateId(),
-            author: `Anonymous`,
-            date: new Date()}
+          {
+            date: new Date()
+          }
       );
 
       this._callback.commentSendHandler(newComment);
@@ -306,11 +306,10 @@ export default class FilmDetailsPopup extends SmartView {
         card,
         {
           newComment: {
-            id: null,
             text: ``,
             emoji: null,
-            author: null,
             date: null,
+            cardId: card.id
           }
         }
     );
