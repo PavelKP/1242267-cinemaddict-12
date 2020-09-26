@@ -6,7 +6,7 @@ import MostCommentedView from '../view/most-commented.js';
 import NoFilmsView from '../view/no-films.js';
 import FilmSortingView from '../view/film-sorting.js';
 import LoadingView from '../view/loading.js';
-import {render, remove} from '../utils/render.js';
+import {render, remove, replace} from '../utils/render.js';
 import {SortType, UserAction, UpdateType, FILM_CARD_AMOUNT_PER_STEP} from '../const.js';
 import {sortByDate, sortByRating} from '../utils/film-cards.js';
 import {filter} from '../utils/filters.js';
@@ -35,6 +35,7 @@ export default class MovieList {
     this._loadMoreButtonComponent = null;
     this._filmList = null;
     this.destroyed = false;
+    this._cardPropertyChanged = false;
 
     this._filmBoardComponent = new FilmBoardView();
     this._topRatedComponent = new TopRatedView();
@@ -183,8 +184,10 @@ export default class MovieList {
     }
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, update, property) {
     const fallback = this._getFilmCards().filter((card) => card.id === update.id);
+    this._cardPropertyChanged = property;
+
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
         this._api.updateFilmCard(update, ...fallback)
@@ -198,6 +201,13 @@ export default class MovieList {
     }
   }
 
+  _updateSingleCardAndPopup(data) {
+    const clearId = String(data.id).match(/(\d+)$/g);
+    this._runInitByProperty(clearId, data);
+    this._runInitByProperty(IdType.TOP_RATED + clearId, data);
+    this._runInitByProperty(IdType.MOST_COMMENTED + clearId, data);
+  }
+
   _handleModelEvent(updateType, data) {
 
     if (data === `stats`) {
@@ -207,10 +217,21 @@ export default class MovieList {
     switch (updateType) {
       case UpdateType.PATCH:
         // Only update single film card and popup
-        const clearId = String(data.id).match(/(\d+)$/g);
-        this._runInitByProperty(clearId, data);
-        this._runInitByProperty(IdType.TOP_RATED + clearId, data);
-        this._runInitByProperty(IdType.MOST_COMMENTED + clearId, data);
+        this._updateSingleCardAndPopup(data);
+        break;
+      case UpdateType.PATCH_CUSTOM:
+        const filterType = this._filterModel.getFilter();
+        if (this._cardPropertyChanged === filterType) {
+          // MINOR update
+          this._clearBoard();
+          this._renderBoard();
+        } else {
+          // Update single film card, popup, filter
+          this._updateSingleCardAndPopup(data);
+
+          this._renderSort(); // Render sorting block
+          this._cardPropertyChanged = null;
+        }
         break;
       case UpdateType.MINOR:
         this._clearBoard();
@@ -229,14 +250,17 @@ export default class MovieList {
   }
 
   _renderSort() {
-    if (this._filmSortingComponent) {
-      this._filmSortingComponent = null;
-    }
+    const prevSortingComponent = this._filmSortingComponent;
 
     this._filmSortingComponent = new FilmSortingView(this._currentSortType);
     this._filmSortingComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
 
-    render(this._boardContainer, this._filmSortingComponent, `beforeend`); // Render sorting block
+    if (prevSortingComponent) {
+      replace(this._filmSortingComponent, prevSortingComponent);
+      remove(prevSortingComponent);
+    } else {
+      render(this._boardContainer, this._filmSortingComponent, `beforeend`); // Render sorting block
+    }
   }
 
   _clearFilmList() {
@@ -290,7 +314,6 @@ export default class MovieList {
       .forEach((presenter) => presenter.destroy());
     this._filmCardPresenterObserver = {};
 
-    remove(this._filmSortingComponent);
     remove(this._filmBoardComponent);
     remove(this._noFilmsComponent);
     remove(this._loadingComponent);

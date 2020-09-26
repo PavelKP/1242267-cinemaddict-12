@@ -77,11 +77,9 @@ export default class Api {
     .then(FilmCardsModel.adaptToClient)
     .then((adaptedCard) => {
       const oldComments = this._comments[card.id].slice();
-      const flags = card.comments.map((newComment) => {
-        return oldComments.findIndex((oldComment) => {
-          return oldComment.id === newComment.id;
-        });
-      });
+      const flags = card.comments.map((newComment) =>
+        oldComments.findIndex((oldComment) => oldComment.id === newComment.id)
+      );
 
       // If new comments exist
       // We ask server for

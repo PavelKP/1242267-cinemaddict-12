@@ -1,7 +1,7 @@
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsPopupView from '../view/film-popup.js';
 import {render, replace, remove} from '../utils/render.js';
-import {UserAction, UpdateType} from '../const.js';
+import {UserAction, UpdateType, FilterType} from '../const.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -128,14 +128,15 @@ export default class FilmCardPresenter {
   _handleWatchlistClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH_CUSTOM,
         Object.assign(
             {},
             this._card,
             {
               isListed: !this._card.isListed,
             }
-        )
+        ),
+        FilterType.WATCHLIST
     );
   }
 
@@ -157,7 +158,7 @@ export default class FilmCardPresenter {
   _handleHistoryClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH_CUSTOM,
         Object.assign(
             {},
             this._card,
@@ -165,7 +166,8 @@ export default class FilmCardPresenter {
               isWatched: !this._card.isWatched,
               watchingDate: new Date()
             }
-        )
+        ),
+        FilterType.HISTORY
     );
   }
 
@@ -188,14 +190,15 @@ export default class FilmCardPresenter {
   _handleFavoriteClick() {
     this._changeData(
         UserAction.UPDATE_FILM_CARD,
-        UpdateType.MINOR,
+        UpdateType.PATCH_CUSTOM,
         Object.assign(
             {},
             this._card,
             {
               isFavorite: !this._card.isFavorite,
             }
-        )
+        ),
+        FilterType.FAVORITES
     );
   }
 
@@ -213,7 +216,6 @@ export default class FilmCardPresenter {
     );
     this._controlFlag = true;
   }
-
 
   _handleCommentDeleteClick(element) {
     const commentId = element.dataset.commentId;
