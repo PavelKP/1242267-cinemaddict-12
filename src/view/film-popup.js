@@ -4,7 +4,7 @@ import SmartView from './smart.js';
 import he from 'he';
 
 // Create comments template
-const createCommentTemplate = (commentsArray) => {
+const createCommentTemplate = (commentsArray, deletedCommentId) => {
   // Iterate throw copy of array with comments
   // Destructure variables as parameters
   // Replace array element with template
@@ -13,6 +13,7 @@ const createCommentTemplate = (commentsArray) => {
     const commentDate = formatDate(date, `YYYY/MM/DD HH:mm`);
     const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"/>` : ``;
     const encodedText = he.encode(text);
+    const deleteState = (deletedCommentId === id) ? `deleting...` : `delete`;
 
     return (`
     <li class="film-details__comment">
@@ -24,7 +25,7 @@ const createCommentTemplate = (commentsArray) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>
-          <button class="film-details__comment-delete" data-comment-id = "${id}">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id = "${id}">${deleteState}</button>
         </p>
       </div>
     </li>
@@ -51,7 +52,7 @@ const createEmojiList = (fileNames, currentEmojiName) => {
 
 const createFilmDetailsPopup = (filmCard) => {
 
-  const {title, rating, release, duration, poster, description, comments, ageRating, original, director, country, genres, writers, actors, isWatched, isFavorite, isListed, newComment} = filmCard;
+  const {title, rating, release, duration, poster, description, comments, ageRating, original, director, country, genres, writers, actors, isWatched, isFavorite, isListed, newComment, isDisabled, deletedCommentId} = filmCard;
 
   const formattedRating = (rating.toString().length === 1) ? `${rating}.0` : rating;
   const writersList = writers.join(`, `);
@@ -66,12 +67,13 @@ const createFilmDetailsPopup = (filmCard) => {
   const watchedChecked = isWatched ? `checked` : ``;
   const isFavoriteChecked = isFavorite ? `checked` : ``;
 
-  const commentsTemplate = createCommentTemplate(comments);
+  const commentsTemplate = createCommentTemplate(comments, deletedCommentId);
   const commentsAmount = comments.length;
 
   const newEmojiName = newComment.emoji;
   const newEmojiTemplate = newEmojiName ? `<img src="./images/emoji/${newEmojiName}.png" width="55" height="55" alt="${newEmojiName}"/>` : ``;
   const newCommentText = newComment.text ? decodeURIComponent(newComment.text) : ``;
+  const disabled = isDisabled ? `disabled` : ``;
 
   return (
     `<section class="film-details">
@@ -164,7 +166,7 @@ const createFilmDetailsPopup = (filmCard) => {
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newCommentText}</textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${disabled}>${newCommentText}</textarea>
           </label>
 
           <div class="film-details__emoji-list">
@@ -310,6 +312,10 @@ export default class FilmDetailsPopup extends SmartView {
             date: null,
             cardId: card.id
           }
+        },
+        {
+          isDisabled: false,
+          deletedCommentId: null
         }
     );
   }

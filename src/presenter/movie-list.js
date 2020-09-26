@@ -1,4 +1,4 @@
-import FilmCardPresenter from '../presenter/film-card.js';
+import FilmCardPresenter, {State as CardPresenterViewState} from '../presenter/film-card.js';
 import FilmBoardView from '../view/film-board.js';
 import LoadMoreButtonView from '../view/load-more-button.js';
 import TopRatedView from '../view/top-rated.js';
@@ -202,6 +202,9 @@ export default class MovieList {
           });
         break;
       case UserAction.DELETE_COMMENT:
+        this._filmCardPresenterObserver[update.id]
+          .setViewState(CardPresenterViewState.DELETING, update.deletedCommentId);
+
         this._api.deleteComment(update)
         .then(() => {
           this._filmCardsModel.deleteComment(updateType, update);

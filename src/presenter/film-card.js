@@ -7,6 +7,13 @@ const Mode = {
   DEFAULT: `DEFAULT`,
   POPUP: `POPUP`,
 };
+
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};
+
 const MIN_COMMENT_LENGTH = 3;
 
 export default class FilmCardPresenter {
@@ -290,5 +297,33 @@ export default class FilmCardPresenter {
       watchlist: null,
       all: null
     };
+  }
+
+  setViewState(state, deletedCommentId) {
+    const resetFormState = () => {
+      this._popupComponent.updateData({
+        isDisabled: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._popupComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._popupComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+          deletedCommentId
+        });
+        break;
+      case State.ABORTING:
+        this._popupComponent.shake(resetFormState);
+        break;
+    }
   }
 }
