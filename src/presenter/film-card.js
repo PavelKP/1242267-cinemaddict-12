@@ -303,7 +303,7 @@ export default class FilmCardPresenter {
     const resetFormState = () => {
       this._popupComponent.updateData({
         isDisabled: false,
-        isDeleting: false
+        deletedCommentId: null
       });
     };
 

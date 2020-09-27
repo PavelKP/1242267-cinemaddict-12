@@ -184,16 +184,20 @@ export default class MovieList {
     }
   }
 
-  _changeViewStateByProperty(prefix, update, state) {
-    const clearId = String(update.id || update.cardId).match(/(\d+)$/g);
-    if (this._filmCardPresenterObserver.hasOwnProperty([prefix + clearId])) {
-      this._filmCardPresenterObserver[prefix + clearId].setViewState(state, update.deletedCommentId);
-    }
+  _changeViewStateByProperty(update, state, clearId) {
+    const prefixes = [``, IdType.TOP_RATED, IdType.MOST_COMMENTED];
+
+    prefixes.forEach((prefix) => {
+      if (this._filmCardPresenterObserver.hasOwnProperty([prefix + clearId])) {
+        this._filmCardPresenterObserver[prefix + clearId].setViewState(state, update.deletedCommentId);
+      }
+    });
   }
 
   _handleViewAction(actionType, updateType, update, property) {
     const fallback = this._getFilmCards().filter((card) => card.id === update.id);
     this._cardPropertyChanged = property;
+    const clearId = String(update.id || update.cardId).match(/(\d+)$/g);
 
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
@@ -203,19 +207,18 @@ export default class MovieList {
           });
         break;
       case UserAction.ADD_COMMENT:
-        this._changeViewStateByProperty(``, update, CardPresenterViewState.SAVING);
-        this._changeViewStateByProperty(IdType.MOST_COMMENTED, update, CardPresenterViewState.SAVING);
-        this._changeViewStateByProperty(IdType.TOP_RATED, update, CardPresenterViewState.SAVING);
+        this._changeViewStateByProperty(update, CardPresenterViewState.SAVING, clearId);
 
         this._api.addComment(update)
           .then((updatedCard) => {
             this._filmCardsModel.updateFilmCard(updateType, updatedCard);
+          })
+          .catch(() => {
+            this._changeViewStateByProperty(update, CardPresenterViewState.ABORTING, clearId);
           });
         break;
       case UserAction.DELETE_COMMENT:
-        this._changeViewStateByProperty(``, update, CardPresenterViewState.DELETING);
-        this._changeViewStateByProperty(IdType.MOST_COMMENTED, update, CardPresenterViewState.DELETING);
-        this._changeViewStateByProperty(IdType.TOP_RATED, update, CardPresenterViewState.DELETING);
+        this._changeViewStateByProperty(update, CardPresenterViewState.DELETING, clearId);
 
         this._api.deleteComment(update)
         .then(() => {

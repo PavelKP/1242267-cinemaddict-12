@@ -3,6 +3,8 @@ import {formatDate, formatDuration} from '../utils/film-cards.js';
 import SmartView from './smart.js';
 import he from 'he';
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 // Create comments template
 const createCommentTemplate = (commentsArray, deletedCommentId) => {
   // Iterate throw copy of array with comments
@@ -341,5 +343,14 @@ export default class FilmDetailsPopup extends SmartView {
     this.updateData(
         FilmDetailsPopup.parseCardToData(card)
     );
+  }
+
+  shake(callback) {
+    this.getElement().querySelector(`form`)
+      .style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this.getElement().style.animation = ``;
+      callback();
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
