@@ -9,12 +9,12 @@ export default class Filter extends Observer {
     this._renderedFilmCards = null;
   }
 
-  setFilter(updateType, filter) {
+  set(updateType, filter) {
     this._activeFilter = filter;
     this._notify(updateType, filter);
   }
 
-  getFilter() {
+  get() {
     return this._activeFilter;
   }
 }

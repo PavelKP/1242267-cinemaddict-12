@@ -1,17 +1,23 @@
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsPopupView from '../view/film-popup.js';
 import {render, replace, remove} from '../utils/render.js';
-import {UserAction, UpdateType, FilterType} from '../const.js';
+import {UserAction, UpdateType, FilterType, PROPERTY_STATUS_CHANGED} from '../const.js';
 
+const MIN_COMMENT_LENGTH = 3;
 const Mode = {
   DEFAULT: `DEFAULT`,
   POPUP: `POPUP`,
 };
-const MIN_COMMENT_LENGTH = 3;
+
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};
 
 export default class FilmCardPresenter {
-  constructor(filmList, changeData, changeMode) {
-    this._filmList = filmList;
+  constructor(filmListElement, changeData, changeMode) {
+    this._filmListElement = filmListElement;
     this._changeData = changeData;
     this._changeMode = changeMode;
 
@@ -20,6 +26,7 @@ export default class FilmCardPresenter {
     this._mode = Mode.DEFAULT;
     this._controlFlag = false;
     this._changedProperties = null;
+    this._deletedCommentId = null;
 
 
     // Bind handlers
@@ -35,6 +42,15 @@ export default class FilmCardPresenter {
     this._handleWatchlistPopupClick = this._handleWatchlistPopupClick.bind(this);
     this._handleFavoritePopupClick = this._handleFavoritePopupClick.bind(this);
     this._handleHistoryPopupClick = this._handleHistoryPopupClick.bind(this);
+  }
+
+  _setCurrentProperties() {
+    this._changedProperties = {
+      favorites: null,
+      history: null,
+      watchlist: null,
+      all: null
+    };
   }
 
   init(card) {
@@ -64,11 +80,11 @@ export default class FilmCardPresenter {
 
 
     if (!prevFilmCardComponent || !prevPopupComponent) {
-      render(this._filmList, this._filmCardComponent, `beforeend`);
+      render(this._filmListElement, this._filmCardComponent, `beforeend`);
       return;
     }
     // if previous film card exists in DOM, change it to new card
-    if (this._filmList.contains(prevFilmCardComponent.getElement())) {
+    if (this._filmListElement.contains(prevFilmCardComponent.getElement())) {
       // We need new component with handlers (I use getElement() instead of this.element in View)
       replace(this._filmCardComponent, prevFilmCardComponent);
     }
@@ -80,6 +96,46 @@ export default class FilmCardPresenter {
 
     remove(prevFilmCardComponent);
     remove(prevPopupComponent);
+  }
+
+  setViewState(state, deletedCommentId, actionType) {
+    const resetFormState = () => {
+      this._popupComponent.updateData({
+        isDisabled: false,
+        deletedCommentId: null
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._popupComponent.updateData({
+          isDisabled: true
+        });
+        break;
+      case State.DELETING:
+        this._deletedCommentId = deletedCommentId;
+        this._popupComponent.updateData({
+          isDisabled: true,
+          deletedCommentId
+        });
+        break;
+      case State.ABORTING:
+        this._popupComponent.shake(resetFormState, actionType, this._deletedCommentId);
+        break;
+    }
+  }
+
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._closePopup();
+    }
+  }
+
+  _toggleProperty(property) {
+    this._changedProperties[property] =
+    (this._changedProperties[property] === PROPERTY_STATUS_CHANGED)
+      ? null
+      : PROPERTY_STATUS_CHANGED;
   }
 
   destroy() {
@@ -240,13 +296,16 @@ export default class FilmCardPresenter {
     comments.splice(comments.findIndex((comment) => String(comment.id) === commentId), 1);
 
     this._changeData(
-        UserAction.UPDATE_FILM_CARD,
+        UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
         Object.assign(
             {},
             this._card,
             {
               comments,
+            },
+            {
+              deletedCommentId: commentId
             }
         )
     );
@@ -257,41 +316,13 @@ export default class FilmCardPresenter {
       return;
     }
 
-    const updatedCommentsArray = Object.assign({}, this._card).comments;
-    updatedCommentsArray.push(newComment);
-
     this._changeData(
-        UserAction.UPDATE_FILM_CARD,
+        UserAction.ADD_COMMENT,
         UpdateType.PATCH,
         Object.assign(
             {},
-            this._card,
-            {
-              comments: updatedCommentsArray
-            }
+            newComment
         )
     );
-  }
-
-  resetView() {
-    if (this._mode !== Mode.DEFAULT) {
-      this._closePopup();
-    }
-  }
-
-  _toggleProperty(property) {
-    this._changedProperties[property] =
-    (this._changedProperties[property] === `changed`)
-      ? null
-      : `changed`;
-  }
-
-  _setCurrentProperties() {
-    this._changedProperties = {
-      favorites: null,
-      history: null,
-      watchlist: null,
-      all: null
-    };
   }
 }

@@ -50,9 +50,9 @@ export const findTopGenre = (filmCards) => {
   });
 };
 
-export const countWatchedInPeriod = (data) => {
-  const period = data.period;
-  const watchedFilms = countWatchedFilms(data.cards);
+export const countWatchedInPeriod = (filmCardsAndPeriod) => {
+  const period = filmCardsAndPeriod.period;
+  const watchedFilms = countWatchedFilms(filmCardsAndPeriod.cards);
 
   // Return array of cards watched in specific period or empty array if nothing has been find
   return periodToFilterMap[period](watchedFilms);

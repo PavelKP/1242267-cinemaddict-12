@@ -53,6 +53,19 @@ export default class SiteMenu extends AbstractView {
     return createSiteMenuTemplate(this._filters, this._currentFilter);
   }
 
+  setFilterTypeClickHandler(callback) {
+    this._callback.filterTypeClick = callback;
+    this.getElement().addEventListener(`click`, this._filterTypeClickHandler);
+  }
+
+  setStatisticClickHandler(callback) {
+    this._callback.statisticClick = callback;
+  }
+
+  setMenuItemClickHandler(callback) {
+    this._callback.menuItemClick = callback;
+  }
+
   _filterTypeClickHandler(evt) {
     evt.preventDefault();
 
@@ -67,19 +80,6 @@ export default class SiteMenu extends AbstractView {
       this._callback.filterTypeClick(evt.target.dataset.filterType);
       this._callback.statisticClick();
     }
-  }
-
-  setFilterTypeClickHandler(callback) {
-    this._callback.filterTypeClick = callback;
-    this.getElement().addEventListener(`click`, this._filterTypeClickHandler);
-  }
-
-  setStatisticClickHandler(callback) {
-    this._callback.statisticClick = callback;
-  }
-
-  setMenuItemClickHandler(callback) {
-    this._callback.menuItemClick = callback;
   }
 }
 

@@ -17,6 +17,12 @@ import Api from './api.js';
 const AUTHORIZATION = `Basic qr866jdzbbs`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
 
+// HTML elements
+const siteHeaderElement = document.querySelector(`.header`);
+const	siteMainElement = document.querySelector(`.main`);
+const	siteFooterElement = document.querySelector(`.footer`);
+const siteFooterStatsElement = siteFooterElement.querySelector(`.footer__statistics`);
+
 let statisticComponent;
 
 const handleStatisticClick = () => {
@@ -24,6 +30,7 @@ const handleStatisticClick = () => {
     remove(statisticComponent);
   }
   movieListPresenter.destroy();
+  movieListPresenter.destroySort();
   statisticComponent = new StatisticsView(filmCardsModel.getFilmCards());
   render(siteMainElement, statisticComponent, `beforeend`);
 };
@@ -34,12 +41,6 @@ const handleMenuItemClick = () => {
     remove(statisticComponent);
   }
 };
-
-// HTML elements
-const siteHeaderElement = document.querySelector(`.header`);
-const	siteMainElement = document.querySelector(`.main`);
-const	siteFooterElement = document.querySelector(`.footer`);
-const siteFooterStats = siteFooterElement.querySelector(`.footer__statistics`);
 
 // Server
 const api = new Api(END_POINT, AUTHORIZATION);
@@ -64,7 +65,7 @@ api.getFilmCards()
   .then((filmCards) => {
     filmCardsModel.setFilmCards(UpdateType.INIT, filmCards);
     // Render number of films
-    render(siteFooterStats, new FilmNumberView(filmCards), `beforeend`);
+    render(siteFooterStatsElement, new FilmNumberView(filmCards), `beforeend`);
     filterPresenter.unlock();
   })
   .catch((err) => {
