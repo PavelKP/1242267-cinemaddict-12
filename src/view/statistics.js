@@ -5,8 +5,8 @@ import {countDuration, findTopGenre, countWatchedInPeriod} from "../utils/statis
 import {userGradeSettings} from '../const.js';
 import {getUserRank} from '../utils/user-profile.js';
 
-const renderChart = (statisticCtx, data) => {
-  const watchedInPeriod = countWatchedInPeriod(data);
+const renderChart = (statisticCtx, filmCardsAndPeriod) => {
+  const watchedInPeriod = countWatchedInPeriod(filmCardsAndPeriod);
 
   const genresMap = watchedInPeriod ? findTopGenre(watchedInPeriod) : false;
   const genreNames = genresMap ? genresMap.map((pare) => pare[0]) : [];
@@ -75,8 +75,8 @@ const renderChart = (statisticCtx, data) => {
   });
 };
 
-const createStatisticsTemplate = (data) => {
-  const watchedInPeriod = countWatchedInPeriod(data);
+const createStatisticsTemplate = (filmCardsAndPeriod) => {
+  const watchedInPeriod = countWatchedInPeriod(filmCardsAndPeriod);
   const watchedAmount = watchedInPeriod.length;
 
   const totalDuration = watchedAmount ? countDuration(watchedInPeriod) : 0;
@@ -84,7 +84,7 @@ const createStatisticsTemplate = (data) => {
   const minutes = totalDuration.minutes ? totalDuration.minutes : 0;
   const topGenre = watchedAmount ? findTopGenre(watchedInPeriod)[0][0] : ``;
 
-  const userRank = getUserRank(data.cards, userGradeSettings);
+  const userRank = getUserRank(filmCardsAndPeriod.cards, userGradeSettings);
 
   return (
     `<section class="statistic">

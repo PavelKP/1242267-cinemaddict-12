@@ -231,23 +231,23 @@ export default class MovieList {
     }
   }
 
-  _updateSingleCardAndPopup(data) {
-    const clearId = String(data.id).match(/(\d+)$/g);
-    this._runInitByProperty(clearId, data);
-    this._runInitByProperty(IdType.TOP_RATED + clearId, data);
-    this._runInitByProperty(IdType.MOST_COMMENTED + clearId, data);
+  _updateSingleCardAndPopup(filmCard) {
+    const clearId = String(filmCard.id).match(/(\d+)$/g);
+    this._runInitByProperty(clearId, filmCard);
+    this._runInitByProperty(IdType.TOP_RATED + clearId, filmCard);
+    this._runInitByProperty(IdType.MOST_COMMENTED + clearId, filmCard);
   }
 
-  _handleModelEvent(updateType, data) {
+  _handleModelEvent(updateType, update) {
 
-    if (data === `stats`) {
+    if (update === `stats`) {
       return;
     }
 
     switch (updateType) {
       case UpdateType.PATCH:
         // Only update single film card and popup
-        this._updateSingleCardAndPopup(data);
+        this._updateSingleCardAndPopup(update);
         break;
       case UpdateType.PATCH_CUSTOM:
         const filterType = this._filterModel.getFilter();
@@ -257,7 +257,7 @@ export default class MovieList {
           this._renderBoard();
         } else {
           // Update single film card, popup, filter
-          this._updateSingleCardAndPopup(data);
+          this._updateSingleCardAndPopup(update);
 
           this._renderSort(); // Render sorting block
           this._cardPropertyChanged = null;
