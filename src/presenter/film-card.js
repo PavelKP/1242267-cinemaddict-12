@@ -99,6 +99,12 @@ export default class FilmCardPresenter {
   }
 
   setViewState(state, deletedCommentId, actionType) {
+
+    let justDataUpdating = false;
+    if (!document.body.contains(this._popupComponent.getElement())) {
+      justDataUpdating = true;
+    }
+
     const resetFormState = () => {
       this._popupComponent.updateData({
         isDisabled: false,
@@ -110,14 +116,14 @@ export default class FilmCardPresenter {
       case State.SAVING:
         this._popupComponent.updateData({
           isDisabled: true
-        });
+        }, justDataUpdating);
         break;
       case State.DELETING:
         this._deletedCommentId = deletedCommentId;
         this._popupComponent.updateData({
           isDisabled: true,
           deletedCommentId
-        });
+        }, justDataUpdating);
         break;
       case State.ABORTING:
         this._popupComponent.shake(resetFormState, actionType, this._deletedCommentId);
