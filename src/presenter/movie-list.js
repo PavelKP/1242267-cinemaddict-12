@@ -87,9 +87,7 @@ export default class MovieList {
 
   // Render number of cards from array
   _renderCards(filmCards) {
-    for (let i = 0; i < filmCards.length; i++) {
-      this._renderCard(this._filmListElement, filmCards[i]);
-    }
+    filmCards.forEach((card) => this._renderCard(this._filmListElement, card));
   }
 
   // Render cards and button if necessary
