@@ -19,7 +19,7 @@ const createCommentTemplate = (commentsArray, deletedCommentId) => {
     const disabled = deletedCommentId ? `disabled` : ``;
 
     return (`
-    <li class="film-details__comment">
+    <li class="film-details__comment" data-comment-id="${id}">
       <span class="film-details__comment-emoji">
         ${emojiTemplate}
       </span>
@@ -28,7 +28,7 @@ const createCommentTemplate = (commentsArray, deletedCommentId) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>
-          <button class="film-details__comment-delete" data-comment-id = "${id}" ${disabled}>${deleteState}</button>
+          <button class="film-details__comment-delete" ${disabled}>${deleteState}</button>
         </p>
       </div>
     </li>
@@ -263,14 +263,17 @@ export default class FilmDetailsPopup extends SmartView {
             date: new Date()
           }
       );
-
       this._callback.commentSendHandler(newComment);
     }
   }
 
   _commentDeleteHandler(evt) {
     evt.preventDefault();
-    this._callback.commentDeleteHandler(evt.target);
+
+    if (evt.target.tagName !== `BUTTON`) {
+      return;
+    }
+    this._callback.commentDeleteHandler(evt.currentTarget);
   }
 
   setPopupCloseButtonHandler(callback) {
@@ -295,7 +298,7 @@ export default class FilmDetailsPopup extends SmartView {
 
   setCommentDeleteHandler(callback) {
     this._callback.commentDeleteHandler = callback;
-    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+    this.getElement().querySelectorAll(`.film-details__comment`)
       .forEach((button) => button.addEventListener(`click`, this._commentDeleteHandler));
   }
 
@@ -345,21 +348,20 @@ export default class FilmDetailsPopup extends SmartView {
     );
   }
 
-  shake(callback, actionType) {
+  shake(callback, actionType, deletedCommentId) {
     let target;
     switch (actionType) {
       case UserAction.ADD_COMMENT:
-        target = `form`;
+        target = this.getElement().querySelector(`.film-details__new-comment`);
         break;
       case UserAction.DELETE_COMMENT:
-        target = `.film-details__comments-wrap`;
+        target = this.getElement().querySelector(`li[data-comment-id="${deletedCommentId}"]`);
         break;
     }
 
-    this.getElement().querySelector(target)
-      .style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    target.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
-      this.getElement().style.animation = ``;
+      target.style.animation = ``;
       callback();
     }, SHAKE_ANIMATION_TIMEOUT);
   }

@@ -27,6 +27,7 @@ export default class FilmCardPresenter {
     this._mode = Mode.DEFAULT;
     this._controlFlag = false;
     this._changedProperties = null;
+    this._deletedCommentId = null;
 
 
     // Bind handlers
@@ -314,13 +315,14 @@ export default class FilmCardPresenter {
         });
         break;
       case State.DELETING:
+        this._deletedCommentId = deletedCommentId;
         this._popupComponent.updateData({
           isDisabled: true,
           deletedCommentId
         });
         break;
       case State.ABORTING:
-        this._popupComponent.shake(resetFormState, actionType);
+        this._popupComponent.shake(resetFormState, actionType, this._deletedCommentId);
         break;
     }
   }
