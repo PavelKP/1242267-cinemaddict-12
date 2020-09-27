@@ -12,8 +12,7 @@ import {sortByDate, sortByRating} from '../utils/film-cards.js';
 import {filter} from '../utils/filters.js';
 
 // Constants
-const TOP_FILM_CARD_AMOUNT = 2;
-const COMMENTED_FILM_CARD_AMOUNT = 2;
+const EXTRA_FILM_CARD_AMOUNT = 2;
 const IdType = {
   TOP_RATED: `topRated`,
   MOST_COMMENTED: `mostCommented`,
@@ -123,25 +122,21 @@ export default class MovieList {
     render(this._filmListElement.parentElement, this._loadMoreButtonComponent, `beforeend`);
   }
 
-  _renderExtraFilmCards() {
-    render(this._filmBoardComponent, this._topRatedComponent, `beforeend`); // Render top rated block
-    render(this._filmBoardComponent, this._mostCommentedComponent, `beforeend`); // Render most commented block
-
-    // Copy film cards array and sort by rating
-    // Render top rated films
-    const filmCardsOrderByRating = this._getFilmCards().slice().sort((a, b) => b.rating - a.rating);
-    const topRatedContainerElement = this._topRatedComponent.getElement().querySelector(`.films-list__container`);
-    for (let i = 0; i < Math.min(filmCardsOrderByRating.length, TOP_FILM_CARD_AMOUNT); i++) {
-      this._renderCard(topRatedContainerElement, filmCardsOrderByRating[i], IdType.TOP_RATED);
+  _renderExtraFilmCards(component, idType) {
+    let cards = this._filmCardsModel.getFilmCards(); // All cards, not filtered
+    switch (idType) {
+      case IdType.TOP_RATED:
+        cards = cards.slice().sort((a, b) => b.rating - a.rating);
+        break;
+      case IdType.MOST_COMMENTED:
+        cards = cards.slice().sort((a, b) => b.comments.length - a.comments.length);
     }
 
-    // Copy film cards array and sort by comments amount
-    // Render most commented films
-    const filmCardsOrderByComments = this._getFilmCards().slice().sort((a, b) => b.comments.length - a.comments.length);
-    const mostCommentedContainerElement = this._mostCommentedComponent.getElement().querySelector(`.films-list__container`);
-    for (let i = 0; i < Math.min(filmCardsOrderByRating.length, COMMENTED_FILM_CARD_AMOUNT); i++) {
-      this._renderCard(mostCommentedContainerElement, filmCardsOrderByComments[i], IdType.MOST_COMMENTED);
-    }
+    render(this._filmBoardComponent, component, `beforeend`); // Render extra block
+    const extraContainerElement = component.getElement().querySelector(`.films-list__container`);
+    const cardAmount = Math.min(cards.length, EXTRA_FILM_CARD_AMOUNT);
+
+    cards.slice(0, cardAmount).forEach((card) => this._renderCard(extraContainerElement, card, idType));
   }
 
   _renderNoFilms() {
@@ -159,8 +154,6 @@ export default class MovieList {
   }
 
   _changeViewStateByProperty(update, state, clearId, actionType) {
-    //debugger;
-
     const prefixes = [``, IdType.TOP_RATED, IdType.MOST_COMMENTED];
 
     prefixes.forEach((prefix) => {
@@ -232,7 +225,9 @@ export default class MovieList {
     this._prepareEmptyBoard();
 
     this._renderCardsList(filmCards.slice(0, Math.min(filmCardsCount, this._renderedFilmCards))); // Render cards + button
-    this._renderExtraFilmCards(); // Render extra cards
+    // Render extra cards
+    this._renderExtraFilmCards(this._topRatedComponent, IdType.TOP_RATED);
+    this._renderExtraFilmCards(this._mostCommentedComponent, IdType.MOST_COMMENTED);
   }
 
   _clearBoard({resetRenderedFilmCardsCount = false, resetSortType = false} = {}) {
@@ -273,6 +268,12 @@ export default class MovieList {
     this.destroyed = true;
   }
 
+  _refreshMostCommented() {
+    // Refresh most commented block
+    remove(this._mostCommentedComponent);
+    this._renderExtraFilmCards(this._mostCommentedComponent, IdType.MOST_COMMENTED);
+  }
+
   _handleLoadMoreButtonClick() {
     const filmCardsCount = this._getFilmCards().length;
     const newRenderedFilmCardsCount = Math.min(filmCardsCount, this._renderedFilmCards + FILM_CARD_AMOUNT_PER_STEP);
@@ -296,7 +297,8 @@ export default class MovieList {
     this._clearFilmList();
     remove(this._loadMoreButtonComponent);
     this._renderCardsList();
-    this._renderExtraFilmCards();
+    this._renderExtraFilmCards(this._topRatedComponent, IdType.TOP_RATED);
+    this._renderExtraFilmCards(this._mostCommentedComponent, IdType.MOST_COMMENTED);
   }
 
   _handleViewAction(actionType, updateType, update, property) {
@@ -316,6 +318,8 @@ export default class MovieList {
         this._api.addComment(update)
           .then((updatedCard) => {
             this._filmCardsModel.updateFilmCard(updateType, updatedCard);
+
+            this._refreshMostCommented(); // Refresh most commented block
           })
           .catch(() => {
             this._changeViewStateByProperty(update, CardPresenterViewState.ABORTING, clearId, actionType);
@@ -326,6 +330,8 @@ export default class MovieList {
         this._api.deleteComment(update)
         .then(() => {
           this._filmCardsModel.updateFilmCard(updateType, update);
+
+          this._refreshMostCommented(); // Refresh most commented block
         })
         .catch(() => {
           this._changeViewStateByProperty(update, CardPresenterViewState.ABORTING, clearId, actionType);
