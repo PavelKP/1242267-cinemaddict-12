@@ -349,19 +349,19 @@ export default class FilmDetailsPopup extends SmartView {
   }
 
   shake(callback, actionType, deletedCommentId) {
-    let target;
+    let targetElement;
     switch (actionType) {
       case UserAction.ADD_COMMENT:
-        target = this.getElement().querySelector(`.film-details__new-comment`);
+        targetElement = this.getElement().querySelector(`.film-details__new-comment`);
         break;
       case UserAction.DELETE_COMMENT:
-        target = this.getElement().querySelector(`li[data-comment-id="${deletedCommentId}"]`);
+        targetElement = this.getElement().querySelector(`li[data-comment-id="${deletedCommentId}"]`);
         break;
     }
 
-    target.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT}ms`;
+    targetElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT}ms`;
     setTimeout(() => {
-      target.style.animation = ``;
+      targetElement.style.animation = ``;
       callback();
     }, SHAKE_ANIMATION_TIMEOUT);
   }
