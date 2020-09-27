@@ -16,8 +16,8 @@ export const State = {
 };
 
 export default class FilmCardPresenter {
-  constructor(filmList, changeData, changeMode) {
-    this._filmList = filmList;
+  constructor(filmListElement, changeData, changeMode) {
+    this._filmListElement = filmListElement;
     this._changeData = changeData;
     this._changeMode = changeMode;
 
@@ -71,11 +71,11 @@ export default class FilmCardPresenter {
 
 
     if (!prevFilmCardComponent || !prevPopupComponent) {
-      render(this._filmList, this._filmCardComponent, `beforeend`);
+      render(this._filmListElement, this._filmCardComponent, `beforeend`);
       return;
     }
     // if previous film card exists in DOM, change it to new card
-    if (this._filmList.contains(prevFilmCardComponent.getElement())) {
+    if (this._filmListElement.contains(prevFilmCardComponent.getElement())) {
       // We need new component with handlers (I use getElement() instead of this.element in View)
       replace(this._filmCardComponent, prevFilmCardComponent);
     }

@@ -33,7 +33,7 @@ export default class MovieList {
 
     this._filmSortingComponent = null;
     this._loadMoreButtonComponent = null;
-    this._filmList = null;
+    this._filmListElement = null;
     this.destroyed = false;
     this._cardPropertyChanged = false;
 
@@ -89,7 +89,7 @@ export default class MovieList {
   // Render number of cards from array
   _renderCards(filmCards) {
     for (let i = 0; i < filmCards.length; i++) {
-      this._renderCard(this._filmList, filmCards[i]);
+      this._renderCard(this._filmListElement, filmCards[i]);
     }
   }
 
@@ -134,7 +134,7 @@ export default class MovieList {
       this._handleLoadMoreButtonClick();
     });
 
-    render(this._filmList.parentElement, this._loadMoreButtonComponent, `beforeend`);
+    render(this._filmListElement.parentElement, this._loadMoreButtonComponent, `beforeend`);
   }
 
   _renderExtraFilmCards() {
@@ -159,11 +159,11 @@ export default class MovieList {
   }
 
   _renderNoFilms() {
-    render(this._filmList, this._noFilmsComponent, `beforeend`);
+    render(this._filmListElement, this._noFilmsComponent, `beforeend`);
   }
 
   _renderLoading() {
-    render(this._filmList, this._loadingComponent, `beforeend`);
+    render(this._filmListElement, this._loadingComponent, `beforeend`);
   }
 
   _handleSortTypeChange(sortType) {
@@ -318,7 +318,7 @@ export default class MovieList {
     // Render empty board
     // Define empty film card container
     render(this._boardContainer, this._filmBoardComponent, `beforeend`);
-    this._filmList = this._filmBoardComponent.getElement().querySelector(`.films-list .films-list__container`);
+    this._filmListElement = this._filmBoardComponent.getElement().querySelector(`.films-list .films-list__container`);
   }
 
   _renderBoard() {
