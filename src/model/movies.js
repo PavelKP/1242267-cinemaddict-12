@@ -165,7 +165,7 @@ export default class Movies extends Observer {
     const index = this._filmCards.findIndex((card) => card.id === update.id);
 
     if (index === -1) {
-      throw new Error(`Can't delete unexisting card`);
+      throw new Error(`Can't delete unexisting comments`);
     }
 
     this._filmCards = [
