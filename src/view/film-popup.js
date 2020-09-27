@@ -359,7 +359,7 @@ export default class FilmDetailsPopup extends SmartView {
         break;
     }
 
-    target.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    target.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT}ms`;
     setTimeout(() => {
       target.style.animation = ``;
       callback();
