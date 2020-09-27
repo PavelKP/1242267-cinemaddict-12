@@ -14,7 +14,7 @@ export default class Filter {
     this._filterComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
+    this._handleTypeChange = this._handleTypeChange.bind(this);
 
     this._handleStatisticClick = handleStatisticClick.bind(this);
     this._handleMenuItemClick = handleMenuItemClick.bind(this);
@@ -26,13 +26,13 @@ export default class Filter {
   init() {
     this._currentFilter = this._filterModel.get();
 
-    const filters = this._getFilters();
+    const filters = this._getValues();
     const prevFilterComponent = this._filterComponent;
 
     this._filterComponent = new FilterView(filters, this._currentFilter);
 
     if (this._isOpen) {
-      this._filterComponent.setFilterTypeClickHandler(this._handleFilterTypeChange);
+      this._filterComponent.setFilterTypeClickHandler(this._handleTypeChange);
       this._filterComponent.setStatisticClickHandler(this._handleStatisticClick);
       this._filterComponent.setMenuItemClickHandler(this._handleMenuItemClick);
     }
@@ -56,7 +56,7 @@ export default class Filter {
     this.init();
   }
 
-  _handleFilterTypeChange(filterType) {
+  _handleTypeChange(filterType) {
     if (this._currentFilter === filterType) {
       return;
     }
@@ -64,7 +64,7 @@ export default class Filter {
     this._filterModel.set(UpdateType.MAJOR, filterType);
   }
 
-  _getFilters() {
+  _getValues() {
     const filmCards = this._filmCardsModel.getFilmCards();
 
     return [

@@ -9,19 +9,19 @@ const createLoadMoreButtonTemplate = () => {
 export default class LoadMoreButton extends AbstractView {
   constructor() {
     super();
-    this._loadMoreButtonHandler = this._loadMoreButtonHandler.bind(this);
+    this._controlHandler = this._controlHandler.bind(this);
   }
 
   _getTemplate() {
     return createLoadMoreButtonTemplate();
   }
 
-  _loadMoreButtonHandler(evt) {
-    this._callback.loadMoreButtonHandler(evt);
+  _controlHandler(evt) {
+    this._callback.controlHandler(evt);
   }
 
   setHandler(callback) {
-    this._callback.loadMoreButtonHandler = callback;
-    this.getElement().addEventListener(`click`, this._loadMoreButtonHandler);
+    this._callback.controlHandler = callback;
+    this.getElement().addEventListener(`click`, this._controlHandler);
   }
 }

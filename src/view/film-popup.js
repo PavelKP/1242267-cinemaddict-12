@@ -53,7 +53,7 @@ const createEmojiList = (fileNames, currentEmojiName) => {
   }).join(``);
 };
 
-const createFilmDetailsPopup = (filmCard) => {
+const createFilmDetails = (filmCard) => {
 
   const {title, rating, release, duration, poster, description, comments, ageRating, original, director, country, genres, writers, actors, isWatched, isFavorite, isListed, newComment, isDisabled, deletedCommentId} = filmCard;
 
@@ -183,10 +183,10 @@ const createFilmDetailsPopup = (filmCard) => {
   );
 };
 
-export default class FilmDetailsPopup extends SmartView {
+export default class FilmDetails extends SmartView {
   constructor(card) {
     super();
-    this._data = FilmDetailsPopup.parseCardToData(card);
+    this._data = FilmDetails.parseCardToData(card);
 
     this._popupCloseButtonHandler = this._popupCloseButtonHandler.bind(this);
     this._popupWatchlistClickHandler = this._popupWatchlistClickHandler.bind(this);
@@ -202,7 +202,7 @@ export default class FilmDetailsPopup extends SmartView {
   }
 
   _getTemplate() {
-    return createFilmDetailsPopup(this._data);
+    return createFilmDetails(this._data);
   }
 
   setPopupCloseButtonHandler(callback) {
@@ -254,7 +254,7 @@ export default class FilmDetailsPopup extends SmartView {
 
   reset(card) {
     this.updateData(
-        FilmDetailsPopup.parseCardToData(card)
+        FilmDetails.parseCardToData(card)
     );
   }
 
