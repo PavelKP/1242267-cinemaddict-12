@@ -293,6 +293,11 @@ export default class MovieList {
     }
   }
 
+  destroySort() {
+    remove(this._filmSortingComponent);
+    this._filmSortingComponent = null;
+  }
+
   _clearFilmList() {
     Object
       .values(this._filmCardPresenterObserver)
@@ -329,7 +334,6 @@ export default class MovieList {
       this._renderNoFilms(); // Render plug
       return;
     }
-
     this._renderSort(); // Render sorting block
     this._prepareEmptyBoard();
 

@@ -24,6 +24,7 @@ const handleStatisticClick = () => {
     remove(statisticComponent);
   }
   movieListPresenter.destroy();
+  movieListPresenter.destroySort();
   statisticComponent = new StatisticsView(filmCardsModel.getFilmCards());
   render(siteMainElement, statisticComponent, `beforeend`);
 };
