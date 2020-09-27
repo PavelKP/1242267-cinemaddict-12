@@ -130,17 +130,17 @@ export default class MovieList {
     // Copy film cards array and sort by rating
     // Render top rated films
     const filmCardsOrderByRating = this._getFilmCards().slice().sort((a, b) => b.rating - a.rating);
-    const topRatedContainer = this._topRatedComponent.getElement().querySelector(`.films-list__container`);
+    const topRatedContainerElement = this._topRatedComponent.getElement().querySelector(`.films-list__container`);
     for (let i = 0; i < Math.min(filmCardsOrderByRating.length, TOP_FILM_CARD_AMOUNT); i++) {
-      this._renderCard(topRatedContainer, filmCardsOrderByRating[i], IdType.TOP_RATED);
+      this._renderCard(topRatedContainerElement, filmCardsOrderByRating[i], IdType.TOP_RATED);
     }
 
     // Copy film cards array and sort by comments amount
     // Render most commented films
     const filmCardsOrderByComments = this._getFilmCards().slice().sort((a, b) => b.comments.length - a.comments.length);
-    const mostCommentedContainer = this._mostCommentedComponent.getElement().querySelector(`.films-list__container`);
+    const mostCommentedContainerElement = this._mostCommentedComponent.getElement().querySelector(`.films-list__container`);
     for (let i = 0; i < Math.min(filmCardsOrderByRating.length, COMMENTED_FILM_CARD_AMOUNT); i++) {
-      this._renderCard(mostCommentedContainer, filmCardsOrderByComments[i], IdType.MOST_COMMENTED);
+      this._renderCard(mostCommentedContainerElement, filmCardsOrderByComments[i], IdType.MOST_COMMENTED);
     }
   }
 

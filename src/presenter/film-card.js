@@ -3,11 +3,11 @@ import FilmDetailsPopupView from '../view/film-popup.js';
 import {render, replace, remove} from '../utils/render.js';
 import {UserAction, UpdateType, FilterType, PROPERTY_STATUS_CHANGED} from '../const.js';
 
+const MIN_COMMENT_LENGTH = 3;
 const Mode = {
   DEFAULT: `DEFAULT`,
   POPUP: `POPUP`,
 };
-const MIN_COMMENT_LENGTH = 3;
 
 export const State = {
   SAVING: `SAVING`,
