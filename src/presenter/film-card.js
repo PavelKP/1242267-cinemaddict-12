@@ -1,7 +1,7 @@
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsPopupView from '../view/film-popup.js';
 import {render, replace, remove} from '../utils/render.js';
-import {UserAction, UpdateType, FilterType} from '../const.js';
+import {UserAction, UpdateType, FilterType, PROPERTY_STATUS_CHANGED} from '../const.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -285,9 +285,9 @@ export default class FilmCardPresenter {
 
   _toggleProperty(property) {
     this._changedProperties[property] =
-    (this._changedProperties[property] === `changed`)
+    (this._changedProperties[property] === PROPERTY_STATUS_CHANGED)
       ? null
-      : `changed`;
+      : PROPERTY_STATUS_CHANGED;
   }
 
   _setCurrentProperties() {

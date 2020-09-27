@@ -7,7 +7,7 @@ import NoFilmsView from '../view/no-films.js';
 import FilmSortingView from '../view/film-sorting.js';
 import LoadingView from '../view/loading.js';
 import {render, remove, replace} from '../utils/render.js';
-import {SortType, UserAction, UpdateType, FILM_CARD_AMOUNT_PER_STEP} from '../const.js';
+import {SortType, UserAction, UpdateType, FILM_CARD_AMOUNT_PER_STEP, PROPERTY_STATUS_CHANGED} from '../const.js';
 import {sortByDate, sortByRating} from '../utils/film-cards.js';
 import {filter} from '../utils/filters.js';
 
@@ -251,7 +251,7 @@ export default class MovieList {
         break;
       case UpdateType.PATCH_CUSTOM:
         const filterType = this._filterModel.getFilter();
-        if (this._cardPropertyChanged[filterType] === `changed`) {
+        if (this._cardPropertyChanged[filterType] === PROPERTY_STATUS_CHANGED) {
           // MINOR update
           this._clearBoard();
           this._renderBoard();
