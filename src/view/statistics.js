@@ -5,14 +5,14 @@ import {countDuration, findTopGenre, countWatchedInPeriod} from "../utils/statis
 import {userGradeSettings} from '../const.js';
 import {getUserRank} from '../utils/user-profile.js';
 
+const BAR_HEIGHT = 50;
+
 const renderChart = (statisticCtx, filmCardsAndPeriod) => {
   const watchedInPeriod = countWatchedInPeriod(filmCardsAndPeriod);
 
   const genresMap = watchedInPeriod ? findTopGenre(watchedInPeriod) : false;
   const genreNames = genresMap ? genresMap.map((pare) => pare[0]) : [];
   const genreNumbers = genresMap ? genresMap.map((pare) => pare[1]) : [];
-
-  const BAR_HEIGHT = 50;
 
   // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
   statisticCtx.height = BAR_HEIGHT * 5;
