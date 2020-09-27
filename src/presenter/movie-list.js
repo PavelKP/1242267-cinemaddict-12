@@ -62,7 +62,7 @@ export default class MovieList {
   }
 
   _getFilmCards() {
-    let filterType = this._filterModel.getFilter();
+    let filterType = this._filterModel.get();
     filterType = (filterType === `stats`) ? `all` : filterType;
 
     const filmCards = this._filmCardsModel.getFilmCards();
@@ -115,7 +115,7 @@ export default class MovieList {
     }
 
     this._loadMoreButtonComponent = new LoadMoreButtonView();
-    this._loadMoreButtonComponent.setLoadMoreButtonHandler((evt) => {
+    this._loadMoreButtonComponent.setHandler((evt) => {
       evt.preventDefault();
       this._handleLoadMoreButtonClick();
     });
@@ -346,7 +346,7 @@ export default class MovieList {
         this._updateSingleCardAndPopup(update);
         break;
       case UpdateType.PATCH_CUSTOM:
-        const filterType = this._filterModel.getFilter();
+        const filterType = this._filterModel.get();
         if (this._cardPropertyChanged[filterType] === PROPERTY_STATUS_CHANGED) {
           // MINOR update
           this._clearBoard();
