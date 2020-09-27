@@ -294,8 +294,10 @@ export default class MovieList {
   }
 
   destroySort() {
-    remove(this._filmSortingComponent);
-    this._filmSortingComponent = null;
+    if (this._filmSortingComponent) {
+      remove(this._filmSortingComponent);
+      this._filmSortingComponent = null;
+    }
   }
 
   _clearFilmList() {
