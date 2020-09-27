@@ -310,14 +310,12 @@ export default class FilmCardPresenter {
     switch (state) {
       case State.SAVING:
         this._popupComponent.updateData({
-          isDisabled: true,
-          isSaving: true
+          isDisabled: true
         });
         break;
       case State.DELETING:
         this._popupComponent.updateData({
           isDisabled: true,
-          isDeleting: true,
           deletedCommentId
         });
         break;

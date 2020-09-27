@@ -14,6 +14,7 @@ const createCommentTemplate = (commentsArray, deletedCommentId) => {
     const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"/>` : ``;
     const encodedText = he.encode(text);
     const deleteState = (deletedCommentId === id) ? `deleting...` : `delete`;
+    const disabled = deletedCommentId ? `disabled` : ``;
 
     return (`
     <li class="film-details__comment">
@@ -25,7 +26,7 @@ const createCommentTemplate = (commentsArray, deletedCommentId) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${commentDate}</span>
-          <button class="film-details__comment-delete" data-comment-id = "${id}">${deleteState}</button>
+          <button class="film-details__comment-delete" data-comment-id = "${id}" ${disabled}>${deleteState}</button>
         </p>
       </div>
     </li>
