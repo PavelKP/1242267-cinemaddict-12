@@ -165,6 +165,15 @@ export default class Statistics extends SmartView {
     this._chart = renderChart(statisticCtx, this._data);
   }
 
+  restoreHandlers() {
+    this._setPeriodChangeHandler();
+    this._setChart();
+  }
+
+  _setChecked(period) {
+    this.getElement().querySelector(`input[value="${period}"]`).checked = true;
+  }
+
   _setPeriodChangeHandler() {
     this.getElement().querySelector(`.statistic__filters`).addEventListener(`change`, this._periodChangeHandler);
   }
@@ -180,14 +189,5 @@ export default class Statistics extends SmartView {
     });
 
     this._setChecked(this._data.period);
-  }
-
-  restoreHandlers() {
-    this._setPeriodChangeHandler();
-    this._setChart();
-  }
-
-  _setChecked(period) {
-    this.getElement().querySelector(`input[value="${period}"]`).checked = true;
   }
 }

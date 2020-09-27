@@ -44,6 +44,15 @@ export default class FilmCardPresenter {
     this._handleHistoryPopupClick = this._handleHistoryPopupClick.bind(this);
   }
 
+  _setCurrentProperties() {
+    this._changedProperties = {
+      favorites: null,
+      history: null,
+      watchlist: null,
+      all: null
+    };
+  }
+
   init(card) {
     this._card = card;
 
@@ -87,6 +96,46 @@ export default class FilmCardPresenter {
 
     remove(prevFilmCardComponent);
     remove(prevPopupComponent);
+  }
+
+  setViewState(state, deletedCommentId, actionType) {
+    const resetFormState = () => {
+      this._popupComponent.updateData({
+        isDisabled: false,
+        deletedCommentId: null
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._popupComponent.updateData({
+          isDisabled: true
+        });
+        break;
+      case State.DELETING:
+        this._deletedCommentId = deletedCommentId;
+        this._popupComponent.updateData({
+          isDisabled: true,
+          deletedCommentId
+        });
+        break;
+      case State.ABORTING:
+        this._popupComponent.shake(resetFormState, actionType, this._deletedCommentId);
+        break;
+    }
+  }
+
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._closePopup();
+    }
+  }
+
+  _toggleProperty(property) {
+    this._changedProperties[property] =
+    (this._changedProperties[property] === PROPERTY_STATUS_CHANGED)
+      ? null
+      : PROPERTY_STATUS_CHANGED;
   }
 
   destroy() {
@@ -275,54 +324,5 @@ export default class FilmCardPresenter {
             newComment
         )
     );
-  }
-
-  resetView() {
-    if (this._mode !== Mode.DEFAULT) {
-      this._closePopup();
-    }
-  }
-
-  _toggleProperty(property) {
-    this._changedProperties[property] =
-    (this._changedProperties[property] === PROPERTY_STATUS_CHANGED)
-      ? null
-      : PROPERTY_STATUS_CHANGED;
-  }
-
-  _setCurrentProperties() {
-    this._changedProperties = {
-      favorites: null,
-      history: null,
-      watchlist: null,
-      all: null
-    };
-  }
-
-  setViewState(state, deletedCommentId, actionType) {
-    const resetFormState = () => {
-      this._popupComponent.updateData({
-        isDisabled: false,
-        deletedCommentId: null
-      });
-    };
-
-    switch (state) {
-      case State.SAVING:
-        this._popupComponent.updateData({
-          isDisabled: true
-        });
-        break;
-      case State.DELETING:
-        this._deletedCommentId = deletedCommentId;
-        this._popupComponent.updateData({
-          isDisabled: true,
-          deletedCommentId
-        });
-        break;
-      case State.ABORTING:
-        this._popupComponent.shake(resetFormState, actionType, this._deletedCommentId);
-        break;
-    }
   }
 }

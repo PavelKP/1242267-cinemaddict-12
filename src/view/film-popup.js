@@ -205,6 +205,77 @@ export default class FilmDetailsPopup extends SmartView {
     return createFilmDetailsPopup(this._data);
   }
 
+  setPopupCloseButtonHandler(callback) {
+    this._callback.popupCloseButtonHandler = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupCloseButtonHandler);
+  }
+
+  setPopupWatchlistClickHandler(callback) {
+    this._callback.popupWatchlistClickHandler = callback;
+    this.getElement().querySelector(`input[name="watchlist"]`).addEventListener(`click`, this._popupWatchlistClickHandler);
+  }
+
+  setPopupHistoryClickHandler(callback) {
+    this._callback.popupHistoryClickHandler = callback;
+    this.getElement().querySelector(`input[name="watched"]`).addEventListener(`click`, this._popupHistoryClickHandler);
+  }
+
+  setPopupFavoriteClickHandler(callback) {
+    this._callback.popupFavoriteClickHandler = callback;
+    this.getElement().querySelector(`input[name="favorite"]`).addEventListener(`click`, this._popupFavoriteClickHandler);
+  }
+
+  setCommentDeleteHandler(callback) {
+    this._callback.commentDeleteHandler = callback;
+    this.getElement().querySelectorAll(`.film-details__comment`)
+      .forEach((button) => button.addEventListener(`click`, this._commentDeleteHandler));
+  }
+
+  setCommentSendHandler(callback) {
+    this._callback.commentSendHandler = callback;
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._commentSendHandler);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._emojiInputChangeHandler);
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentInputHandler);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+
+    this.setPopupCloseButtonHandler(this._callback.popupCloseButtonHandler);
+    this.setPopupWatchlistClickHandler(this._callback.popupWatchlistClickHandler);
+    this.setPopupHistoryClickHandler(this._callback.popupHistoryClickHandler);
+    this.setPopupFavoriteClickHandler(this._callback.popupFavoriteClickHandler);
+    this.setCommentDeleteHandler(this._callback.commentDeleteHandler);
+    this.setCommentSendHandler(this._callback.commentSendHandler);
+  }
+
+  reset(card) {
+    this.updateData(
+        FilmDetailsPopup.parseCardToData(card)
+    );
+  }
+
+  shake(callback, actionType, deletedCommentId) {
+    let targetElement;
+    switch (actionType) {
+      case UserAction.ADD_COMMENT:
+        targetElement = this.getElement().querySelector(`.film-details__new-comment`);
+        break;
+      case UserAction.DELETE_COMMENT:
+        targetElement = this.getElement().querySelector(`li[data-comment-id="${deletedCommentId}"]`);
+        break;
+    }
+
+    targetElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT}ms`;
+    setTimeout(() => {
+      targetElement.style.animation = ``;
+      callback();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
   _popupCloseButtonHandler(evt) {
     this._callback.popupCloseButtonHandler(evt);
   }
@@ -276,37 +347,6 @@ export default class FilmDetailsPopup extends SmartView {
     this._callback.commentDeleteHandler(evt.currentTarget);
   }
 
-  setPopupCloseButtonHandler(callback) {
-    this._callback.popupCloseButtonHandler = callback;
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._popupCloseButtonHandler);
-  }
-
-  setPopupWatchlistClickHandler(callback) {
-    this._callback.popupWatchlistClickHandler = callback;
-    this.getElement().querySelector(`input[name="watchlist"]`).addEventListener(`click`, this._popupWatchlistClickHandler);
-  }
-
-  setPopupHistoryClickHandler(callback) {
-    this._callback.popupHistoryClickHandler = callback;
-    this.getElement().querySelector(`input[name="watched"]`).addEventListener(`click`, this._popupHistoryClickHandler);
-  }
-
-  setPopupFavoriteClickHandler(callback) {
-    this._callback.popupFavoriteClickHandler = callback;
-    this.getElement().querySelector(`input[name="favorite"]`).addEventListener(`click`, this._popupFavoriteClickHandler);
-  }
-
-  setCommentDeleteHandler(callback) {
-    this._callback.commentDeleteHandler = callback;
-    this.getElement().querySelectorAll(`.film-details__comment`)
-      .forEach((button) => button.addEventListener(`click`, this._commentDeleteHandler));
-  }
-
-  setCommentSendHandler(callback) {
-    this._callback.commentSendHandler = callback;
-    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._commentSendHandler);
-  }
-
   static parseCardToData(card) {
     return Object.assign(
         {},
@@ -324,45 +364,5 @@ export default class FilmDetailsPopup extends SmartView {
           deletedCommentId: null
         }
     );
-  }
-
-  _setInnerHandlers() {
-    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._emojiInputChangeHandler);
-    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentInputHandler);
-  }
-
-  restoreHandlers() {
-    this._setInnerHandlers();
-
-    this.setPopupCloseButtonHandler(this._callback.popupCloseButtonHandler);
-    this.setPopupWatchlistClickHandler(this._callback.popupWatchlistClickHandler);
-    this.setPopupHistoryClickHandler(this._callback.popupHistoryClickHandler);
-    this.setPopupFavoriteClickHandler(this._callback.popupFavoriteClickHandler);
-    this.setCommentDeleteHandler(this._callback.commentDeleteHandler);
-    this.setCommentSendHandler(this._callback.commentSendHandler);
-  }
-
-  reset(card) {
-    this.updateData(
-        FilmDetailsPopup.parseCardToData(card)
-    );
-  }
-
-  shake(callback, actionType, deletedCommentId) {
-    let targetElement;
-    switch (actionType) {
-      case UserAction.ADD_COMMENT:
-        targetElement = this.getElement().querySelector(`.film-details__new-comment`);
-        break;
-      case UserAction.DELETE_COMMENT:
-        targetElement = this.getElement().querySelector(`li[data-comment-id="${deletedCommentId}"]`);
-        break;
-    }
-
-    targetElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT}ms`;
-    setTimeout(() => {
-      targetElement.style.animation = ``;
-      callback();
-    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }

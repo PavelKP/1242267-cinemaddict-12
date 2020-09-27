@@ -56,16 +56,6 @@ export default class FilmCard extends AbstractView {
     return createFilmCardTemplate(this._card);
   }
 
-  _posterClickHandler(evt) {
-    this._callback.posterClickHandler(evt);
-  }
-  _titleClickHandler(evt) {
-    this._callback.titleClickHandler(evt);
-  }
-  _commentsClickHandler(evt) {
-    this._callback.commentsClickHandler(evt);
-  }
-
   setPosterClickHandler(callback) {
     this._callback.posterClickHandler = callback;
     this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._posterClickHandler);
@@ -77,21 +67,6 @@ export default class FilmCard extends AbstractView {
   setCommentsClickHandler(callback) {
     this._callback.commentsClickHandler = callback;
     this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._commentsClickHandler);
-  }
-
-  _watchlistClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.watchlistClickHandler();
-  }
-
-  _historyClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.historyClickHandler();
-  }
-
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClickHandler();
   }
 
   setWatchlistClickHandler(callback) {
@@ -107,5 +82,30 @@ export default class FilmCard extends AbstractView {
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClickHandler = callback;
     this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._favoriteClickHandler);
+  }
+
+  _posterClickHandler(evt) {
+    this._callback.posterClickHandler(evt);
+  }
+  _titleClickHandler(evt) {
+    this._callback.titleClickHandler(evt);
+  }
+  _commentsClickHandler(evt) {
+    this._callback.commentsClickHandler(evt);
+  }
+
+  _watchlistClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.watchlistClickHandler();
+  }
+
+  _historyClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.historyClickHandler();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClickHandler();
   }
 }

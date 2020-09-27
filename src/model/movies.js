@@ -32,6 +32,22 @@ export default class Movies extends Observer {
     this._notify(updateType, update);
   }
 
+  deleteComment(updateType, update) {
+    const index = this._filmCards.findIndex((card) => card.id === update.id);
+
+    if (index === -1) {
+      throw new Error(`Can't delete unexisting comments`);
+    }
+
+    this._filmCards = [
+      ...this._filmCards.slice(0, index),
+      update,
+      ...this._filmCards.slice(index + 1)
+    ];
+
+    this._notify(updateType, update);
+  }
+
   static adaptToClient(card) {
     card = card.hasOwnProperty(`movie`)
       ? (
@@ -159,21 +175,5 @@ export default class Movies extends Observer {
           date: newComment.date
         }
     );
-  }
-
-  deleteComment(updateType, update) {
-    const index = this._filmCards.findIndex((card) => card.id === update.id);
-
-    if (index === -1) {
-      throw new Error(`Can't delete unexisting comments`);
-    }
-
-    this._filmCards = [
-      ...this._filmCards.slice(0, index),
-      update,
-      ...this._filmCards.slice(index + 1)
-    ];
-
-    this._notify(updateType, update);
   }
 }
