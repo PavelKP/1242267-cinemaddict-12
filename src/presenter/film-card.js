@@ -7,14 +7,13 @@ const Mode = {
   DEFAULT: `DEFAULT`,
   POPUP: `POPUP`,
 };
+const MIN_COMMENT_LENGTH = 3;
 
 export const State = {
   SAVING: `SAVING`,
   DELETING: `DELETING`,
   ABORTING: `ABORTING`
 };
-
-const MIN_COMMENT_LENGTH = 3;
 
 export default class FilmCardPresenter {
   constructor(filmList, changeData, changeMode) {
