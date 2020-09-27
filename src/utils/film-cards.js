@@ -1,8 +1,8 @@
 import moment from 'moment';
 
 // Convert date to year only
-const formatYear = (dateObject) => {
-  return dateObject.getFullYear();
+const formatYear = (date) => {
+  return date.getFullYear();
 };
 
 // Shorten string to limit -1

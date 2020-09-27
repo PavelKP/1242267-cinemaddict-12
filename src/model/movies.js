@@ -80,18 +80,18 @@ export default class Movies extends Observer {
     return adaptedCard;
   }
 
-  static adaptCommentsToClient(commentsArray) {
-    return commentsArray.map((commentObject) => {
+  static adaptCommentsToClient(comments) {
+    return comments.map((comment) => {
       const adaptedComment = Object.assign(
           {},
-          commentObject,
+          comment,
           {
-            text: commentObject.comment,
-            emoji: commentObject.emotion,
+            text: comment.comment,
+            emoji: comment.emotion,
             date:
-              (commentObject.date)
-                ? new Date(commentObject.date)
-                : commentObject.date
+              (comment.date)
+                ? new Date(comment.date)
+                : comment.date
           }
       );
 
@@ -105,7 +105,7 @@ export default class Movies extends Observer {
   static adaptCardToServer(card) {
     const comments =
       (card.comments.length >= 1)
-        ? card.comments.map((obj) => obj.id)
+        ? card.comments.map((comment) => comment.id)
         : card.comments;
 
     const releaseDate =

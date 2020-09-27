@@ -94,10 +94,10 @@ export default class MovieList {
   }
 
   // Render cards and button if necessary
-  _renderCardsList(incomeCardsArray) {
+  _renderCardsList(incomeCards) {
     const filmCardsCount = this._getFilmCards().length;
 
-    const filmCards = incomeCardsArray ? incomeCardsArray
+    const filmCards = incomeCards ? incomeCards
       : this._getFilmCards()
         .slice(0, Math.min(filmCardsCount, FILM_CARD_AMOUNT_PER_STEP));
 

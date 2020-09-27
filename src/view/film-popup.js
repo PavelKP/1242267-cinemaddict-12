@@ -6,12 +6,12 @@ import he from 'he';
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
 // Create comments template
-const createCommentTemplate = (commentsArray, deletedCommentId) => {
+const createCommentTemplate = (comments, deletedCommentId) => {
   // Iterate throw copy of array with comments
   // Destructure variables as parameters
   // Replace array element with template
   // Join array into string
-  return commentsArray.map(({id, text, emoji, author, date}) => {
+  return comments.map(({id, text, emoji, author, date}) => {
     const commentDate = formatDate(date, `YYYY/MM/DD HH:mm`);
     const emojiTemplate = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}"/>` : ``;
     const encodedText = he.encode(text);
