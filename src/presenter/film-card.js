@@ -299,7 +299,7 @@ export default class FilmCardPresenter {
     };
   }
 
-  setViewState(state, deletedCommentId) {
+  setViewState(state, deletedCommentId, actionType) {
     const resetFormState = () => {
       this._popupComponent.updateData({
         isDisabled: false,
@@ -320,7 +320,7 @@ export default class FilmCardPresenter {
         });
         break;
       case State.ABORTING:
-        this._popupComponent.shake(resetFormState);
+        this._popupComponent.shake(resetFormState, actionType);
         break;
     }
   }

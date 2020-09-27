@@ -1,4 +1,4 @@
-import {EMOJI_FILE_NAMES} from '../const.js';
+import {EMOJI_FILE_NAMES, UserAction} from '../const.js';
 import {formatDate, formatDuration} from '../utils/film-cards.js';
 import SmartView from './smart.js';
 import he from 'he';
@@ -345,8 +345,18 @@ export default class FilmDetailsPopup extends SmartView {
     );
   }
 
-  shake(callback) {
-    this.getElement().querySelector(`form`)
+  shake(callback, actionType) {
+    let target;
+    switch (actionType) {
+      case UserAction.ADD_COMMENT:
+        target = `form`;
+        break;
+      case UserAction.DELETE_COMMENT:
+        target = `.film-details__comments-wrap`;
+        break;
+    }
+
+    this.getElement().querySelector(target)
       .style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
       this.getElement().style.animation = ``;

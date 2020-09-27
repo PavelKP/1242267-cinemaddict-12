@@ -133,7 +133,6 @@ export default class Api {
       })
       .catch((err) => {
         window.console.error(err);
-        //return Promise.resolve(fallback); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       });
   }
 
