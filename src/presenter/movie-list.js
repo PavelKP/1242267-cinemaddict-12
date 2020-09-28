@@ -1,8 +1,6 @@
 import FilmCardPresenter, {State as CardPresenterViewState} from '../presenter/film-card.js';
 import FilmBoardView from '../view/film-board.js';
 import LoadMoreButtonView from '../view/load-more-button.js';
-import TopRatedView from '../view/top-rated.js';
-import MostCommentedView from '../view/most-commented.js';
 import NoFilmsView from '../view/no-films.js';
 import FilmSortingView from '../view/film-sorting.js';
 import LoadingView from '../view/loading.js';
@@ -10,13 +8,6 @@ import {render, remove, replace} from '../utils/render.js';
 import {SortType, UserAction, UpdateType, FILM_CARD_AMOUNT_PER_STEP, PROPERTY_STATUS_CHANGED} from '../const.js';
 import {sortByDate, sortByRating} from '../utils/film-cards.js';
 import {filter} from '../utils/filters.js';
-
-// Constants
-const EXTRA_FILM_CARD_AMOUNT = 2;
-const IdType = {
-  TOP_RATED: `topRated`,
-  MOST_COMMENTED: `mostCommented`,
-};
 
 export default class MovieList {
   constructor(boardContainer, filmCardsModel, filterModel, api) {
@@ -37,8 +28,6 @@ export default class MovieList {
     this._cardPropertyChanged = false;
 
     this._filmBoardComponent = new FilmBoardView();
-    this._topRatedComponent = new TopRatedView();
-    this._mostCommentedComponent = new MostCommentedView();
     this._noFilmsComponent = new NoFilmsView();
     this._loadingComponent = new LoadingView();
 
@@ -79,10 +68,10 @@ export default class MovieList {
   }
 
   // Render one card
-  _renderCard(container, card, modifier = ``) {
+  _renderCard(container, card) {
     const filmCardPresenter = new FilmCardPresenter(container, this._handleViewAction, this._handleModeChange);
     filmCardPresenter.init(card);
-    this._filmCardPresenterObserver[modifier + card.id] = filmCardPresenter;
+    this._filmCardPresenterObserver[card.id] = filmCardPresenter;
   }
 
   // Render number of cards from array
@@ -120,23 +109,6 @@ export default class MovieList {
     render(this._filmListElement.parentElement, this._loadMoreButtonComponent, `beforeend`);
   }
 
-  _renderExtraFilmCards(component, idType) {
-    let cards = this._filmCardsModel.getFilmCards(); // All cards, not filtered
-    switch (idType) {
-      case IdType.TOP_RATED:
-        cards = cards.slice().sort((a, b) => b.rating - a.rating);
-        break;
-      case IdType.MOST_COMMENTED:
-        cards = cards.slice().sort((a, b) => b.comments.length - a.comments.length);
-    }
-
-    render(this._filmBoardComponent, component, `beforeend`); // Render extra block
-    const extraContainerElement = component.getElement().querySelector(`.films-list__container`);
-    const cardAmount = Math.min(cards.length, EXTRA_FILM_CARD_AMOUNT);
-
-    cards.slice(0, cardAmount).forEach((card) => this._renderCard(extraContainerElement, card, idType));
-  }
-
   _renderNoFilms() {
     render(this._filmListElement, this._noFilmsComponent, `beforeend`);
   }
@@ -146,26 +118,9 @@ export default class MovieList {
   }
 
   _runInitByProperty(key, updatedFilmCard) {
-    if (this._filmCardPresenterObserver.hasOwnProperty((key))) {
+    if (this._filmCardPresenterObserver.hasOwnProperty(key)) {
       this._filmCardPresenterObserver[key].init(updatedFilmCard);
     }
-  }
-
-  _changeViewStateByProperty(update, state, clearId, actionType) {
-    const prefixes = [``, IdType.TOP_RATED, IdType.MOST_COMMENTED];
-
-    prefixes.forEach((prefix) => {
-      if (this._filmCardPresenterObserver.hasOwnProperty([prefix + clearId])) {
-        this._filmCardPresenterObserver[prefix + clearId].setViewState(state, update.deletedCommentId, actionType);
-      }
-    });
-  }
-
-  _updateSingleCardAndPopup(filmCard) {
-    const clearId = String(filmCard.id).match(/(\d+)$/g);
-    this._runInitByProperty(clearId, filmCard);
-    this._runInitByProperty(IdType.TOP_RATED + clearId, filmCard);
-    this._runInitByProperty(IdType.MOST_COMMENTED + clearId, filmCard);
   }
 
   _renderSort() {
@@ -223,9 +178,6 @@ export default class MovieList {
     this._prepareEmptyBoard();
 
     this._renderCardsList(filmCards.slice(0, Math.min(filmCardsCount, this._renderedFilmCards))); // Render cards + button
-    // Render extra cards
-    this._renderExtraFilmCards(this._topRatedComponent, IdType.TOP_RATED);
-    this._renderExtraFilmCards(this._mostCommentedComponent, IdType.MOST_COMMENTED);
   }
 
   _clearBoard({resetRenderedFilmCardsCount = false, resetSortType = false} = {}) {
@@ -242,9 +194,6 @@ export default class MovieList {
     if (this._loadMoreButtonComponent) {
       remove(this._loadMoreButtonComponent);
     }
-
-    remove(this._topRatedComponent);
-    remove(this._mostCommentedComponent);
 
     if (resetRenderedFilmCardsCount) {
       this._renderedFilmCards = FILM_CARD_AMOUNT_PER_STEP;
@@ -264,12 +213,6 @@ export default class MovieList {
     this._filmCardsModel.removeObserver(this._handleModelEvent);
     this._filterModel.removeObserver(this._handleModelEvent);
     this.destroyed = true;
-  }
-
-  _refreshMostCommented() {
-    // Refresh most commented block
-    remove(this._mostCommentedComponent);
-    this._renderExtraFilmCards(this._mostCommentedComponent, IdType.MOST_COMMENTED);
   }
 
   _handleLoadMoreButtonClick() {
@@ -295,14 +238,14 @@ export default class MovieList {
     this._clearFilmList();
     remove(this._loadMoreButtonComponent);
     this._renderCardsList();
-    this._renderExtraFilmCards(this._topRatedComponent, IdType.TOP_RATED);
-    this._renderExtraFilmCards(this._mostCommentedComponent, IdType.MOST_COMMENTED);
   }
 
   _handleViewAction(actionType, updateType, update, property) {
+    const deletedCommentId = update.deletedCommentId;
+    const clearId = String(update.id || update.cardId);
     const fallback = this._getFilmCards().filter((card) => card.id === update.id);
+
     this._cardPropertyChanged = property;
-    const clearId = String(update.id || update.cardId).match(/(\d+)$/g);
 
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
@@ -312,27 +255,23 @@ export default class MovieList {
           });
         break;
       case UserAction.ADD_COMMENT:
-        this._changeViewStateByProperty(update, CardPresenterViewState.SAVING, clearId, actionType);
+        this._filmCardPresenterObserver[clearId].setViewState(CardPresenterViewState.SAVING);
         this._api.addComment(update)
           .then((updatedCard) => {
             this._filmCardsModel.updateFilmCard(updateType, updatedCard);
-
-            this._refreshMostCommented(); // Refresh most commented block
           })
           .catch(() => {
-            this._changeViewStateByProperty(update, CardPresenterViewState.ABORTING, clearId, actionType);
+            this._filmCardPresenterObserver[clearId].setViewState(CardPresenterViewState.ABORTING, deletedCommentId, actionType);
           });
         break;
       case UserAction.DELETE_COMMENT:
-        this._changeViewStateByProperty(update, CardPresenterViewState.DELETING, clearId, actionType);
+        this._filmCardPresenterObserver[clearId].setViewState(CardPresenterViewState.DELETING, deletedCommentId, actionType);
         this._api.deleteComment(update)
         .then(() => {
           this._filmCardsModel.updateFilmCard(updateType, update);
-
-          this._refreshMostCommented(); // Refresh most commented block
         })
         .catch(() => {
-          this._changeViewStateByProperty(update, CardPresenterViewState.ABORTING, clearId, actionType);
+          this._filmCardPresenterObserver[clearId].setViewState(CardPresenterViewState.ABORTING, deletedCommentId, actionType);
         });
         break;
     }
@@ -347,7 +286,9 @@ export default class MovieList {
     switch (updateType) {
       case UpdateType.PATCH:
         // Only update single film card and popup
-        this._updateSingleCardAndPopup(update);
+        this._filmCardPresenterObserver[update.id].init(update);
+
+
         break;
       case UpdateType.PATCH_CUSTOM:
         const filterType = this._filterModel.get();
@@ -357,8 +298,7 @@ export default class MovieList {
           this._renderBoard();
         } else {
           // Update single film card, popup, filter
-          this._updateSingleCardAndPopup(update);
-
+          this._filmCardPresenterObserver[update.id].init(update);
           this._renderSort(); // Render sorting block
           this._cardPropertyChanged = null;
         }
