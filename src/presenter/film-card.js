@@ -26,10 +26,6 @@ export default class FilmCardPresenter {
     this._mode = Mode.DEFAULT;
     this._controlFlag = false;
     this._changedProperties = null;
-    /*
-    this._deletedCommentId = null;
-    */
-
 
     // Bind handlers
     this._showPopup = this._showPopup.bind(this);
