@@ -111,9 +111,6 @@ export default class FilmCardPresenter {
         });
         break;
       case State.DELETING:
-        /*
-        this._deletedCommentId = deletedCommentId;
-        */
         this._popupComponent.updateData({
           isDisabled: true,
           deletedCommentId

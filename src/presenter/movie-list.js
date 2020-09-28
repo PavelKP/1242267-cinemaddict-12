@@ -117,12 +117,6 @@ export default class MovieList {
     render(this._filmListElement, this._loadingComponent, `beforeend`);
   }
 
-  _runInitByProperty(key, updatedFilmCard) {
-    if (this._filmCardPresenterObserver.hasOwnProperty(key)) {
-      this._filmCardPresenterObserver[key].init(updatedFilmCard);
-    }
-  }
-
   _renderSort() {
     const prevSortingComponent = this._filmSortingComponent;
 
