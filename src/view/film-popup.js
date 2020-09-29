@@ -40,9 +40,7 @@ const createCommentTemplate = (comments, deletedCommentId) => {
 const createEmojiList = (fileNames, currentEmojiName) => {
 
   return fileNames.map((fileName) => {
-
     const checked = (fileName === currentEmojiName) ? `checked` : ``;
-
     return (
       `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${fileName}" value="${fileName}" ${checked}>
       <label class="film-details__emoji-label" for="emoji-${fileName}">
@@ -53,23 +51,60 @@ const createEmojiList = (fileNames, currentEmojiName) => {
   }).join(``);
 };
 
-const createFilmDetails = (filmCard) => {
+const createFilmDescriptionInList = (filmCard) => {
+  const {director, writers, actors, release, duration, country, genres} = filmCard;
 
-  const {title, rating, release, duration, poster, description, comments, ageRating, original, director, country, genres, writers, actors, isWatched, isFavorite, isListed, newComment, isDisabled, deletedCommentId} = filmCard;
-
-  const formattedRating = (rating.toString().length === 1) ? `${rating}.0` : rating;
   const writersList = writers.join(`, `);
   const actorsList = actors.join(`, `);
   const longReleaseDate = formatDate(release, `DD MMMM YYYY`);
   const formattedDuration = formatDuration(duration);
-
   const genresTitle = (genres.length > 1) ? `Genres` : `Genre`;
   const genresList = genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 
-  const isListedChecked = isListed ? `checked` : ``;
-  const watchedChecked = isWatched ? `checked` : ``;
-  const isFavoriteChecked = isFavorite ? `checked` : ``;
+  const termToDefinition = {
+    'Director': director,
+    'Writers': writersList,
+    'Actors': actorsList,
+    'Release Date': longReleaseDate,
+    'Runtime': formattedDuration,
+    'Country': country,
+    [genresTitle]: genresList
+  };
 
+  return Object.entries(termToDefinition).map(([term, definition]) => {
+    return (
+      `<tr class="film-details__row">
+        <td class="film-details__term">${term}</td>
+        <td class="film-details__cell">${definition}</td>
+      </tr>`
+    );
+  }).join(``);
+};
+
+const generateControls = (filmCard) => {
+  const {isWatched, isFavorite, isListed} = filmCard;
+
+  const controls = {
+    'watchlist': {label: `Add to watchlist`, checked: (isListed ? `checked` : ``)},
+    'watched': {label: `Already watched`, checked: (isWatched ? `checked` : ``)},
+    'favorite': {label: `Add to favorites`, checked: (isFavorite ? `checked` : ``)}
+  };
+
+  return Object.entries(controls).map(([name, {label, checked}]) => {
+    return (
+      `
+      <input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${checked}>
+      <label for="${name}" class="film-details__control-label film-details__control-label--${name}">${label}</label>
+      `
+    );
+  }).join(``);
+};
+
+const createFilmDetails = (filmCard) => {
+
+  const {title, rating, poster, description, comments, ageRating, original, newComment, isDisabled, deletedCommentId} = filmCard;
+
+  const formattedRating = (rating.toString().length === 1) ? `${rating}.0` : rating;
   const commentsTemplate = createCommentTemplate(comments, deletedCommentId);
   const commentsAmount = comments.length;
 
@@ -105,36 +140,7 @@ const createFilmDetails = (filmCard) => {
           </div>
 
           <table class="film-details__table">
-            <tr class="film-details__row">
-              <td class="film-details__term">Director</td>
-              <td class="film-details__cell">${director}</td>
-            </tr>
-            <tr class="film-details__row">
-              <td class="film-details__term">Writers</td>
-              <td class="film-details__cell">${writersList}</td>
-            </tr>
-            <tr class="film-details__row">
-              <td class="film-details__term">Actors</td>
-              <td class="film-details__cell">${actorsList}</td>
-            </tr>
-            <tr class="film-details__row">
-              <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${longReleaseDate}</td>
-            </tr>
-            <tr class="film-details__row">
-              <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${formattedDuration}</td>
-            </tr>
-            <tr class="film-details__row">
-              <td class="film-details__term">Country</td>
-              <td class="film-details__cell">${country}</td>
-            </tr>
-            <tr class="film-details__row">
-              <td class="film-details__term">${genresTitle}</td>
-              <td class="film-details__cell">
-                ${genresList}
-              </td>
-            </tr>
+            ${createFilmDescriptionInList(filmCard)}
           </table>
 
           <p class="film-details__film-description">
@@ -144,14 +150,7 @@ const createFilmDetails = (filmCard) => {
       </div>
 
       <section class="film-details__controls">
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isListedChecked}>
-        <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${watchedChecked}>
-        <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavoriteChecked}>
-        <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+        ${generateControls(filmCard)}
       </section>
     </div>
 
