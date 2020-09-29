@@ -11,7 +11,7 @@ export default class Filter {
     this._current = null;
     this._isOpen = false;
 
-    this._component = null;
+    this._view = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleTypeChange = this._handleTypeChange.bind(this);
@@ -27,22 +27,22 @@ export default class Filter {
     this._current = this._model.get();
 
     const filters = this._getValues();
-    const prevComponent = this._component;
+    const prevComponent = this._view;
 
-    this._component = new FilterView(filters, this._current);
+    this._view = new FilterView(filters, this._current);
 
     if (this._isOpen) {
-      this._component.setFilterTypeClickHandler(this._handleTypeChange);
-      this._component.setStatisticClickHandler(this._handleStatisticClick);
-      this._component.setMenuItemClickHandler(this._handleMenuItemClick);
+      this._view.setFilterTypeClickHandler(this._handleTypeChange);
+      this._view.setStatisticClickHandler(this._handleStatisticClick);
+      this._view.setMenuItemClickHandler(this._handleMenuItemClick);
     }
 
     if (!prevComponent) {
-      render(this._container, this._component, `beforeend`);
+      render(this._container, this._view, `beforeend`);
       return;
     }
 
-    replace(this._component, prevComponent);
+    replace(this._view, prevComponent);
     remove(prevComponent);
   }
 
