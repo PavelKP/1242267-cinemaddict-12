@@ -8,7 +8,7 @@ export default class Filter {
     this._container = container;
     this._model = model;
     this._filmCardsModel = filmCardsModel;
-    this._current = null;
+    this._currentValue = null;
     this._isOpen = false;
 
     this._view = null;
@@ -24,12 +24,12 @@ export default class Filter {
   }
 
   init() {
-    this._current = this._model.get();
+    this._currentValue = this._model.get();
 
     const filters = this._getValues();
     const prevComponent = this._view;
 
-    this._view = new FilterView(filters, this._current);
+    this._view = new FilterView(filters, this._currentValue);
 
     if (this._isOpen) {
       this._view.setFilterTypeClickHandler(this._handleTypeChange);
@@ -57,7 +57,7 @@ export default class Filter {
   }
 
   _handleTypeChange(filterType) {
-    if (this._current === filterType) {
+    if (this._currentValue === filterType) {
       return;
     }
 
