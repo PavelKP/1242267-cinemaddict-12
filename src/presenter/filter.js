@@ -4,14 +4,14 @@ import {filter} from '../utils/filters.js';
 import {FilterType, UpdateType} from '../const.js';
 
 export default class Filter {
-  constructor(filterContainer, filterModel, filmCardsModel, handleStatisticClick, handleMenuItemClick) {
-    this._filterContainer = filterContainer;
-    this._filterModel = filterModel;
+  constructor(container, model, filmCardsModel, handleStatisticClick, handleMenuItemClick) {
+    this._container = container;
+    this._model = model;
     this._filmCardsModel = filmCardsModel;
-    this._currentFilter = null;
+    this._current = null;
     this._isOpen = false;
 
-    this._filterComponent = null;
+    this._component = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleTypeChange = this._handleTypeChange.bind(this);
@@ -20,30 +20,30 @@ export default class Filter {
     this._handleMenuItemClick = handleMenuItemClick.bind(this);
 
     this._filmCardsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._model.addObserver(this._handleModelEvent);
   }
 
   init() {
-    this._currentFilter = this._filterModel.get();
+    this._current = this._model.get();
 
     const filters = this._getValues();
-    const prevFilterComponent = this._filterComponent;
+    const prevComponent = this._component;
 
-    this._filterComponent = new FilterView(filters, this._currentFilter);
+    this._component = new FilterView(filters, this._current);
 
     if (this._isOpen) {
-      this._filterComponent.setFilterTypeClickHandler(this._handleTypeChange);
-      this._filterComponent.setStatisticClickHandler(this._handleStatisticClick);
-      this._filterComponent.setMenuItemClickHandler(this._handleMenuItemClick);
+      this._component.setFilterTypeClickHandler(this._handleTypeChange);
+      this._component.setStatisticClickHandler(this._handleStatisticClick);
+      this._component.setMenuItemClickHandler(this._handleMenuItemClick);
     }
 
-    if (!prevFilterComponent) {
-      render(this._filterContainer, this._filterComponent, `beforeend`);
+    if (!prevComponent) {
+      render(this._container, this._component, `beforeend`);
       return;
     }
 
-    replace(this._filterComponent, prevFilterComponent);
-    remove(prevFilterComponent);
+    replace(this._component, prevComponent);
+    remove(prevComponent);
   }
 
   unlock() {
@@ -57,11 +57,11 @@ export default class Filter {
   }
 
   _handleTypeChange(filterType) {
-    if (this._currentFilter === filterType) {
+    if (this._current === filterType) {
       return;
     }
 
-    this._filterModel.set(UpdateType.MAJOR, filterType);
+    this._model.set(UpdateType.MAJOR, filterType);
   }
 
   _getValues() {
